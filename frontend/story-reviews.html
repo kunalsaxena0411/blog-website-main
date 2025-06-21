@@ -49,6 +49,11 @@
         transition: all 0.3s ease;
       }
 
+      header.scrolled {
+        background: rgba(15, 23, 42, 0.9);
+        padding: 10px 0;
+      }
+
       /* Logo styling */
       .logo-container {
         display: flex;
@@ -378,6 +383,44 @@
           flex-direction: column;
           gap: 8px;
         }
+        /* Ensure mobile menu buttons and links stack properly */
+        #mobileMenu .flex-col > a,
+        #mobileMenu .flex-col > button {
+          width: 100%;
+          text-align: left;
+          padding: 0.75rem 0;
+        }
+        /* Remove top border if it causes visual issues on mobile */
+        #mobileMenu {
+          border-top: none;
+        }
+        /* Adjust font size of main content heading on mobile */
+        .content-overlay h1 {
+            font-size: 2.5rem; /* Smaller for mobile view */
+        }
+      }
+      /* Animated underline for navigation links */
+      .underline-animation {
+        position: relative;
+        display: inline-block;
+      }
+
+      .underline-animation::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+      }
+
+      .underline-animation:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
       }
     </style>
   </head>
@@ -389,216 +432,201 @@
     </div>
 
     <!-- Header Section -->
-    <header class="text-white shadow-lg py-4">
-      <div
-        class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center"
-      >
-        <!-- Logo with link to homepage -->
-        <div class="logo-container">
-          <img
-            src="20211011_204121_0000-1.png"
-            alt="Gamakauaa Logo"
-            class="logo-img"
-            onerror="this.onerror=null;this.src='https://placehold.co/50x50/cccccc/333333?text=गामाकौआ';"
-          />
-          <a href="index.html" class="logo-text">गामाकौआ</a>
+    <header id="mainHeader" class="fixed top-0 left-0 w-full z-50">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+          <!-- Logo with link to homepage -->
+          <div class="logo-container">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+              alt="Gamakauaa Logo"
+              class="logo-img"
+              onerror="this.onerror=null;this.src='https://placehold.co/50x50/cccccc/333333?text=गामाकौआ';"
+            />
+            <a href="index.html" class="logo-text">गामाकौआ</a>
+          </div>
+
+          <nav class="hidden md:flex space-x-6 items-center">
+            <a
+              href="hindi-literature.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-book mr-2"></i>हिंदी साहित्य
+            </a>
+            <a
+              href="literary-theories.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
+            </a>
+            <a
+              href="story-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं
+            </a>
+            <a
+              href="novel-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-book-open mr-2"></i>उपन्यास समीक्षाएं
+            </a>
+            <a
+              href="du-study-material.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री
+            </a>
+
+            <!-- Post Blog Button - Visible only for admins -->
+            <a href="#" id="postContentLink" class="post-blog-btn hidden">
+              <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+            </a>
+
+            <!-- User Profile Dropdown - Visible when logged in -->
+            <div id="userProfileDropdown" class="profile-dropdown hidden">
+              <div class="profile-btn">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                  alt="User Profile"
+                  class="profile-img"
+                />
+                <span
+                  id="userEmailDisplay"
+                  class="text-white font-medium"
+                ></span>
+              </div>
+              <div class="dropdown-content">
+                <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
+                <a href="#"
+                  ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+                >
+                <a href="#" id="logoutBtn"
+                  ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+                >
+              </div>
+            </div>
+
+            <!-- Auth Buttons - Visible when not logged in -->
+            <button
+              id="loginBtn"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+            >
+              लॉग इन
+            </button>
+            <button
+              id="signupBtn"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+            >
+              साइन अप करें
+            </button>
+          </nav>
+
+          <button
+            id="mobileMenuBtn"
+            class="md:hidden text-white focus:outline-none"
+          >
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
         </div>
-        <nav
-          class="mt-4 md:mt-0 flex flex-wrap justify-center md:justify-end items-center space-x-4 md:space-x-6 text-base font-medium"
+
+        <!-- Mobile Menu -->
+        <div
+          id="mobileMenu"
+          class="hidden md:hidden py-4 border-t border-gray-700"
         >
-          <ul
-            class="flex flex-wrap justify-center md:justify-end space-x-4 md:space-x-6 text-base font-medium"
-          >
-            <li>
-              <a
-                href="hindi-literature.html"
-                class="text-white hover:text-emerald-300 transition duration-300 flex items-center"
-              >
-                <i class="fas fa-book mr-2"></i>हिंदी साहित्य</a
-              >
-            </li>
-            <li>
-              <a
-                href="literary-theories.html"
-                class="text-white hover:text-emerald-300 transition duration-300 flex items-center"
-              >
-                <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत</a
-              >
-            </li>
-            <li>
-              <a
-                href="story-reviews.html"
-                class="text-white hover:text-emerald-300 transition duration-300 flex items-center"
-              >
-                <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं</a
-              >
-            </li>
-            <li>
-              <a
-                href="du-study-material.html"
-                class="text-white hover:text-emerald-300 transition duration-300 flex items-center"
-              >
-                <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
-              >
-            </li>
-            <li>
-              <a
-                href="novel-reviews.html"
-                class="text-white hover:text-emerald-300 transition duration-300 flex items-center"
-              >
-                <i class="fas fa-book mr-2">उपन्यास समीक्षा</i></a
-              >
-            </li>
-          </ul>
+          <div class="flex flex-col space-y-4">
+            <a
+              href="hindi-literature.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-book mr-2"></i>हिंदी साहित्य
+            </a>
+            <a
+              href="literary-theories.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
+            </a>
+            <a
+              href="story-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं
+            </a>
+            <a
+              href="novel-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-book-open mr-2"></i>उपन्यास समीक्षाएं
+            </a>
+            <a
+              href="du-study-material.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री
+            </a>
+            <!-- Post Blog Button - Visible only for admins -->
+            <a
+              href="#"
+              id="mobilePostContentLink"
+              class="text-white hover:text-emerald-300 transition duration-300 hidden"
+            >
+              <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+            </a>
 
-          <!-- Post Blog Button - Visible only for admins -->
-          <a href="#" id="postContentLink" class="post-blog-btn hidden">
-            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
-          </a>
+            <!-- Mobile User Profile - Visible when logged in -->
+            <div
+              id="mobileUserProfile"
+              class="hidden pt-4 border-t border-gray-600"
+            >
+              <div class="flex items-center mb-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                  alt="User Profile"
+                  class="profile-img"
+                />
+                <span
+                  id="mobileUserEmailDisplay"
+                  class="text-white font-medium ml-2"
+                ></span>
+              </div>
+              <div class="flex flex-col space-y-2">
+                <a href="#" class="text-white hover:text-emerald-300"
+                  ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
+                >
+                <a href="#" class="text-white hover:text-emerald-300"
+                  ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+                >
+                <a
+                  href="#"
+                  id="mobileLogoutBtn"
+                  class="text-white hover:text-emerald-300"
+                  ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+                >
+              </div>
+            </div>
 
-          <!-- User Profile Dropdown - Visible when logged in -->
-          <div id="userProfileDropdown" class="profile-dropdown hidden">
-            <div class="profile-btn">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="User Profile"
-                class="profile-img"
-              />
-              <span
-                id="userEmailDisplay"
-                class="text-white font-medium"
-              ></span>
-            </div>
-            <div class="dropdown-content">
-              <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
-              <a href="#"
-                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
-              >
-              <a href="#" id="logoutBtn"
-                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
-              >
-            </div>
+            <!-- Mobile Auth Buttons - Visible when not logged in -->
+            <button
+              id="mobileLoginBtn"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+            >
+              लॉग इन
+            </button>
+            <button
+              id="mobileSignupBtn"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+            >
+              साइन अप करें
+            </button>
           </div>
-
-          <!-- Auth Buttons - Visible when not logged in -->
-          <button
-            id="loginBtn"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
-          >
-            लॉग इन
-          </button>
-          <button
-            id="signupBtn"
-            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
-          >
-            साइन अप करें
-          </button>
-        </nav>
-        <!-- Mobile Menu Toggle (for the entire header content including new buttons) -->
-        <button
-          id="mobileMenuBtn"
-          class="md:hidden text-white focus:outline-none"
-        >
-          <i class="fas fa-bars text-2xl"></i>
-        </button>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div
-        id="mobileMenu"
-        class="hidden md:hidden py-4 border-t border-gray-700 container mx-auto px-4"
-      >
-        <div class="flex flex-col space-y-4">
-          <a
-            href="hindi-literature.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-book mr-2"></i>हिंदी साहित्य
-          </a>
-          <a
-            href="literary-theories.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
-          </a>
-          <a
-            href="story-reviews.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं
-          </a>
-          <a
-            href="du-study-material.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
-          >
-          <a
-            href="novel-reviews.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-graduation-cap mr-2"></i>उपन्यास समीक्षा</a
-          >
-          <!-- Post Blog Button - Visible only for admins -->
-          <a
-            href="#"
-            id="mobilePostContentLink"
-            class="text-white hover:text-emerald-300 transition duration-300 hidden"
-          >
-            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
-          </a>
-
-          <!-- Mobile User Profile - Visible when logged in -->
-          <div
-            id="mobileUserProfile"
-            class="hidden pt-4 border-t border-gray-600"
-          >
-            <div class="flex items-center mb-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="User Profile"
-                class="profile-img"
-              />
-              <span
-                id="mobileUserEmailDisplay"
-                class="text-white font-medium ml-2"
-              ></span>
-            </div>
-            <div class="flex flex-col space-y-2">
-              <a href="#" class="text-white hover:text-emerald-300"
-                ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
-              >
-              <a href="#" class="text-white hover:text-emerald-300"
-                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
-              >
-              <a
-                href="#"
-                id="mobileLogoutBtn"
-                class="text-white hover:text-emerald-300"
-                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
-              >
-            </div>
-          </div>
-
-          <!-- Mobile Auth Buttons - Visible when not logged in -->
-          <button
-            id="mobileLoginBtn"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
-          >
-            लॉग इन
-          </button>
-          <button
-            id="mobileSignupBtn"
-            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
-          >
-            साइन अप करें
-          </button>
         </div>
       </div>
     </header>
 
     <!-- Main Content Section for Story Reviews -->
-    <section class="py-16 px-4">
+    <section class="py-16 px-4 pt-32"> <!-- Added pt-32 to push content below fixed header -->
       <div class="container mx-auto content-overlay p-8">
         <h1
           class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
@@ -608,7 +636,7 @@
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          इस अनुभाग में, हम विभिन्न भारतीय और विश्व साहित्य की लघु कथाओं की गहन
+          इस अनुभाग में, हम विभिन्न भारतीय और विश्व साहित्य की कहानियों की गहन
           समीक्षाएं प्रस्तुत करते हैं। हमारी समीक्षाएं कहानी की प्लॉट, चरित्र
           विकास, विषयों, प्रतीकात्मकता और साहित्यिक तकनीकों का विश्लेषण करती
           हैं।
@@ -616,10 +644,10 @@
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          चाहे आप एक पाठक हों जो अपनी अगली कहानी की तलाश में हैं या एक छात्र जो
-          साहित्यिक विश्लेषण में अंतर्दृष्टि प्राप्त करना चाहता है, हमारे
-          समीक्षाएं आपको कहानी को बेहतर ढंग से समझने और उसकी सराहना करने में मदद
-          करेंगी।
+          चाहे आप एक पाठक हों जो अपनी अगली कहानी की तलाश में हैं या एक छात्र
+          जो साहित्यिक विश्लेषण में अंतर्दृष्टि प्राप्त करना चाहता है, हमारी
+          समीक्षाएं आपको कहानियों को बेहतर ढंग से समझने और उनकी सराहना करने में
+          मदद करेंगी।
         </p>
         <div
           id="articlesContainer"
@@ -958,8 +986,22 @@
               <option value="hindi-literature">हिंदी साहित्य</option>
               <option value="literary-theories">साहित्यिक सिद्धांत</option>
               <option value="story-reviews">कहानी समीक्षाएं</option>
+              <option value="novel-reviews">उपन्यास समीक्षाएं</option>
               <option value="du-study-material">डीयू अध्ययन सामग्री</option>
             </select>
+          </div>
+          <div>
+            <label
+              for="articleImageUrl"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >छवि URL (वैकल्पिक):</label
+            >
+            <input
+              type="url"
+              id="articleImageUrl"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख के लिए एक छवि URL दर्ज करें"
+            />
           </div>
           <div>
             <label
@@ -995,6 +1037,13 @@
                 onclick="formatDoc('insertUnorderedList')"
               >
                 <i class="fas fa-list-ul"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="insertImage('articleContentEditable')"
+              >
+                <i class="fas fa-image"></i>
               </button>
             </div>
             <div
@@ -1062,8 +1111,22 @@
               <option value="hindi-literature">हिंदी साहित्य</option>
               <option value="literary-theories">साहित्यिक सिद्धांत</option>
               <option value="story-reviews">कहानी समीक्षाएं</option>
+              <option value="novel-reviews">उपन्यास समीक्षाएं</option>
               <option value="du-study-material">डीयू अध्ययन सामग्री</option>
             </select>
+          </div>
+          <div>
+            <label
+              for="editArticleImageUrl"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >छवि URL (वैकल्पिक):</label
+            >
+            <input
+              type="url"
+              id="editArticleImageUrl"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख के लिए एक छवि URL दर्ज करें"
+            />
           </div>
           <div>
             <label
@@ -1099,6 +1162,13 @@
                 onclick="formatDocEdit('insertUnorderedList')"
               >
                 <i class="fas fa-list-ul"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="insertImage('editArticleContentEditable')"
+              >
+                <i class="fas fa-image"></i>
               </button>
             </div>
             <div
@@ -1142,6 +1212,15 @@
           - <span id="articleDetailAuthor" class="italic"></span> द्वारा
         </p>
         <p id="articleDetailTimestamp" class="text-gray-500 text-xs mb-4"></p>
+        <div id="articleDetailImageContainer" class="mb-4 hidden">
+          <img
+            id="articleDetailImage"
+            src=""
+            alt="Article Image"
+            class="w-full h-64 object-cover rounded-lg"
+            onerror="this.style.display='none'; document.getElementById('articleDetailImageContainer').style.display='none';"
+          />
+        </div>
         <div
           id="articleDetailContent"
           class="prose max-w-none text-gray-700 leading-relaxed text-base overflow-y-auto h-96"
@@ -1254,47 +1333,50 @@
         <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
           हमसे संपर्क करें
         </h3>
-        <form>
+        <form id="contactForm">
           <div class="mb-4">
             <label
-              for="name"
+              for="contactName"
               class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
               >आपका नाम:</label
             >
             <input
               type="text"
-              id="name"
+              id="contactName"
               name="name"
               class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
               placeholder="अपना नाम दर्ज करें"
+              required
             />
           </div>
           <div class="mb-4">
             <label
-              for="email"
+              for="contactEmail"
               class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
               >आपका ईमेल:</label
             >
             <input
               type="email"
-              id="email"
+              id="contactEmail"
               name="email"
               class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
               placeholder="अपना ईमेल दर्ज करें"
+              required
             />
           </div>
           <div class="mb-6">
             <label
-              for="message"
+              for="contactMessage"
               class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
               >आपका संदेश:</label
             >
             <textarea
-              id="message"
+              id="contactMessage"
               name="message"
               rows="4"
               class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
               placeholder="यहां अपना संदेश लिखें"
+              required
             ></textarea>
           </div>
           <div class="flex items-center justify-between">
@@ -1323,8 +1405,8 @@
         // Reset classes
         infoMessage.classList.remove("show", "error");
         if (isError) {
-          infoMessage.querySelector("i").className = "fas fa-times-circle mr-2"; // Error icon
           infoMessage.classList.add("error");
+          infoMessage.querySelector("i").className = "fas fa-times-circle mr-2"; // Error icon
         } else {
           infoMessage.querySelector("i").className = "fas fa-check-circle mr-2"; // Success icon
         }
@@ -1368,41 +1450,57 @@
           "mobilePostContentLink"
         );
 
-        // Desktop nav
         if (loggedInUser) {
+          // User is signed in
           loginBtn.classList.add("hidden");
           signupBtn.classList.add("hidden");
           userProfileDropdown.classList.remove("hidden");
           userEmailDisplay.textContent = loggedInUser.email;
-        } else {
-          loginBtn.classList.remove("hidden");
-          signupBtn.classList.remove("hidden");
-          userProfileDropdown.classList.add("hidden");
-        }
 
-        // Mobile nav
-        if (loggedInUser) {
           mobileLoginBtn.classList.add("hidden");
           mobileSignupBtn.classList.add("hidden");
           mobileUserProfile.classList.remove("hidden");
           mobileUserEmailDisplay.textContent = loggedInUser.email;
+
+          if (loggedInUser.role === "admin") {
+            postContentLink.classList.remove("hidden");
+            mobilePostContentLink.classList.remove("hidden");
+          } else {
+            postContentLink.classList.add("hidden");
+            mobilePostContentLink.classList.add("hidden");
+          }
         } else {
+          // User is signed out
+          loginBtn.classList.remove("hidden");
+          signupBtn.classList.remove("hidden");
+          userProfileDropdown.classList.add("hidden");
+
           mobileLoginBtn.classList.remove("hidden");
           mobileSignupBtn.classList.remove("hidden");
           mobileUserProfile.classList.add("hidden");
-        }
 
-        // Post content button visibility
-        if (loggedInUser && loggedInUser.role === "admin") {
-          postContentLink.classList.remove("hidden");
-          mobilePostContentLink.classList.remove("hidden");
-        } else {
           postContentLink.classList.add("hidden");
           mobilePostContentLink.classList.add("hidden");
         }
-
         loadArticlesByCategory(); // Re-render articles to show/hide edit/delete buttons
       }
+
+      // Header scroll effect
+      const mainHeader = document.getElementById("mainHeader");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+          mainHeader.classList.add("scrolled");
+        } else {
+          mainHeader.classList.remove("scrolled");
+        }
+      });
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
 
       // Generic Modal Functions
       function openModal(modalId) {
@@ -1420,13 +1518,6 @@
             closeModal(overlay.id);
           }
         });
-      });
-
-      // Mobile menu toggle
-      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
-      mobileMenuBtn.addEventListener("click", () => {
-        mobileMenu.classList.toggle("hidden");
       });
 
       // Login/Signup Modal Handlers
@@ -1593,12 +1684,30 @@
           const data = await response.json();
 
           if (response.ok) {
-            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
+            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया! आपको एक स्वागत ईमेल भेजा गया है। आप अब लॉग इन कर सकते हैं।");
             closeModal("signupModal");
             // Optionally clear signup form, then open login modal
             document.getElementById("signupEmail").value = "";
             document.getElementById("signupPassword").value = "";
             openModal("loginModal"); // Prompt for login after signup
+
+            // --- New: Send welcome email after successful signup ---
+            try {
+              // This endpoint assumes your backend sends the actual email.
+              await fetch(`${API_BASE_URL}/auth/send-welcome-email`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: email }),
+              });
+              // No need to show another message, the primary signup message already covers it.
+            } catch (emailError) {
+              console.error("Error sending welcome email:", emailError);
+              // Log this error but do not disrupt user flow, as signup was successful.
+            }
+            // --- End of new code ---
+
           } else {
             showMessage(data.message || "साइन अप विफल रहा।", true); // Display error from server
           }
@@ -1624,10 +1733,8 @@
         .getElementById("mobileLogoutBtn")
         .addEventListener("click", handleLogout);
 
-      // Rich Text Editor functionality for new article (kept for consistency, though this page doesn't post directly)
+      // Rich Text Editor functionality for new article
       function formatDoc(command) {
-        // This function is for the 'newArticleForm', which is not directly used on this page for posting.
-        // It's included to make the rich text editor logic consistent if this modal is reused or copied.
         const editableDiv = document.getElementById("articleContentEditable");
         if (editableDiv) {
             editableDiv.focus();
@@ -1635,11 +1742,19 @@
         }
       }
 
-
       // Rich Text Editor functionality for edit article
       function formatDocEdit(command) {
         document.getElementById("editArticleContentEditable").focus();
         document.execCommand(command, false, null);
+      }
+
+      // Function to insert image into content editable div
+      function insertImage(editorId) {
+        const imageUrl = prompt("छवि URL दर्ज करें:");
+        if (imageUrl) {
+          document.getElementById(editorId).focus();
+          document.execCommand("insertImage", false, imageUrl);
+        }
       }
 
       // Post Content Link handler - Checks for admin access
@@ -1657,8 +1772,8 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
+            document.getElementById("articleImageUrl").value = ""; // Clear image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
-            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for new post
           }
         });
       document
@@ -1675,8 +1790,8 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
+            document.getElementById("articleImageUrl").value = ""; // Clear image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
-            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for new post
           }
         });
 
@@ -1699,6 +1814,7 @@
 
           const title = document.getElementById("articleTitle").value;
           const category = document.getElementById("articleCategory").value;
+          const imageUrl = document.getElementById("articleImageUrl").value; // Get image URL
           const content = document.getElementById(
             "articleContentEditable"
           ).innerHTML;
@@ -1715,7 +1831,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // Send author as logged-in user's email
+              body: JSON.stringify({ title, category, content, imageUrl, author: loggedInUser.email }), // Send author as logged-in user's email and imageUrl
             });
 
             const data = await response.json();
@@ -1730,7 +1846,8 @@
             } else {
               showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
             }
-          } catch (error) {
+          }
+          catch (error) {
             console.error("Error posting article:", error);
             showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
@@ -1756,6 +1873,7 @@
           const articleId = document.getElementById("editArticleId").value;
           const title = document.getElementById("editArticleTitle").value;
           const category = document.getElementById("editArticleCategory").value;
+          const imageUrl = document.getElementById("editArticleImageUrl").value; // Get image URL
           const content = document.getElementById(
             "editArticleContentEditable"
           ).innerHTML;
@@ -1772,7 +1890,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content }),
+              body: JSON.stringify({ title, category, content, imageUrl }), // Include imageUrl
             });
 
             const data = await response.json();
@@ -1828,12 +1946,18 @@
               }
             );
 
-            // Removed the image tag here
+            // Conditional rendering for image
+            const articleImageHtml = article.imageUrl ?
+              `<img src="${article.imageUrl}" alt="${article.title}" class="w-full h-48 object-cover rounded-t-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x200/F0F0F0/888888?text=No+Image';this.style.display='block';"/>` :
+              `<img src="https://placehold.co/400x200/F0F0F0/888888?text=No+Image" alt="Placeholder" class="w-full h-48 object-cover rounded-t-lg mb-4"/>`;
+
+
             const articleCard = `
               <div
                 class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
                 data-id="${article._id}"
               >
+                ${articleImageHtml}
                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
                   article.category
                 }</span>
@@ -1914,6 +2038,7 @@
                         document.getElementById("editArticleId").value = article._id;
                         document.getElementById("editArticleTitle").value = article.title;
                         document.getElementById("editArticleCategory").value = article.category;
+                        document.getElementById("editArticleImageUrl").value = article.imageUrl || ""; // Populate image URL
                         document.getElementById("editArticleContentEditable").innerHTML = article.content;
                         openModal("editArticleModal");
                       } else {
@@ -2014,6 +2139,19 @@
         document.getElementById(
           "articleDetailTimestamp"
         ).textContent = `प्रकाशित: ${timestamp}`;
+
+        // Set article image, or hide if no URL
+        const articleDetailImage = document.getElementById("articleDetailImage");
+        const articleDetailImageContainer = document.getElementById("articleDetailImageContainer");
+        if (article.imageUrl) {
+          articleDetailImage.src = article.imageUrl;
+          articleDetailImageContainer.style.display = 'block'; // Show container
+          articleDetailImage.style.display = 'block'; // Show image
+        } else {
+          articleDetailImage.src = ''; // Clear src
+          articleDetailImageContainer.style.display = 'none'; // Hide container
+          articleDetailImage.style.display = 'none'; // Hide image
+        }
         document.getElementById("articleDetailContent").innerHTML =
           article.content; // Use innerHTML for rich text
         openModal("articleDetailModal");
@@ -2045,32 +2183,32 @@
         // Contact Us Modal functionality
         const contactUsLink = document.getElementById("contactUsLink");
         const contactModal = document.getElementById("contactModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
+        const contactForm = document.getElementById("contactForm");
 
         if (contactUsLink) {
           contactUsLink.addEventListener("click", function (e) {
             e.preventDefault();
-            contactModal.classList.add("open");
+            openModal("contactModal"); // Use the generic openModal function
           });
         }
 
-        if (closeModalBtn) {
-          closeModalBtn.addEventListener("click", function () {
-            contactModal.classList.remove("open");
+        if (contactForm) {
+          contactForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = document.getElementById("contactName").value;
+            const email = document.getElementById("contactEmail").value;
+            const message = document.getElementById("contactMessage").value;
+            console.log(
+              `Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`
+            );
+            showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
+            closeModal("contactModal"); // Use the generic closeModal function
+            contactForm.reset(); // Clear form
           });
         }
 
-        // Close modal when clicking outside content
-        if (contactModal) {
-          contactModal.addEventListener("click", function (e) {
-            if (e.target === contactModal) {
-              contactModal.classList.remove("open");
-            }
-          });
-        }
-
-        // Initial load of articles for this category and UI update
-        updateAuthUI();
+        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
+        // loadArticlesByCategory is called inside updateAuthUI()
       });
     </script>
   </body>
