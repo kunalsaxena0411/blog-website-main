@@ -509,27 +509,65 @@
         color: white;
       }
 
-      /* Responsive adjustments */
+         /* Responsive adjustments for header */
       @media (max-width: 768px) {
         .logo-text {
-          font-size: 1.2rem;
+          font-size: 1.2rem; /* Smaller logo text on mobile */
         }
 
         .logo-img {
-          width: 40px;
+          width: 40px; /* Smaller logo image on mobile */
           height: 40px;
         }
 
         .post-blog-btn {
-          padding: 8px 16px;
-          font-size: 0.9rem;
+          padding: 8px 16px; /* Adjust padding for mobile button */
+          font-size: 0.9rem; /* Smaller font size for mobile button */
         }
 
         .auth-required-buttons {
-          flex-direction: column;
-          gap: 8px;
+          flex-direction: column; /* Stack buttons vertically in modals on mobile */
+          gap: 8px; /* Reduce gap between stacked buttons */
+        }
+
+        /* Adjust header layout for mobile */
+        #mainHeader .container {
+          padding-left: 1rem; /* Add padding to prevent content from touching edges */
+          padding-right: 1rem;
+        }
+
+        /* Ensure logo and mobile button are well-spaced */
+        #mainHeader .flex-row-reverse {
+          flex-direction: row; /* Revert flex direction for mobile header if needed */
+        }
+        #mainHeader .justify-between {
+          justify-content: space-between; /* Space out logo and menu icon */
+          align-items: center; /* Vertically center items */
+        }
+
+        /* Mobile menu specific styles */
+        #mobileMenu {
+          background: rgba(26, 32, 44, 0.95); /* Darker background for mobile menu */
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%; /* Position below the header */
+          padding: 1rem;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #mobileMenu .flex-col > a,
+        #mobileMenu .flex-col > button {
+          padding: 0.75rem 0; /* Add vertical padding to mobile menu items */
+          text-align: left; /* Align text to the left */
+          width: 100%; /* Make links full width for easier tapping */
+          display: block; /* Ensure links take full width */
         }
       }
+
       /* Custom styling for article detail modal content for better readability */
       #articleDetailContent {
         white-space: pre-wrap; /* Preserves whitespace and wraps text */
