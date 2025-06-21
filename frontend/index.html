@@ -270,7 +270,7 @@
         transform-origin: bottom left;
       }
 
-          /* Floating book animation in hero section */
+      /* Floating book animation in hero section (visible on desktop by default) */
       .floating-book {
         position: absolute;
         animation: floatBook 8s ease-in-out infinite;
@@ -509,7 +509,13 @@
         color: white;
       }
 
-         /* Responsive adjustments for header */
+      /* Custom styling for article detail modal content for better readability */
+      #articleDetailContent {
+        white-space: pre-wrap; /* Preserves whitespace and wraps text */
+        word-break: break-word; /* Breaks long words */
+      }
+
+      /* Responsive adjustments for mobile view */
       @media (max-width: 768px) {
         .logo-text {
           font-size: 1.2rem; /* Smaller logo text on mobile */
@@ -566,12 +572,24 @@
           width: 100%; /* Make links full width for easier tapping */
           display: block; /* Ensure links take full width */
         }
-      }
 
-      /* Custom styling for article detail modal content for better readability */
-      #articleDetailContent {
-        white-space: pre-wrap; /* Preserves whitespace and wraps text */
-        word-break: break-word; /* Breaks long words */
+        /* Hide floating books on mobile */
+        .floating-book {
+          display: none;
+        }
+
+        /* Reduce font size of hero heading on mobile */
+        .hero-section h1 {
+          font-size: 3rem; /* Adjusted from text-5xl (48px) to 48px to 3rem (48px is default in tailwind) */
+        }
+         /* Reduce font size of blog section heading on mobile */
+        #latest-articles h2 {
+          font-size: 2.5rem; /* Adjusted from text-4xl (36px) to 2.5rem (40px) */
+        }
+         /* Reduce font size of testimonial section heading on mobile */
+        .py-16.bg-gray-900.bg-opacity-70 h2 {
+          font-size: 2rem; /* Adjusted from text-3xl (30px) to 2rem (32px) */
+        }
       }
     </style>
   </head>
@@ -591,11 +609,12 @@
         <div class="flex justify-between items-center py-4">
           <!-- Logo with link to homepage -->
           <div class="logo-container">
-            <!-- Updated logo source -->
+            <!-- Updated logo source with a reliable CDN -->
             <img
-              src="20211011_204121_0000-1.png"
+              src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
               alt="Gamakauaa Logo"
               class="logo-img"
+              onerror="this.onerror=null;this.src='https://placehold.co/50x50/cccccc/333333?text=गामाकौआ';"
             />
             <a href="index.html" class="logo-text">गामाकौआ</a>
           </div>
@@ -829,8 +848,9 @@
               />
               <img
                 class="w-10 h-10 rounded-full border-2 border-white"
-                src="rahul_verma.jpg"
-                alt="User Avatar 2"
+                src="https://placehold.co/150x150/FF6347/FFFFFF?text=RV"
+                alt="Rahul Verma"
+                onerror="this.onerror=null;this.src='https://placehold.co/150x150/FF6347/FFFFFF?text=RV';"
               />
               <img
                 class="w-10 h-10 rounded-full border-2 border-white"
@@ -949,9 +969,10 @@
           >
             <div class="flex items-center mb-4">
               <img
-                src="rahul_verma.jpg"
+                src="https://placehold.co/150x150/FF6347/FFFFFF?text=RV"
                 alt="Rahul Verma"
                 class="w-12 h-12 rounded-full border-2 border-emerald-400"
+                onerror="this.onerror=null;this.src='https://placehold.co/150x150/FF6347/FFFFFF?text=RV';"
               />
               <div class="ml-4">
                 <h4 class="font-semibold text-white">राहुल वर्मा</h4>
@@ -1361,7 +1382,20 @@
               <option value="du-study-material">डीयू अध्ययन सामग्री</option>
             </select>
           </div>
-          <!-- Image URL section removed -->
+          <!-- New: Image URL input field -->
+          <div>
+            <label
+              for="articleImageUrl"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >छवि URL (वैकल्पिक):</label
+            >
+            <input
+              type="url"
+              id="articleImageUrl"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख के लिए एक छवि URL दर्ज करें"
+            />
+          </div>
           <div>
             <label
               for="articleContent"
@@ -1397,7 +1431,14 @@
               >
                 <i class="fas fa-list-ul"></i>
               </button>
-              <!-- Image insert button removed -->
+              <!-- New: Image insert button for rich text editor -->
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="insertImage('articleContentEditable')"
+              >
+                <i class="fas fa-image"></i>
+              </button>
             </div>
             <div
               id="articleContentEditable"
@@ -1467,7 +1508,20 @@
               <option value="du-study-material">डीयू अध्ययन सामग्री</option>
             </select>
           </div>
-          <!-- Image URL section removed -->
+          <!-- New: Image URL input field for edit modal -->
+          <div>
+            <label
+              for="editArticleImageUrl"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >छवि URL (वैकल्पिक):</label
+            >
+            <input
+              type="url"
+              id="editArticleImageUrl"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख के लिए एक छवि URL दर्ज करें"
+            />
+          </div>
           <div>
             <label
               for="editArticleContent"
@@ -1503,7 +1557,14 @@
               >
                 <i class="fas fa-list-ul"></i>
               </button>
-              <!-- Image insert button removed -->
+              <!-- New: Image insert button for rich text editor in edit modal -->
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="insertImage('editArticleContentEditable')"
+              >
+                <i class="fas fa-image"></i>
+              </button>
             </div>
             <div
               id="editArticleContentEditable"
@@ -1546,7 +1607,16 @@
           - <span id="articleDetailAuthor" class="italic"></span> द्वारा
         </p>
         <p id="articleDetailTimestamp" class="text-gray-500 text-xs mb-4"></p>
-        <!-- Removed article image display from here -->
+        <!-- New: Image display for article detail -->
+        <div id="articleDetailImageContainer" class="mb-4 hidden">
+          <img
+            id="articleDetailImage"
+            src=""
+            alt="Article Image"
+            class="w-full h-64 object-cover rounded-lg"
+            onerror="this.style.display='none'; document.getElementById('articleDetailImageContainer').style.display='none';"
+          />
+        </div>
         <div
           id="articleDetailContent"
           class="prose max-w-none text-gray-700 leading-relaxed text-base overflow-y-auto h-96"
@@ -1955,7 +2025,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्हा।", true);
           }
         });
 
@@ -2044,12 +2114,30 @@
           const data = await response.json();
 
           if (response.ok) {
-            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
+            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया! आपको एक स्वागत ईमेल भेजा गया है। आप अब लॉग इन कर सकते हैं।");
             closeModal("signupModal");
             // Optionally clear signup form, then open login modal
             document.getElementById("signupEmail").value = "";
             document.getElementById("signupPassword").value = "";
             openModal("loginModal"); // Prompt for login after signup
+
+            // --- New: Send welcome email after successful signup ---
+            try {
+              // This endpoint assumes your backend sends the actual email.
+              await fetch(`${API_BASE_URL}/auth/send-welcome-email`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: email }),
+              });
+              // No need to show another message, the primary signup message already covers it.
+            } catch (emailError) {
+              console.error("Error sending welcome email:", emailError);
+              // Log this error but do not disrupt user flow, as signup was successful.
+            }
+            // --- End of new code ---
+
           } else {
             showMessage(data.message || "साइन अप विफल रहा।", true); // Display error from server
           }
@@ -2087,12 +2175,14 @@
         document.execCommand(command, false, null);
       }
 
-      // Function to insert image into content editable div (removed image URL prompt)
-      // This function is still present but will not be called from the UI after removing the button.
+      // Function to insert image into content editable div
       function insertImage(editorId) {
-        alert("छवि डालने की सुविधा हटा दी गई है।"); // Inform user if they try to call this directly
+        const imageUrl = prompt("छवि URL दर्ज करें:");
+        if (imageUrl) {
+          document.getElementById(editorId).focus();
+          document.execCommand("insertImage", false, imageUrl);
+        }
       }
-
 
       // Post Content Link handler - Checks for admin access
       document
@@ -2109,7 +2199,7 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
-            // document.getElementById("articleImageUrl").value = ""; // Removed image URL field
+            document.getElementById("articleImageUrl").value = ""; // Clear image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
           }
         });
@@ -2127,7 +2217,7 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
-            // document.getElementById("articleImageUrl").value = ""; // Removed image URL field
+            document.getElementById("articleImageUrl").value = ""; // Clear image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
           }
         });
@@ -2151,7 +2241,7 @@
 
           const title = document.getElementById("articleTitle").value;
           const category = document.getElementById("articleCategory").value;
-          // const imageUrl = document.getElementById("articleImageUrl").value; // Removed image URL
+          const imageUrl = document.getElementById("articleImageUrl").value; // Get image URL
           const content = document.getElementById(
             "articleContentEditable"
           ).innerHTML;
@@ -2168,7 +2258,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // imageUrl removed
+              body: JSON.stringify({ title, category, content, imageUrl, author: loggedInUser.email }), // Send author as logged-in user's email and imageUrl
             });
 
             const data = await response.json();
@@ -2207,7 +2297,7 @@
           const articleId = document.getElementById("editArticleId").value;
           const title = document.getElementById("editArticleTitle").value;
           const category = document.getElementById("editArticleCategory").value;
-          // const imageUrl = document.getElementById("editArticleImageUrl").value; // Removed image URL
+          const imageUrl = document.getElementById("editArticleImageUrl").value; // Get image URL
           const content = document.getElementById(
             "editArticleContentEditable"
           ).innerHTML;
@@ -2224,7 +2314,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content }), // imageUrl removed
+              body: JSON.stringify({ title, category, content, imageUrl }), // Include imageUrl
             });
 
             const data = await response.json();
@@ -2278,12 +2368,18 @@
               }
             );
 
-            // Removed articleImageHtml - No image is expected
+            // Conditional rendering for image
+            const articleImageHtml = article.imageUrl ?
+              `<img src="${article.imageUrl}" alt="${article.title}" class="w-full h-48 object-cover rounded-t-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x200/F0F0F0/888888?text=No+Image';this.style.display='block';"/>` :
+              `<img src="https://placehold.co/400x200/F0F0F0/888888?text=No+Image" alt="Placeholder" class="w-full h-48 object-cover rounded-t-lg mb-4"/>`;
+
+
             const articleCard = `
               <div
                 class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
                 data-id="${article._id}"
               >
+                ${articleImageHtml}
                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
                   article.category
                 }</span>
@@ -2364,7 +2460,7 @@
                         document.getElementById("editArticleId").value = article._id;
                         document.getElementById("editArticleTitle").value = article.title;
                         document.getElementById("editArticleCategory").value = article.category;
-                        // document.getElementById("editArticleImageUrl").value = article.imageUrl || ""; // Removed image URL field
+                        document.getElementById("editArticleImageUrl").value = article.imageUrl || ""; // Populate image URL
                         document.getElementById("editArticleContentEditable").innerHTML = article.content;
                         openModal("editArticleModal");
                       } else {
@@ -2466,7 +2562,19 @@
           "articleDetailTimestamp"
         ).textContent = `प्रकाशित: ${timestamp}`;
 
-        // Removed logic for displaying article image
+        // Set article image, or hide if no URL
+        const articleDetailImage = document.getElementById("articleDetailImage");
+        const articleDetailImageContainer = document.getElementById("articleDetailImageContainer");
+        if (article.imageUrl) {
+          articleDetailImage.src = article.imageUrl;
+          articleDetailImageContainer.style.display = 'block'; // Show container
+          articleDetailImage.style.display = 'block'; // Show image
+        } else {
+          articleDetailImage.src = ''; // Clear src
+          articleDetailImageContainer.style.display = 'none'; // Hide container
+          articleDetailImage.style.display = 'none'; // Hide image
+        }
+
         document.getElementById("articleDetailContent").innerHTML =
           article.content; // Use innerHTML for rich text
         openModal("articleDetailModal");
