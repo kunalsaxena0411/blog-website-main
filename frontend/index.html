@@ -164,6 +164,30 @@
         pointer-events: none;
       }
 
+      /* Keyframes for floating particles */
+      @keyframes floatParticle {
+        0% {
+          transform: translateY(0) translateX(0);
+          opacity: 0.5;
+        }
+        25% {
+          transform: translateY(-20px) translateX(10px);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(0) translateX(0);
+          opacity: 0.5;
+        }
+        75% {
+          transform: translateY(20px) translateX(-10px);
+          opacity: 0.7;
+        }
+        100% {
+          transform: translateY(0) translateX(0);
+          opacity: 0.5;
+        }
+      }
+
       /* Modal styles */
       .modal-overlay {
         position: fixed;
@@ -705,21 +729,21 @@
       </div>
     </header>
 
-    <!-- Hero Section -->
+  <!-- Hero Section -->
     <section class="hero-section text-white text-center">
       <!-- Floating book decorations -->
       <img
-        src="https://raw.githubusercontent.com/singh-animesh/gamakauaa-website/main/20211011_204121_0000-1.png"
+        src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
         alt="Floating decorative book icon"
         class="floating-book book1"
       />
       <img
-        src="https://raw.githubusercontent.com/singh-animesh/gamakauaa-website/main/20211011_204121_0000-1.png"
+        src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
         alt="Floating decorative book icon"
         class="floating-book book2"
       />
       <img
-        src="https://raw.githubusercontent.com/singh-animesh/gamakauaa-website/main/20211011_204121_0000-1.png"
+        src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
         alt="Floating decorative book icon"
         class="floating-book book3"
       />
@@ -2165,7 +2189,8 @@
             } else {
               showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
             }
-          } catch (error) {
+          }
+          catch (error) {
             console.error("Error posting article:", error);
             showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
