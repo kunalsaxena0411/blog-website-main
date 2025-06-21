@@ -49,6 +49,30 @@
         transition: all 0.3s ease;
       }
 
+      /* Logo styling */
+      .logo-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #10b981;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
       /* Content section with glass morphism effect */
       .content-overlay {
         background: rgba(
@@ -213,6 +237,76 @@
         transform: translateX(0);
       }
 
+      /* User profile dropdown */
+      .profile-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .profile-btn {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .profile-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 8px;
+        object-fit: cover;
+        border: 2px solid #3b82f6;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #1e293b;
+        min-width: 200px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.3s;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #334155;
+      }
+
+      .profile-dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      /* Post blog button styling */
+      .post-blog-btn {
+        background: linear-gradient(135deg, #3b82f6, #10b981);
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .post-blog-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      .post-blog-btn i {
+        margin-right: 8px;
+      }
+
       /* Auth required modal */
       .auth-required-modal {
         text-align: center;
@@ -264,6 +358,27 @@
         white-space: pre-wrap; /* Preserves whitespace and wraps text */
         word-break: break-word; /* Breaks long words */
       }
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .logo-text {
+          font-size: 1.2rem;
+        }
+
+        .logo-img {
+          width: 40px;
+          height: 40px;
+        }
+
+        .post-blog-btn {
+          padding: 8px 16px;
+          font-size: 0.9rem;
+        }
+
+        .auth-required-buttons {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
     </style>
   </head>
   <body class="text-gray-800">
@@ -278,14 +393,18 @@
       <div
         class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center"
       >
-        <a
-          href="index.html"
-          class="text-3xl font-bold rounded-md hover:text-gray-300 transition duration-300 flex items-center"
+        <!-- Logo with link to homepage -->
+        <div class="logo-container">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+            alt="Gamakauaa Logo"
+            class="logo-img"
+          />
+          <a href="index.html" class="logo-text">गामाकौआ</a>
+        </div>
+        <nav
+          class="mt-4 md:mt-0 flex flex-wrap justify-center md:justify-end items-center space-x-4 md:space-x-6 text-base font-medium"
         >
-          <i class="fas fa-book-open mr-2 text-emerald-400"></i>
-          <span class="gradient-text">गामाकौआ</span>
-        </a>
-        <nav class="mt-4 md:mt-0">
           <ul
             class="flex flex-wrap justify-center md:justify-end space-x-4 md:space-x-6 text-base font-medium"
           >
@@ -322,7 +441,144 @@
               >
             </li>
           </ul>
+
+          <!-- Post Blog Button - Visible only for admins -->
+          <a href="#" id="postContentLink" class="post-blog-btn hidden">
+            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+          </a>
+
+          <!-- User Profile Dropdown - Visible when logged in -->
+          <div id="userProfileDropdown" class="profile-dropdown hidden">
+            <div class="profile-btn">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                alt="User Profile"
+                class="profile-img"
+              />
+              <span
+                id="userEmailDisplay"
+                class="text-white font-medium"
+              ></span>
+            </div>
+            <div class="dropdown-content">
+              <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
+              <a href="#"
+                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+              >
+              <a href="#" id="logoutBtn"
+                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+              >
+            </div>
+          </div>
+
+          <!-- Auth Buttons - Visible when not logged in -->
+          <button
+            id="loginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <button
+            id="signupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
         </nav>
+        <!-- Mobile Menu Toggle (for the entire header content including new buttons) -->
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden text-white focus:outline-none"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobileMenu"
+        class="hidden md:hidden py-4 border-t border-gray-700 container mx-auto px-4"
+      >
+        <div class="flex flex-col space-y-4">
+          <a
+            href="hindi-literature.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-book mr-2"></i>हिंदी साहित्य
+          </a>
+          <a
+            href="literary-theories.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
+          </a>
+          <a
+            href="story-reviews.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं
+          </a>
+          <a
+            href="du-study-material.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
+          >
+          <!-- Post Blog Button - Visible only for admins -->
+          <a
+            href="#"
+            id="mobilePostContentLink"
+            class="text-white hover:text-emerald-300 transition duration-300 hidden"
+          >
+            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+          </a>
+
+          <!-- Mobile User Profile - Visible when logged in -->
+          <div
+            id="mobileUserProfile"
+            class="hidden pt-4 border-t border-gray-600"
+          >
+            <div class="flex items-center mb-4">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                alt="User Profile"
+                class="profile-img"
+              />
+              <span
+                id="mobileUserEmailDisplay"
+                class="text-white font-medium ml-2"
+              ></span>
+            </div>
+            <div class="flex flex-col space-y-2">
+              <a href="#" class="text-white hover:text-emerald-300"
+                ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
+              >
+              <a href="#" class="text-white hover:text-emerald-300"
+                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+              >
+              <a
+                href="#"
+                id="mobileLogoutBtn"
+                class="text-white hover:text-emerald-300"
+                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+              >
+            </div>
+          </div>
+
+          <!-- Mobile Auth Buttons - Visible when not logged in -->
+          <button
+            id="mobileLoginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <button
+            id="mobileSignupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
+        </div>
       </div>
     </header>
 
@@ -410,64 +666,336 @@
       <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Contact Us Modal (already present, reused) -->
-    <div id="contactModal" class="modal-overlay">
-      <div class="modal-content">
-        <span class="close-button" id="closeModalBtn">&times;</span>
-        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
-          हमसे संपर्क करें
+    <!-- Login Modal -->
+    <div
+      id="loginModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('loginModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          लॉग इन करें
         </h3>
-        <form>
-          <div class="mb-4">
+        <form id="loginForm" class="space-y-4">
+          <div>
             <label
-              for="name"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका नाम:</label
-            >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="अपना नाम दर्ज करें"
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              for="email"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका ईमेल:</label
+              for="loginEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
             >
             <input
               type="email"
-              id="email"
-              name="email"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="अपना ईमेल दर्ज करें"
+              id="loginEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
             />
           </div>
-          <div class="mb-6">
+          <div>
             <label
-              for="message"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका संदेश:</label
+              for="loginPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >पासवर्ड:</label
             >
-            <textarea
-              id="message"
-              name="message"
-              rows="4"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="यहां अपना संदेश लिखें"
-            ></textarea>
+            <input
+              type="password"
+              id="loginPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका पासवर्ड"
+              required
+            />
           </div>
-          <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline transition duration-300 transform hover:scale-105 hindi-text"
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <div class="text-center text-gray-600 mt-4">
+            <a
+              href="#"
+              id="forgotPasswordLink"
+              class="text-blue-500 hover:underline text-sm mt-2 block text-right hindi-text"
+              >पासवर्ड भूल गए?</a
             >
-              संदेश भेजें
-            </button>
           </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div
+      id="signupModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('signupModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          साइन अप करें
+        </h3>
+        <form id="signupForm" class="space-y-4">
+          <div>
+            <label
+              for="signupEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="signupEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="signupPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >पासवर्ड:</label
+            >
+            <input
+              type="password"
+              id="signupPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="नया पासवर्ड"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            साइन अप करें
+          </button>
+          <div class="text-center text-gray-600 mt-4">
+            <!-- No Google signup without Firebase -->
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div
+      id="forgotPasswordModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('forgotPasswordModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          पासवर्ड भूल गए
+        </h3>
+        <p class="text-gray-700 mb-4 text-center hindi-text">
+          अपना पासवर्ड रीसेट करने के लिए अपना ईमेल दर्ज करें। आपको एक ओटीपी
+          भेजा जाएगा।
+        </p>
+        <form id="forgotPasswordForm" class="space-y-4">
+          <div>
+            <label
+              for="forgotEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="forgotEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            ओटीपी भेजें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div
+      id="resetPasswordModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('resetPasswordModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          पासवर्ड रीसेट करें
+        </h3>
+        <p class="text-gray-700 mb-4 text-center hindi-text">
+          ओटीपी और अपना नया पासवर्ड दर्ज करें।
+        </p>
+        <form id="resetPasswordForm" class="space-y-4">
+          <div>
+            <label
+              for="resetEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="resetEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              readonly
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="resetOtp"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ओटीपी:</label
+            >
+            <input
+              type="text"
+              id="resetOtp"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="प्राप्त ओटीपी दर्ज करें"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="newPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >नया पासवर्ड:</label
+            >
+            <input
+              type="password"
+              id="newPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="नया पासवर्ड दर्ज करें"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            पासवर्ड रीसेट करें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Post Content Modal -->
+    <div
+      id="postContentModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-2xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('postContentModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          नया लेख पोस्ट करें
+        </h3>
+        <form id="newArticleForm" class="space-y-4">
+          <div>
+            <label
+              for="articleTitle"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >शीर्षक:</label
+            >
+            <input
+              type="text"
+              id="articleTitle"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख का शीर्षक"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="articleCategory"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >श्रेणी:</label
+            >
+            <select
+              id="articleCategory"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            >
+              <option value="">श्रेणी चुनें</option>
+              <option value="hindi-literature">हिंदी साहित्य</option>
+              <option value="literary-theories">साहित्यिक सिद्धांत</option>
+              <option value="story-reviews">कहानी समीक्षाएं</option>
+              <option value="du-study-material">डीयू अध्ययन सामग्री</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="articleContent"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >सामग्री:</label
+            >
+            <div class="editor-toolbar">
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('bold')"
+              >
+                <i class="fas fa-bold"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('italic')"
+              >
+                <i class="fas fa-italic"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('underline')"
+              >
+                <i class="fas fa-underline"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('insertUnorderedList')"
+              >
+                <i class="fas fa-list-ul"></i>
+              </button>
+            </div>
+            <div
+              id="articleContentEditable"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-64 overflow-y-auto"
+              contenteditable="true"
+              placeholder="लेख की सामग्री यहाँ लिखें..."
+              data-text="लेख की सामग्री यहाँ लिखें..."
+            ></div>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            लेख पोस्ट करें
+          </button>
         </form>
       </div>
     </div>
@@ -704,6 +1232,68 @@
       </div>
     </div>
 
+    <!-- Contact Us Modal (already present, reused) -->
+    <div id="contactModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-button" id="closeModalBtn">&times;</span>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
+          हमसे संपर्क करें
+        </h3>
+        <form>
+          <div class="mb-4">
+            <label
+              for="name"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका नाम:</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="अपना नाम दर्ज करें"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="email"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका ईमेल:</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="अपना ईमेल दर्ज करें"
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              for="message"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका संदेश:</label
+            >
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="यहां अपना संदेश लिखें"
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <button
+              type="submit"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline transition duration-300 transform hover:scale-105 hindi-text"
+            >
+              संदेश भेजें
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
@@ -743,6 +1333,62 @@
         return null;
       }
 
+      // Function to update UI based on login status
+      function updateAuthUI() {
+        const loggedInUser = getCurrentUser();
+        const loginBtn = document.getElementById("loginBtn");
+        const signupBtn = document.getElementById("signupBtn");
+        const userProfileDropdown = document.getElementById(
+          "userProfileDropdown"
+        );
+        const userEmailDisplay = document.getElementById("userEmailDisplay");
+        const mobileLoginBtn = document.getElementById("mobileLoginBtn");
+        const mobileSignupBtn = document.getElementById("mobileSignupBtn");
+        const mobileUserProfile = document.getElementById("mobileUserProfile");
+        const mobileUserEmailDisplay = document.getElementById(
+          "mobileUserEmailDisplay"
+        );
+        const postContentLink = document.getElementById("postContentLink");
+        const mobilePostContentLink = document.getElementById(
+          "mobilePostContentLink"
+        );
+
+        // Desktop nav
+        if (loggedInUser) {
+          loginBtn.classList.add("hidden");
+          signupBtn.classList.add("hidden");
+          userProfileDropdown.classList.remove("hidden");
+          userEmailDisplay.textContent = loggedInUser.email;
+        } else {
+          loginBtn.classList.remove("hidden");
+          signupBtn.classList.remove("hidden");
+          userProfileDropdown.classList.add("hidden");
+        }
+
+        // Mobile nav
+        if (loggedInUser) {
+          mobileLoginBtn.classList.add("hidden");
+          mobileSignupBtn.classList.add("hidden");
+          mobileUserProfile.classList.remove("hidden");
+          mobileUserEmailDisplay.textContent = loggedInUser.email;
+        } else {
+          mobileLoginBtn.classList.remove("hidden");
+          mobileSignupBtn.classList.remove("hidden");
+          mobileUserProfile.classList.add("hidden");
+        }
+
+        // Post content button visibility
+        if (loggedInUser && loggedInUser.role === "admin") {
+          postContentLink.classList.remove("hidden");
+          mobilePostContentLink.classList.remove("hidden");
+        } else {
+          postContentLink.classList.add("hidden");
+          mobilePostContentLink.classList.add("hidden");
+        }
+
+        loadArticlesByCategory(); // Re-render articles to show/hide edit/delete buttons
+      }
+
       // Generic Modal Functions
       function openModal(modalId) {
         document.getElementById(modalId).classList.add("open");
@@ -761,11 +1407,319 @@
         });
       });
 
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Login/Signup Modal Handlers
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", () => openModal("loginModal"));
+      document
+        .getElementById("mobileLoginBtn")
+        .addEventListener("click", () => openModal("loginModal"));
+      document
+        .getElementById("signupBtn")
+        .addEventListener("click", () => openModal("signupModal"));
+      document
+        .getElementById("mobileSignupBtn")
+        .addEventListener("click", () => openModal("signupModal"));
+
+      // Auth Required Modal buttons
+      document.getElementById("authLoginBtn").addEventListener("click", () => {
+        closeModal("authRequiredModal");
+        openModal("loginModal");
+      });
+      document.getElementById("authSignupBtn").addEventListener("click", () => {
+        closeModal("authRequiredModal");
+        openModal("signupModal");
+      });
+
+      // Admin Access Required Modal buttons
+      document
+        .getElementById("adminAccessLoginBtn")
+        .addEventListener("click", () => {
+          closeModal("adminAccessModal");
+          openModal("loginModal");
+        });
+      document
+        .getElementById("adminAccessSignupBtn")
+        .addEventListener("click", () => {
+          closeModal("adminAccessModal");
+          openModal("signupModal");
+        });
+
+      // Forgot Password Link handler
+      document
+        .getElementById("forgotPasswordLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          closeModal("loginModal");
+          openModal("forgotPasswordModal");
+        });
+
+      // Forgot Password Form Submission
+      document
+        .getElementById("forgotPasswordForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("forgotEmail").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "OTP आपके ईमेल पर भेजा गया है।");
+              closeModal("forgotPasswordModal");
+              document.getElementById("resetEmail").value = email; // Pre-fill email for reset modal
+              openModal("resetPasswordModal");
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट अनुरोध विफल रहा।", true);
+            }
+          } catch (error) {
+            console.error("Forgot password error:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Reset Password Form Submission
+      document
+        .getElementById("resetPasswordForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("resetEmail").value;
+          const otp = document.getElementById("resetOtp").value;
+          const newPassword = document.getElementById("newPassword").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, otp, newPassword }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "पासवर्ड सफलतापूर्वक रीसेट किया गया। अब लॉग इन करें।");
+              closeModal("resetPasswordModal");
+              openModal("loginModal"); // Prompt user to login with new password
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट विफल रहा।", true);
+            }
+          } catch (error) {
+            console.error("Reset password error:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Login Form Submission (Client-side now interacts with backend)
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userEmail", data.user.email);
+            localStorage.setItem("userRole", data.user.role);
+            localStorage.setItem("userId", data.user.id); // Store userId from backend
+            showMessage("सफलतापूर्वक लॉग इन किया गया!");
+            closeModal("loginModal");
+            updateAuthUI();
+          } else {
+            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+        }
+      });
+
+      // Signup Form Submission (Client-side now interacts with backend)
+      document.getElementById("signupForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
+            closeModal("signupModal");
+            // Optionally clear signup form, then open login modal
+            document.getElementById("signupEmail").value = "";
+            document.getElementById("signupPassword").value = "";
+            openModal("loginModal"); // Prompt for login after signup
+          } else {
+            showMessage(data.message || "साइन अप विफल रहा।", true); // Display error from server
+          }
+        } catch (error) {
+          console.error("Signup error:", error);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Logout
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("userId"); // Remove userId on logout
+        showMessage("सफलतापूर्वक लॉग आउट किया गया!");
+        updateAuthUI();
+      }
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", handleLogout);
+      document
+        .getElementById("mobileLogoutBtn")
+        .addEventListener("click", handleLogout);
+
+      // Rich Text Editor functionality for new article (kept for consistency, though this page doesn't post directly)
+      function formatDoc(command) {
+        // This function is for the 'newArticleForm', which is not directly used on this page for posting.
+        // It's included to make the rich text editor logic consistent if this modal is reused or copied.
+        const editableDiv = document.getElementById("articleContentEditable");
+        if (editableDiv) {
+            editableDiv.focus();
+            document.execCommand(command, false, null);
+        }
+      }
+
+
       // Rich Text Editor functionality for edit article
       function formatDocEdit(command) {
         document.getElementById("editArticleContentEditable").focus();
         document.execCommand(command, false, null);
       }
+
+      // Post Content Link handler - Checks for admin access
+      document
+        .getElementById("postContentLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+          } else if (loggedInUser.role !== "admin") {
+            openModal("adminAccessModal");
+          } else {
+            openModal("postContentModal");
+            // Clear form fields when opening for new post
+            document.getElementById("articleTitle").value = "";
+            document.getElementById("articleCategory").value = "";
+            document.getElementById("articleContentEditable").innerHTML = "";
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for new post
+          }
+        });
+      document
+        .getElementById("mobilePostContentLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+          } else if (loggedInUser.role !== "admin") {
+            openModal("adminAccessModal");
+          } else {
+            openModal("postContentModal");
+            // Clear form fields when opening for new post
+            document.getElementById("articleTitle").value = "";
+            document.getElementById("articleCategory").value = "";
+            document.getElementById("articleContentEditable").innerHTML = "";
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for new post
+          }
+        });
+
+      // New Article Form Submission (Now interacts with backend)
+      document
+        .getElementById("newArticleForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser || loggedInUser.role !== "admin") {
+            showMessage(
+              "लेख पोस्ट करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।",
+              true
+            );
+            closeModal("postContentModal");
+            openModal("adminAccessModal");
+            return;
+          }
+
+          const title = document.getElementById("articleTitle").value;
+          const category = document.getElementById("articleCategory").value;
+          const content = document.getElementById(
+            "articleContentEditable"
+          ).innerHTML;
+
+          if (!title || !category || !content) {
+            showMessage("सभी फ़ील्ड भरें!", true);
+            return;
+          }
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/articles`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loggedInUser.token}`,
+              },
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // Send author as logged-in user's email
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "लेख सफलतापूर्वक पोस्ट किया गया!");
+              closeModal("postContentModal");
+              // Check if the posted article belongs to this category before reloading
+              if (category === ARTICLE_CATEGORY) {
+                loadArticlesByCategory(); // Re-render articles for current category
+              }
+            } else {
+              showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
+            }
+          } catch (error) {
+            console.error("Error posting article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
 
       // Edit Article Form Submission (Now interacts with backend)
       document
@@ -1109,10 +2063,9 @@
           });
         }
 
-        // Initial load of articles for this category
-        loadArticlesByCategory();
+        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
+        // loadArticlesByCategory is called inside updateAuthUI()
       });
     </script>
   </body>
 </html>
-
