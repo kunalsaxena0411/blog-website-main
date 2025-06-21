@@ -69,6 +69,7 @@ const articleSchema = new mongoose.Schema({
   author: { type: String, required: true }, // This will be the email of the user who posted
   category: { type: String, required: true }, // Category for the article
   content: { type: String, required: true },
+  imageUrl: { type: String, default: "" }, // New field for article image URL
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // MongoDB User _id reference
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
@@ -158,6 +159,29 @@ app.post("/api/auth/signup", async (req, res) => {
     }
 
     const newUser = await User.create({ email, password, role });
+
+    // Send welcome email after successful signup
+    const mailOptions = {
+      from: "nirzara.antiai@gmail.com", // Sender address
+      to: newUser.email, // Recipient address
+      subject: "गामाकौआ में आपका स्वागत है!",
+      html: `
+        <p>प्रिय ${newUser.email},</p>
+        <p>गामाकौआ समुदाय में आपका स्वागत है! हमें आपको अपने साथ पाकर खुशी हो रही है।</p>
+        <p>अब आप हमारे सभी लेखों को एक्सप्लोर कर सकते हैं और हिंदी साहित्य और संस्कृति की दुनिया में गोता लगा सकते हैं।</p>
+        <p>शुभ पठन!</p>
+        <p>धन्यवाद,<br>गामाकौआ टीम</p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending welcome email after signup:", error);
+      } else {
+        console.log("Welcome Email sent on signup:", info.response);
+      }
+    });
+
     res.status(201).json({
       message: `Signed up successfully as ${role}. Please log in.`,
     });
@@ -193,6 +217,28 @@ app.post("/api/auth/login", async (req, res) => {
       JWT_SECRET,
       { expiresIn: "365d" } // Token expires in 365 days
     );
+
+    // Send welcome email on login (if not sent before or as a reminder)
+    const mailOptions = {
+      from: "nirzara.antiai@gmail.com", // Sender address
+      to: user.email, // Recipient address
+      subject: "गामाकौआ में आपका स्वागत है!",
+      html: `
+        <p>प्रिय ${user.email},</p>
+        <p>गामाकौआ में फिर से आपका स्वागत है! हमें खुशी है कि आप वापस आ गए हैं।</p>
+        <p>हमारे नवीनतम लेखों और सामग्री का अन्वेषण करें।</p>
+        <p>धन्यवाद,<br>गामाकौआ टीम</p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending welcome email after login:", error);
+      } else {
+        console.log("Welcome Email sent on login:", info.response);
+      }
+    });
+
 
     res.status(200).json({
       message: "Login successful.",
@@ -340,7 +386,7 @@ app.get("/api/articles/:id", async (req, res) => {
 // POST New Article (Admin Only)
 app.post("/api/articles", verifyToken, verifyAdmin, async (req, res) => {
   // req.user contains the decoded JWT payload from verifyToken: { userId, email, role }
-  const { title, category, content } = req.body; // 'author' will be taken from logged-in user's email
+  const { title, category, content, imageUrl } = req.body; // 'author' will be taken from logged-in user's email
 
   // Ensure all required fields are present
   if (!title || !category || !content) {
@@ -354,6 +400,7 @@ app.post("/api/articles", verifyToken, verifyAdmin, async (req, res) => {
     author: req.user.email, // Use email from decoded JWT as author
     category,
     content,
+    imageUrl: imageUrl || "", // Save image URL, default to empty string if not provided
     userId: req.user.userId, // Use MongoDB user ID from decoded JWT
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -375,7 +422,7 @@ app.post("/api/articles", verifyToken, verifyAdmin, async (req, res) => {
 // PUT/PATCH Update Article (Admin Only)
 app.put("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
   const { id } = req.params;
-  const { title, category, content } = req.body; // Fields to update
+  const { title, category, content, imageUrl } = req.body; // Fields to update
 
   try {
     const articleToUpdate = await Article.findById(id);
@@ -396,6 +443,8 @@ app.put("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
       category !== undefined ? category : articleToUpdate.category;
     articleToUpdate.content =
       content !== undefined ? content : articleToUpdate.content;
+    articleToUpdate.imageUrl =
+      imageUrl !== undefined ? imageUrl : articleToUpdate.imageUrl; // Update image URL
     articleToUpdate.updatedAt = new Date(); // Update timestamp
 
     const updatedArticle = await articleToUpdate.save();
