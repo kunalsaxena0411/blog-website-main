@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>कहानी समीक्षाएं - गामाकौआ</title>
+    <title>डीयू अध्ययन सामग्री - गामाकौआ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -396,7 +396,7 @@
         <!-- Logo with link to homepage -->
         <div class="logo-container">
           <img
-            src="20211011_204121_0000-1.png"
+            src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
             alt="Gamakauaa Logo"
             class="logo-img"
           />
@@ -582,25 +582,29 @@
       </div>
     </header>
 
-    <!-- Main Content Section for Story Reviews -->
+    <!-- Main Content Section for DU Study Material -->
     <section class="py-16 px-4">
       <div class="container mx-auto content-overlay p-8">
         <h1
-          class="text-4xl font-bold text-gray-800 mb-8 text-center hindi-text"
+          class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
         >
-          कहानी समीक्षाएं
+          डीयू अध्ययन सामग्री
         </h1>
-        <p class="text-lg text-gray-700 leading-relaxed mb-6 hindi-text">
-          इस अनुभाग में, हम विभिन्न भारतीय और विश्व साहित्य की लघु कथाओं की गहन
-          समीक्षाएं प्रस्तुत करते हैं। हमारी समीक्षाएं कहानी की प्लॉट, चरित्र
-          विकास, विषयों, प्रतीकात्मकता और साहित्यिक तकनीकों का विश्लेषण करती
-          हैं।
+        <p
+          class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
+        >
+          यह अनुभाग दिल्ली विश्वविद्यालय के छात्रों के लिए विशेष रूप से तैयार की
+          गई अध्ययन सामग्री प्रदान करता है। इसमें विभिन्न स्नातक और स्नातकोत्तर
+          पाठ्यक्रमों से संबंधित नोट्स, महत्वपूर्ण प्रश्न, पिछले वर्ष के प्रश्न
+          पत्र और परीक्षा तैयारी युक्तियाँ शामिल हैं।
         </p>
-        <p class="text-lg text-gray-700 leading-relaxed mb-6 hindi-text">
-          चाहे आप एक पाठक हों जो अपनी अगली कहानी की तलाश में हैं या एक छात्र जो
-          साहित्यिक विश्लेषण में अंतर्दृष्टि प्राप्त करना चाहता है, हमारे
-          समीक्षाएं आपको कहानी को बेहतर ढंग से समझने और उसकी सराहना करने में मदद
-          करेंगी।
+        <p
+          class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
+        >
+          हमारा उद्देश्य छात्रों को उनकी शैक्षणिक यात्रा में सहायता करना है,
+          विशेष रूप से हिंदी साहित्य, अंग्रेजी साहित्य, मास मीडिया और अन्य कला
+          और मानविकी विषयों में। यहां आपको सिनेमा और मास मीडिया, साहित्यिक
+          आलोचना के परिचय जैसे विषयों पर सामग्री मिलेगी।
         </p>
         <div
           id="articlesContainer"
@@ -1293,7 +1297,7 @@
     <script>
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
-      const ARTICLE_CATEGORY = "story-reviews"; // This page's category
+      const ARTICLE_CATEGORY = "du-study-material"; // This page's category
 
       // Function to show messages (success or error)
       function showMessage(message, isError = false) {
@@ -1809,20 +1813,11 @@
               }
             );
 
-            // Placeholder image URL with onerror for graceful fallback
-            const imageUrl = "https://placehold.co/400x200/cccccc/333333?text=" + encodeURIComponent(article.title.substring(0, 20) + '...');
-
             const articleCard = `
               <div
                 class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
                 data-id="${article._id}"
               >
-                <img
-                  src="${imageUrl}"
-                  alt="${article.title}"
-                  class="w-full h-48 object-cover rounded-md mb-4"
-                  onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/333333?text=Image+Load+Error';"
-                />
                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
                   article.category
                 }</span>
@@ -2058,8 +2053,8 @@
           });
         }
 
-        // Initial load of articles for this category
-        updateAuthUI(); // Calls loadArticlesByCategory internally
+        // Initial load of articles for this category and UI update
+        updateAuthUI();
       });
     </script>
   </body>
