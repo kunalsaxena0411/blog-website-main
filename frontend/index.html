@@ -510,48 +510,6 @@
         color: white;
       }
 
-      /* Bullet dropdown specific styles */
-      .bullet-dropdown-container {
-        position: relative;
-        display: inline-block; /* Ensure it wraps its content and allows positioning */
-      }
-
-      .bullet-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 100%; /* Position below the button */
-        left: 0;
-        background-color: #1e293b; /* Dark background */
-        min-width: 120px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 10;
-        border-radius: 8px;
-        overflow: hidden;
-        padding: 8px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .bullet-dropdown-menu.show {
-        display: block;
-      }
-
-      .bullet-dropdown-menu button {
-        background: none;
-        border: none;
-        color: white;
-        padding: 8px 16px;
-        text-align: left;
-        width: 100%;
-        display: block;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-
-      .bullet-dropdown-menu button:hover {
-        background-color: #334155;
-      }
-
-
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .logo-text {
@@ -1104,6 +1062,7 @@
       <div class="modal-content animate__animated animate__zoomIn">
         <span class="close-button" onclick="closeModal('loginModal')"
           >&times;</span
+
         >
         <h3
           class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
@@ -1406,49 +1365,13 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-
-              <!-- Bullet Dropdown for New Article -->
-              <div class="bullet-dropdown-container">
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="toggleBulletDropdown('articleContentEditable')"
-                  id="newArticleBulletBtn"
-                >
-                  <i class="fas fa-list-ul"></i>
-                </button>
-                <div
-                  id="newArticleBulletDropdown"
-                  class="bullet-dropdown-menu"
-                >
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('articleContentEditable', 'disc')"
-                  >
-                    Disc
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('articleContentEditable', 'circle')"
-                  >
-                    Circle
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('articleContentEditable', 'square')"
-                  >
-                    Square
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('articleContentEditable', 'none')"
-                  >
-                    None
-                  </button>
-                </div>
-              </div>
-              <!-- End Bullet Dropdown -->
-
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('insertUnorderedList', 'articleContentEditable', this)"
+              >
+                <i class="fas fa-list-ul"></i> <!-- Changed to unordered list icon -->
+              </button>
               <!-- Image insert button removed -->
             </div>
             <div
@@ -1549,49 +1472,13 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-
-              <!-- Bullet Dropdown for Edit Article -->
-              <div class="bullet-dropdown-container">
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="toggleBulletDropdown('editArticleContentEditable')"
-                  id="editArticleBulletBtn"
-                >
-                  <i class="fas fa-list-ul"></i>
-                </button>
-                <div
-                  id="editArticleBulletDropdown"
-                  class="bullet-dropdown-menu"
-                >
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('editArticleContentEditable', 'disc')"
-                  >
-                    Disc
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('editArticleContentEditable', 'circle')"
-                  >
-                    Circle
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('editArticleContentEditable', 'square')"
-                  >
-                    Square
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyBulletStyle('editArticleContentEditable', 'none')"
-                  >
-                    None
-                  </button>
-                </div>
-              </div>
-              <!-- End Bullet Dropdown -->
-
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDocEdit('insertUnorderedList', 'editArticleContentEditable', this)"
+              >
+                <i class="fas fa-list-ul"></i> <!-- Changed to unordered list icon -->
+              </button>
               <!-- Image insert button removed -->
             </div>
             <div
@@ -2294,13 +2181,15 @@
       function ensureBasicContentStructure(editorId) {
         const editor = document.getElementById(editorId);
         // Check for truly empty or placeholder content that won't allow execCommand to work.
-        if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>') {
-            editor.innerHTML = '<p><br></p>';
+        if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>') {
+            editor.innerHTML = '<p><br></p>'; // Ensure a basic paragraph for typing
+            // Set cursor inside the newly created paragraph
             const range = document.createRange();
             const sel = window.getSelection();
             if (editor.firstChild && editor.firstChild.firstChild) {
                 range.setStart(editor.firstChild.firstChild, 0);
             } else {
+                // Fallback if structure is not as expected after setting innerHTML
                 range.setStart(editor, 0);
             }
             range.collapse(true);
@@ -2315,15 +2204,33 @@
         editor.focus();
 
         if (command === 'insertUnorderedList') {
-            // This button now toggles the dropdown, not directly applies a list style.
-            toggleBulletDropdown(editorId);
-            return; // Prevent default execCommand action for this button
+            // Check if the editor is essentially empty. This is crucial for the initial list creation.
+            const isEmptyContent = !editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>';
+            
+            if (isEmptyContent) {
+                // If empty, insert an empty unordered list with a break to ensure cursor is inside an <li>
+                editor.innerHTML = '<ul><li><br></li></ul>';
+                // Set cursor inside the first list item for immediate typing
+                const range = document.createRange();
+                const sel = window.getSelection();
+                const li = editor.querySelector('li');
+                if (li && li.firstChild) {
+                    range.setStart(li.firstChild, 0);
+                } else if (li) { // If li exists but has no children (e.g., just <li></li>)
+                    range.setStart(li, 0);
+                }
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                // For non-empty content, let execCommand handle it (e.g., convert paragraph to list item)
+                document.execCommand(command, false, null);
+            }
+        } else {
+            // For other commands (bold, italic, underline), ensure basic content structure
+            ensureBasicContentStructure(editorId);
+            document.execCommand(command, false, null);
         }
-        
-        // For other commands (bold, italic, underline), ensure basic content structure
-        ensureBasicContentStructure(editorId);
-        document.execCommand(command, false, null);
-        
 
         // Add brief active state feedback
         if (buttonElement) {
@@ -2340,14 +2247,28 @@
         editor.focus();
 
         if (command === 'insertUnorderedList') {
-            // This button now toggles the dropdown, not directly applies a list style.
-            toggleBulletDropdown(editorId);
-            return; // Prevent default execCommand action for this button
-        }
+            const isEmptyContent = !editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>';
 
-        ensureBasicContentStructure(editorId);
-        document.execCommand(command, false, null);
-        
+            if (isEmptyContent) {
+                editor.innerHTML = '<ul><li><br></li></ul>';
+                const range = document.createRange();
+                const sel = window.getSelection();
+                const li = editor.querySelector('li');
+                 if (li && li.firstChild) {
+                    range.setStart(li.firstChild, 0);
+                } else if (li) {
+                    range.setStart(li, 0);
+                }
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                document.execCommand(command, false, null);
+            }
+        } else {
+            ensureBasicContentStructure(editorId);
+            document.execCommand(command, false, null);
+        }
 
         // Add brief active state feedback
         if (buttonElement) {
@@ -2357,104 +2278,6 @@
             }, 150); // Remove active class after 150ms
         }
       }
-
-      // Function to toggle bullet style dropdown
-      function toggleBulletDropdown(editorId) {
-        const dropdownId = editorId.includes('newArticle') ? 'newArticleBulletDropdown' : 'editArticleBulletDropdown';
-        const dropdown = document.getElementById(dropdownId);
-        dropdown.classList.toggle('show');
-
-        // Close other dropdowns if open
-        document.querySelectorAll('.bullet-dropdown-menu').forEach(menu => {
-            if (menu.id !== dropdownId) {
-                menu.classList.remove('show');
-            }
-        });
-      }
-
-      // Function to apply a specific bullet style
-      function applyBulletStyle(editorId, styleType) {
-          const editor = document.getElementById(editorId);
-          editor.focus(); // Ensure the editor is focused
-
-          // Hide dropdown immediately after a style is chosen
-          document.querySelectorAll('.bullet-dropdown-menu').forEach(menu => {
-              menu.classList.remove('show');
-          });
-
-          const selection = window.getSelection();
-          const currentRange = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
-          if (styleType === 'none') {
-              // Remove list formatting
-              document.execCommand('outdent', false, null);
-
-              if (currentRange) {
-                  // Attempt to find and clear inline list-style-type for affected ULs or LIs
-                  let ancestor = currentRange.commonAncestorContainer;
-                  // Look for UL/OL ancestor to clear its style
-                  let listParent = ancestor.nodeType === Node.ELEMENT_NODE && (ancestor.tagName === 'UL' || ancestor.tagName === 'OL')
-                      ? ancestor
-                      : ancestor.closest('UL, OL');
-                  if (listParent) {
-                      listParent.style.listStyleType = ''; // Clear inline style
-                  }
-
-                  // Also check for individual LIs within the selection
-                  const listItemsInSelection = editor.querySelectorAll('li');
-                  listItemsInSelection.forEach(li => {
-                      if (currentRange.intersectsNode(li)) {
-                          li.style.listStyleType = ''; // Clear inline style
-                      }
-                  });
-              }
-          } else {
-              // For 'disc', 'circle', 'square'
-              // Ensure content is a list item using execCommand
-              document.execCommand('insertUnorderedList', false, null);
-
-              // Find the UL element that currently contains the selection (caret/range)
-              let ulElementToStyle = null;
-              if (selection.rangeCount > 0) {
-                  let node = selection.anchorNode;
-                  while (node && node !== editor) {
-                      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'UL') {
-                          ulElementToStyle = node;
-                          break;
-                      }
-                      node = node.parentNode;
-                  }
-              }
-
-              if (ulElementToStyle) {
-                  // Apply the desired list-style-type to the found UL element
-                  ulElementToStyle.style.listStyleType = styleType;
-              } else {
-                  // Fallback: If no direct UL ancestor is found (e.g., execCommand created a list directly under the editor)
-                  // Try to find the most recently created UL or a UL that now contains the caret.
-                  // This part is heuristic and might need adjustment for very complex DOM structures.
-                  const potentialUl = editor.querySelector('ul:last-of-type');
-                  if (potentialUl && (potentialUl.contains(selection.anchorNode) || potentialUl.contains(selection.focusNode))) {
-                      potentialUl.style.listStyleType = styleType;
-                  } else {
-                      // As a final fallback, if the editor is empty, insert a new UL with the style.
-                      if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>') {
-                          editor.innerHTML = `<ul style="list-style-type: ${styleType};"><li><br></li></ul>`;
-                          // Reposition cursor inside the new list item
-                          const range = document.createRange();
-                          const newLi = editor.querySelector('li');
-                          if (newLi) {
-                              range.setStart(newLi.firstChild || newLi, 0);
-                              range.collapse(true);
-                              selection.removeAllRanges();
-                              selection.addRange(range);
-                          }
-                      }
-                  }
-              }
-          }
-      }
-
 
       // Function to insert image into content editable div (removed image URL prompt)
       // This function is still present but will not be called from the UI after removing the button.
@@ -2608,7 +2431,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्h。", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2937,17 +2760,6 @@
         // Scroll to articles section
         document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
-
-      // Close dropdowns if clicking outside
-      document.addEventListener('click', function(event) {
-          document.querySelectorAll('.bullet-dropdown-menu').forEach(dropdown => {
-              const button = dropdown.previousElementSibling; // The button that opens this dropdown
-              if (button && !button.contains(event.target) && !dropdown.contains(event.target)) {
-                  dropdown.classList.remove('show');
-              }
-          });
-      });
-
 
       // Initial load of articles and UI update when DOM is ready
       document.addEventListener("DOMContentLoaded", () => {
