@@ -495,7 +495,7 @@
               ></span>
             </div>
             <div class="dropdown-content">
-              <!-- <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a> Removed this tab -->
+              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
               <a href="#" id="savedArticlesLink"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
@@ -590,7 +590,7 @@
               ></span>
             </div>
             <div class="flex flex-col space-y-2">
-              <!-- <a href="#" class="text-white hover:text-emerald-300"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a> Removed this tab -->
+              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
               <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
@@ -621,7 +621,8 @@
     </header>
 
     <!-- Main Content Section for Literary Theories -->
-    <section class="py-16 px-4 pt-32"> <!-- Added pt-32 to push content below fixed header -->
+    <section class="py-16 px-4 pt-32">
+      <!-- Added pt-32 to push content below fixed header -->
       <div class="container mx-auto content-overlay p-8">
         <h1
           class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
@@ -631,18 +632,17 @@
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          साहित्यिक सिद्धांत वे लेंस हैं जिनके माध्यम से हम साहित्य का विश्लेषण,
-          व्याख्या और मूल्यांकन करते हैं। वे हमें यह समझने में मदद करते हैं कि
-          लेखक कैसे काम करते हैं, पाठक पाठों का अनुभव कैसे करते हैं, और साहित्य
-          समाज को कैसे प्रतिबिंबित और प्रभावित करता है।
+          यह अनुभाग साहित्यिक सिद्धांतों और आलोचनात्मक दृष्टिकोणों को समर्पित
+          है। इसमें विभिन्न साहित्यिक आंदोलनों, जैसे कि यथार्थवाद,
+          प्रतीकवाद, संरचनावाद, उत्तर-संरचनावाद, और नारीवादी आलोचना आदि पर
+          गहन चर्चाएँ शामिल हैं।
         </p>
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          यह अनुभाग अरस्तू के क्लासिकल सिद्धांतों से लेकर आधुनिक और उत्तर-आधुनिक
-          आलोचनात्मक दृष्टिकोणों तक, साहित्यिक सिद्धांतों की एक विस्तृत श्रृंखला
-          की पड़ताल करता है। प्रत्येक सिद्धांत की मुख्य अवधारणाओं, प्रमुख
-          विचारकों और साहित्य अध्ययन में इसके अनुप्रयोगों को जानें।
+          हमारा उद्देश्य पाठकों को साहित्यिक कृतियों को समझने और उनका विश्लेषण
+          करने के लिए आवश्यक उपकरण प्रदान करना है, जिससे वे साहित्य की गहराई और
+          विभिन्न व्याख्याओं को समझ सकें।
         </p>
         <div
           id="articlesContainer"
@@ -1670,7 +1670,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्h.");
           }
         });
 
@@ -1703,7 +1703,7 @@
             }
           } catch (error) {
             console.error("Reset password error:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1737,7 +1737,7 @@
           }
         } catch (error) {
           console.error("Login error:", error);
-          showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       });
 
@@ -1770,7 +1770,7 @@
           }
         } catch (error) {
           console.error("Signup error:", error);
-          showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1879,7 +1879,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // Send author as logged-in user's email
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // Send author as logged-in user's email
             });
 
             const data = await response.json();
@@ -1896,7 +1896,7 @@
             }
           } catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1950,7 +1950,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2200,7 +2200,7 @@
               }
             } catch (error) {
               console.error("Error deleting article:", error);
-              showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+              showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
             }
           } else {
             showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
@@ -2276,30 +2276,31 @@
         // Contact Us Modal functionality
         const contactUsLink = document.getElementById("contactUsLink");
         const contactModal = document.getElementById("contactModal");
-        const contactForm = document.getElementById("contactForm"); // Get the contact form
+        const contactForm = document.getElementById("contactForm");
 
         if (contactUsLink) {
           contactUsLink.addEventListener("click", function (e) {
             e.preventDefault();
-            openModal("contactModal"); // Use generic openModal
+            openModal("contactModal"); // Use the generic openModal function
           });
         }
 
-        // Contact Form Submission
         if (contactForm) {
-            contactForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const name = document.getElementById("contactName").value;
-                const email = document.getElementById("contactEmail").value;
-                const message = document.getElementById("contactMessage").value;
-                console.log(`Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`);
-                showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
-                closeModal("contactModal"); // Use generic closeModal
-                contactForm.reset(); // Clear form
-            });
+          contactForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = document.getElementById("contactName").value;
+            const email = document.getElementById("contactEmail").value;
+            const message = document.getElementById("contactMessage").value;
+            console.log(
+              `Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`
+            );
+            showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
+            closeModal("contactModal"); // Use the generic closeModal function
+            contactForm.reset(); // Clear form
+          });
         }
 
-        // Load Saved Articles Function (New)
+        // Load Saved Articles Function (NEW)
         const savedArticlesContainer = document.getElementById("savedArticlesContainer");
         const savedArticlesLoader = document.getElementById("savedArticlesLoader");
         const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
@@ -2337,7 +2338,7 @@
                     const fullSavedArticles = await Promise.all(fullArticlesPromises);
 
                     // Filter out any articles that might have failed to fetch or are null
-                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id && article.category === ARTICLE_CATEGORY); // Filter by current page category
+                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
 
                     if (validSavedArticles.length === 0) {
                         noSavedArticlesMessage.classList.remove("hidden");
@@ -2422,7 +2423,6 @@
                 savedArticlesLoader.style.display = "none";
             }
         }
-
 
         // Event listener for "सेव किए गए लेख" link
         document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
