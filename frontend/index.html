@@ -2179,11 +2179,17 @@
       // Helper to ensure there's a paragraph in contenteditable div
       function ensureParagraph(editorId) {
           const editor = document.getElementById(editorId);
-          if (!editor.innerHTML.trim()) {
-              editor.innerHTML = '<p><br></p>'; // Add an empty paragraph with a break
+          // If the editor is completely empty or just contains whitespace/line breaks
+          if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>') {
+              editor.innerHTML = '<p><br></p>'; // Ensure a basic paragraph structure
               const range = document.createRange();
               const sel = window.getSelection();
-              range.setStart(editor.firstChild.firstChild, 0); // Set cursor inside the <p>
+              if (editor.firstChild && editor.firstChild.firstChild) {
+                  range.setStart(editor.firstChild.firstChild, 0); // Set cursor inside the <p>
+              } else {
+                  // Fallback for unexpected empty states, though primary should handle this
+                  range.setStart(editor, 0);
+              }
               range.collapse(true);
               sel.removeAllRanges();
               sel.addRange(range);
@@ -2194,8 +2200,26 @@
       function formatDoc(command, editorId, buttonElement) {
         const editor = document.getElementById(editorId);
         editor.focus();
-        ensureParagraph(editorId); // Ensure there's a paragraph before executing command
-        document.execCommand(command, false, null);
+
+        if (command === 'insertUnorderedList' && !editor.innerHTML.trim()) {
+            // If the editor is empty and user clicks unordered list, explicitly insert
+            editor.innerHTML = '<ul><li><br></li></ul>';
+            // Set cursor inside the first list item
+            const range = document.createRange();
+            const sel = window.getSelection();
+            if (editor.firstChild && editor.firstChild.firstChild && editor.firstChild.firstChild.firstChild) {
+                range.setStart(editor.firstChild.firstChild.firstChild, 0);
+            } else {
+                 range.setStart(editor.firstChild, 0);
+            }
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else {
+            ensureParagraph(editorId); // Ensure there's a paragraph before executing command for other commands or non-empty content
+            document.execCommand(command, false, null);
+        }
+
         // Add brief active state feedback
         if (buttonElement) {
             buttonElement.classList.add('active');
@@ -2209,8 +2233,26 @@
       function formatDocEdit(command, editorId, buttonElement) {
         const editor = document.getElementById(editorId);
         editor.focus();
-        ensureParagraph(editorId); // Ensure there's a paragraph before executing command
-        document.execCommand(command, false, null);
+
+        if (command === 'insertUnorderedList' && !editor.innerHTML.trim()) {
+            // If the editor is empty and user clicks unordered list, explicitly insert
+            editor.innerHTML = '<ul><li><br></li></ul>';
+            // Set cursor inside the first list item
+            const range = document.createRange();
+            const sel = window.getSelection();
+            if (editor.firstChild && editor.firstChild.firstChild && editor.firstChild.firstChild.firstChild) {
+                range.setStart(editor.firstChild.firstChild.firstChild, 0);
+            } else {
+                range.setStart(editor.firstChild, 0);
+            }
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else {
+            ensureParagraph(editorId); // Ensure there's a paragraph before executing command for other commands or non-empty content
+            document.execCommand(command, false, null);
+        }
+
         // Add brief active state feedback
         if (buttonElement) {
             buttonElement.classList.add('active');
@@ -2347,7 +2389,7 @@
           ).innerHTML;
 
           if (!title || !category || !content) {
-            showMessage("सभी फ़ील्ड भरें!", true);
+            showMessage("सभी फ़ीールド भरें!", true);
             return;
           }
 
