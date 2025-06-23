@@ -497,8 +497,8 @@
               ></span>
             </div>
             <div class="dropdown-content">
-              <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
-              <a href="#"
+              <!-- Removed "मेरी प्रोफाइल" tab -->
+              <a href="#" id="savedArticlesLink"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
               <a href="#" id="logoutBtn"
@@ -592,10 +592,7 @@
               ></span>
             </div>
             <div class="flex flex-col space-y-2">
-              <a href="#" class="text-white hover:text-emerald-300"
-                ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
-              >
-              <a href="#" class="text-white hover:text-emerald-300"
+              <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
               <a
@@ -1322,8 +1319,6 @@
             >
             <textarea
               id="contactMessage"
-              name="message"
-              rows="4"
               class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
               placeholder="यहां अपना संदेश लिखें"
               required
@@ -1345,6 +1340,10 @@
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
       const ARTICLE_CATEGORY = "novel-reviews"; // This page's category
+
+      // Global variables to store articles and saved article IDs
+      let allArticles = []; // Stores all fetched articles for this category
+      let savedArticleIds = []; // Stores IDs of articles saved by the user
 
       // Function to show messages (success or error)
       function showMessage(message, isError = false) {
@@ -1380,8 +1379,88 @@
         return null;
       }
 
+      /**
+       * Fetches saved articles for the logged-in user.
+       */
+      async function fetchSavedArticles() {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          savedArticleIds = [];
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/users/saved-articles`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            savedArticleIds = data.savedArticles || [];
+            console.log("Fetched saved article IDs:", savedArticleIds);
+            // Re-render articles for this category to update save icons based on new savedArticleIds
+            displayArticles(allArticles);
+          } else {
+            console.error("Failed to fetch saved articles:", data.message);
+            savedArticleIds = [];
+          }
+        } catch (error) {
+          console.error("Error fetching saved articles:", error);
+          savedArticleIds = [];
+        }
+      }
+
+
+      /**
+       * Toggles saving/unsaving an article for the current user.
+       * @param {string} articleId - The ID of the article to save/unsave.
+       * @param {HTMLElement} buttonElement - The button element that was clicked.
+       */
+      async function toggleSaveArticle(articleId, buttonElement) {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          openModal("authRequiredModal");
+          return;
+        }
+
+        const isCurrentlySaved = savedArticleIds.includes(articleId);
+        const method = isCurrentlySaved ? "DELETE" : "POST";
+        const url = `${API_BASE_URL}/users/saved-articles/${articleId}`;
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            if (isCurrentlySaved) {
+              savedArticleIds = savedArticleIds.filter((id) => id !== articleId);
+              showMessage("लेख सेव किये गए से हटाया गया।");
+              buttonElement.innerHTML = '<i class="far fa-bookmark"></i>'; // Change to outline icon
+              buttonElement.classList.remove('text-blue-500');
+            } else {
+              savedArticleIds.push(articleId);
+              showMessage("लेख सफलतापूर्वक सेव किया गया!");
+              buttonElement.innerHTML = '<i class="fas fa-bookmark"></i>'; // Change to solid icon
+              buttonElement.classList.add('text-blue-500');
+            }
+            console.log("Updated saved article IDs:", savedArticleIds);
+          } else {
+            throw new Error(data.message || "सेव करने की कार्रवाई विफल रही।");
+          }
+        } catch (error) {
+          console.error("Save article error:", error);
+          showMessage(error.message, true);
+        }
+      }
+
       // Function to update UI based on login status
-      function updateAuthUI() {
+      async function updateAuthUI() { // Made async to await fetchSavedArticles
         const loggedInUser = getCurrentUser();
         const loginBtn = document.getElementById("loginBtn");
         const signupBtn = document.getElementById("signupBtn");
@@ -1419,6 +1498,7 @@
             postContentLink.classList.add("hidden");
             mobilePostContentLink.classList.add("hidden");
           }
+          await fetchSavedArticles(); // Fetch saved articles for the logged-in user
         } else {
           // User is signed out
           loginBtn.classList.remove("hidden");
@@ -1431,8 +1511,9 @@
 
           postContentLink.classList.add("hidden");
           mobilePostContentLink.classList.add("hidden");
+          savedArticleIds = []; // Clear saved articles when logged out
         }
-        loadArticlesByCategory(); // Re-render articles to show/hide edit/delete buttons
+        loadArticlesByCategory(); // Always load articles, but UI elements depend on login status
       }
 
       // Header scroll effect
@@ -1754,7 +1835,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // Send author as logged-in user's email
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // Send author as logged-in user's email and userId
             });
 
             const data = await response.json();
@@ -1845,8 +1926,9 @@
             `${API_BASE_URL}/articles?category=${ARTICLE_CATEGORY}`
           );
           const articles = await response.json();
+          allArticles = articles; // Store all articles for this category globally
 
-          if (articles.length === 0) {
+          if (allArticles.length === 0) {
             noArticlesMessage.classList.remove("hidden");
             articlesLoader.style.display = "none";
             return;
@@ -1867,10 +1949,13 @@
               }
             );
 
-            // Removed the image tag here
+            // Check if the current article is saved by the user
+            const isSaved = savedArticleIds.includes(article._id);
+            const bookmarkIconClass = isSaved ? "fas fa-bookmark text-blue-500" : "far fa-bookmark";
+
             const articleCard = `
               <div
-                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
+                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1"
                 data-id="${article._id}"
               >
                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
@@ -1886,11 +1971,24 @@
                     .replace(/<[^>]*>?/gm, "")
                     .substring(0, 150)}... <!-- Strip HTML and truncate -->
                 </p>
-                <button class="mt-4 text-emerald-600 hover:underline read-more-btn" data-id="${
-                  article._id
-                }">
-                  और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
-                </button>
+                <div class="flex justify-between items-center mt-4">
+                  <button class="mt-4 text-emerald-600 hover:underline read-more-btn" data-id="${
+                    article._id
+                  }" onclick="showArticleDetail('${article._id}')">
+                    और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                  </button>
+                  ${
+                    loggedInUser ? `
+                    <button
+                      class="text-gray-500 hover:text-blue-500 text-xl save-article-btn"
+                      data-article-id="${article._id}"
+                      onclick="toggleSaveArticle('${article._id}', this)"
+                    >
+                      <i class="${bookmarkIconClass}"></i>
+                    </button>
+                    ` : ''
+                  }
+                </div>
                 ${
                   loggedInUser && loggedInUser.role === "admin"
                     ? `
@@ -1910,33 +2008,7 @@
             articlesContainer.insertAdjacentHTML("beforeend", articleCard);
           });
 
-          // Add event listeners to newly created read-more, edit, and delete buttons
-          articlesContainer
-            .querySelectorAll(".content-overlay")
-            .forEach((card) => {
-              card.addEventListener("click", async (e) => {
-                // Only trigger detail modal if not clicking edit/delete buttons
-                if (
-                  !e.target.closest(".edit-article-btn") &&
-                  !e.target.closest(".delete-article-btn")
-                ) {
-                  const articleId = e.currentTarget.dataset.id;
-                  try {
-                    const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                    const article = await response.json();
-                    if (response.ok) {
-                      openArticleDetailModal(article);
-                    } else {
-                      showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
-                    }
-                  } catch (error) {
-                    console.error("Error fetching single article:", error);
-                    showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
-                  }
-                }
-              });
-            });
-
+          // Add event listeners to newly created edit, and delete buttons
           articlesContainer
             .querySelectorAll(".edit-article-btn")
             .forEach((button) => {
@@ -2035,7 +2107,12 @@
         });
 
       // Open Article Detail Modal and populate content
-      function openArticleDetailModal(article) {
+      function showArticleDetail(articleId) {
+        const article = allArticles.find(a => a._id === articleId);
+        if (!article) {
+            showMessage("लेख नहीं मिला।", true);
+            return;
+        }
         document.getElementById("articleDetailTitle").textContent =
           article.title;
         document.getElementById("articleDetailCategory").textContent =
@@ -2106,6 +2183,34 @@
                 contactForm.reset(); // Clear form
             });
         }
+
+        // Event listener for "सेव किए गए लेख" (Saved Articles) link
+        document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+            return;
+          }
+
+          // Redirect to the main index.html page and signal to show saved articles
+          window.location.href = `index.html?showSaved=true`;
+        });
+
+        // Event listener for mobile "सेव किए गए लेख" (Saved Articles) link
+        document.getElementById("mobileSavedArticlesLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          closeModal("mobileMenu"); // Close mobile menu after clicking
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+            return;
+          }
+
+          // Redirect to the main index.html page and signal to show saved articles
+          window.location.href = `index.html?showSaved=true`;
+        });
+
 
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
         // loadArticlesByCategory is called inside updateAuthUI()
