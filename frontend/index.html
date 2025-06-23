@@ -2294,15 +2294,13 @@
       function ensureBasicContentStructure(editorId) {
         const editor = document.getElementById(editorId);
         // Check for truly empty or placeholder content that won't allow execCommand to work.
-        if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>') {
-            editor.innerHTML = '<p><br></p>'; // Ensure a basic paragraph for typing
-            // Set cursor inside the newly created paragraph
+        if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>') {
+            editor.innerHTML = '<p><br></p>';
             const range = document.createRange();
             const sel = window.getSelection();
             if (editor.firstChild && editor.firstChild.firstChild) {
                 range.setStart(editor.firstChild.firstChild, 0);
             } else {
-                // Fallback if structure is not as expected after setting innerHTML
                 range.setStart(editor, 0);
             }
             range.collapse(true);
@@ -2376,93 +2374,87 @@
 
       // Function to apply a specific bullet style
       function applyBulletStyle(editorId, styleType) {
-        const editor = document.getElementById(editorId);
-        editor.focus();
-        
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+          const editor = document.getElementById(editorId);
+          editor.focus(); // Ensure the editor is focused
 
-        const range = selection.getRangeAt(0);
-        let commonAncestor = range.commonAncestorContainer;
+          // Hide dropdown immediately after a style is chosen
+          document.querySelectorAll('.bullet-dropdown-menu').forEach(menu => {
+              menu.classList.remove('show');
+          });
 
-        // Find the nearest UL or OL ancestor, or the editor itself
-        let listContainer = commonAncestor.nodeType === Node.ELEMENT_NODE && (commonAncestor.tagName === 'UL' || commonAncestor.tagName === 'OL')
-            ? commonAncestor
-            : editor.closest('ul, ol') || editor;
+          const selection = window.getSelection();
+          const currentRange = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
 
-        // If the selection is not within a list and we're applying a style, create an unordered list first
-        if (styleType !== 'none' && (!listContainer || (listContainer === editor && !editor.querySelector('ul')))) {
-            document.execCommand('insertUnorderedList', false, null);
-            // After inserting, the newly created UL/LI might be the commonAncestor or inside it
-            // Re-evaluate the commonAncestor and listContainer
-            commonAncestor = selection.getRangeAt(0).commonAncestorContainer;
-            listContainer = commonAncestor.nodeType === Node.ELEMENT_NODE && (commonAncestor.tagName === 'UL' || commonAncestor.tagName === 'OL')
-                ? commonAncestor
-                : editor.closest('ul, ol') || editor;
-        }
+          if (styleType === 'none') {
+              // Remove list formatting
+              document.execCommand('outdent', false, null);
 
-        // Apply style or remove list
-        if (styleType === 'none') {
-            document.execCommand('outdent', false, null); // Remove list formatting
-        } else {
-            // Ensure we are working with list items within the selection
-            let tempDiv = document.createElement('div');
-            tempDiv.appendChild(range.cloneContents()); // Clone contents to analyze
+              if (currentRange) {
+                  // Attempt to find and clear inline list-style-type for affected ULs or LIs
+                  let ancestor = currentRange.commonAncestorContainer;
+                  // Look for UL/OL ancestor to clear its style
+                  let listParent = ancestor.nodeType === Node.ELEMENT_NODE && (ancestor.tagName === 'UL' || ancestor.tagName === 'OL')
+                      ? ancestor
+                      : ancestor.closest('UL, OL');
+                  if (listParent) {
+                      listParent.style.listStyleType = ''; // Clear inline style
+                  }
 
-            // Find all LIs within the cloned content or the current selection
-            let listItemsInSelection = [];
-            // If the common ancestor is an LI or UL, get selected LIs
-            if (commonAncestor.nodeType === Node.ELEMENT_NODE && commonAncestor.tagName === 'LI') {
-                listItemsInSelection.push(commonAncestor);
-            } else {
-                // If selection spans multiple elements or paragraphs, find all LIs
-                const startNode = range.startContainer;
-                const endNode = range.endContainer;
+                  // Also check for individual LIs within the selection
+                  const listItemsInSelection = editor.querySelectorAll('li');
+                  listItemsInSelection.forEach(li => {
+                      if (currentRange.intersectsNode(li)) {
+                          li.style.listStyleType = ''; // Clear inline style
+                      }
+                  });
+              }
+          } else {
+              // For 'disc', 'circle', 'square'
+              // Ensure content is a list item using execCommand
+              document.execCommand('insertUnorderedList', false, null);
 
-                // Iterate through nodes in the range and collect LI elements
-                let currentNode = startNode;
-                while (currentNode && editor.contains(currentNode)) {
-                    if (currentNode.nodeType === Node.ELEMENT_NODE) {
-                        if (currentNode.tagName === 'LI') {
-                            listItemsInSelection.push(currentNode);
-                        }
-                        // Also check for LIs inside the current node
-                        currentNode.querySelectorAll('li').forEach(li => {
-                            if (range.intersectsNode(li)) {
-                                listItemsInSelection.push(li);
-                            }
-                        });
-                    }
-                    if (currentNode === endNode) break; // Stop at end of selection
-                    currentNode = currentNode.nextSibling || (currentNode.parentNode && currentNode.parentNode.nextSibling);
-                }
-            }
+              // Find the UL element that currently contains the selection (caret/range)
+              let ulElementToStyle = null;
+              if (selection.rangeCount > 0) {
+                  let node = selection.anchorNode;
+                  while (node && node !== editor) {
+                      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'UL') {
+                          ulElementToStyle = node;
+                          break;
+                      }
+                      node = node.parentNode;
+                  }
+              }
 
-            if (listItemsInSelection.length > 0) {
-                // Apply the style to the found list items
-                listItemsInSelection.forEach(li => {
-                    // Ensure the parent is a UL for unordered list styles
-                    if (li.parentNode && li.parentNode.tagName === 'UL') {
-                        li.style.listStyleType = styleType;
-                    } else if (li.parentNode && li.parentNode.tagName === 'OL') {
-                        // If it's an ordered list, apply relevant ordered list style (though this button is for unordered)
-                        // For simplicity, we'll keep it to unordered types for this button's functionality
-                    }
-                });
-            } else {
-                // If no specific LI is selected, but it's a new list or existing non-styled text
-                // Apply the style to the immediate UL/OL if one was just created or exists
-                const newUl = editor.querySelector('ul:last-of-type'); // Assuming the last created UL
-                if (newUl) {
-                    newUl.style.listStyleType = styleType;
-                }
-            }
-        }
-        // Hide dropdown after selection
-        document.querySelectorAll('.bullet-dropdown-menu').forEach(menu => {
-            menu.classList.remove('show');
-        });
+              if (ulElementToStyle) {
+                  // Apply the desired list-style-type to the found UL element
+                  ulElementToStyle.style.listStyleType = styleType;
+              } else {
+                  // Fallback: If no direct UL ancestor is found (e.g., execCommand created a list directly under the editor)
+                  // Try to find the most recently created UL or a UL that now contains the caret.
+                  // This part is heuristic and might need adjustment for very complex DOM structures.
+                  const potentialUl = editor.querySelector('ul:last-of-type');
+                  if (potentialUl && (potentialUl.contains(selection.anchorNode) || potentialUl.contains(selection.focusNode))) {
+                      potentialUl.style.listStyleType = styleType;
+                  } else {
+                      // As a final fallback, if the editor is empty, insert a new UL with the style.
+                      if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>') {
+                          editor.innerHTML = `<ul style="list-style-type: ${styleType};"><li><br></li></ul>`;
+                          // Reposition cursor inside the new list item
+                          const range = document.createRange();
+                          const newLi = editor.querySelector('li');
+                          if (newLi) {
+                              range.setStart(newLi.firstChild || newLi, 0);
+                              range.collapse(true);
+                              selection.removeAllRanges();
+                              selection.addRange(range);
+                          }
+                      }
+                  }
+              }
+          }
       }
+
 
       // Function to insert image into content editable div (removed image URL prompt)
       // This function is still present but will not be called from the UI after removing the button.
