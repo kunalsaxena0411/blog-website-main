@@ -83,6 +83,27 @@ articleSchema.pre("save", function (next) {
 
 const Article = mongoose.model("Article", articleSchema);
 
+// SavedArticle Schema - New Schema for "Save Post" functionality
+const savedArticleSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  articleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Article",
+    required: true,
+  },
+  createdAt: { type: Date, default: Date.now },
+});
+
+// Ensure a user can only save an article once
+savedArticleSchema.index({ userId: 1, articleId: 1 }, { unique: true });
+
+const SavedArticle = mongoose.model("SavedArticle", savedArticleSchema);
+
+
 // --- Nodemailer Transporter (for sending emails) ---
 // IMPORTANT: Replace with your actual email service credentials.
 // For testing, you can use a service like Ethereal.email (for development only) or Mailtrap.
@@ -478,7 +499,11 @@ app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
     // Optional: Add logic to ensure only the original author (if also admin) can delete their own post
     // if (articleToDelete.userId.toString() !== req.user.userId.toString()) {
     //     return res.status(403).json({ message: 'Forbidden: You can only delete your own articles.' });
-    // }
+    // }\
+
+    // Also delete any saved entries for this article
+    await SavedArticle.deleteMany({ articleId: id });
+
 
     await Article.findByIdAndDelete(id);
     res.status(200).json({ message: "Article deleted successfully!" });
@@ -493,6 +518,96 @@ app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
       .json({ message: "Error deleting article", error: error.message });
   }
 });
+
+// --- Saved Article Endpoints ---
+
+// POST /api/users/saved-articles/:articleId - Save an article
+app.post("/api/users/saved-articles/:articleId", verifyToken, async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    // Check if article exists
+    const article = await Article.findById(articleId);
+    if (!article) {
+      return res.status(404).json({ message: "Article not found." });
+    }
+
+    // Check if already saved by this user
+    const existingSavedArticle = await SavedArticle.findOne({ userId, articleId });
+    if (existingSavedArticle) {
+      return res.status(409).json({ message: "Article already saved by this user." });
+    }
+
+    const newSavedArticle = new SavedArticle({ userId, articleId });
+    await newSavedArticle.save();
+
+    res.status(201).json({ message: "Article saved successfully!" });
+  } catch (error) {
+    console.error("Error saving article:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid article ID format." });
+    }
+    res.status(500).json({ message: "Error saving article", error: error.message });
+  }
+});
+
+// GET /api/users/saved-articles - Get all saved articles for the logged-in user
+app.get("/api/users/saved-articles", verifyToken, async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const savedArticles = await SavedArticle.find({ userId })
+      .populate("articleId") // Populate the full article details
+      .select('articleId') // Select only the articleId field, as populate will replace it
+      .lean(); // Return plain JavaScript objects
+
+    // Map to return just the articles, not the SavedArticle wrappers
+    const articles = savedArticles.map(sa => ({
+      _id: sa.articleId._id,
+      title: sa.articleId.title,
+      author: sa.articleId.author,
+      category: sa.articleId.category,
+      content: sa.articleId.content,
+      imageUrl: sa.articleId.imageUrl,
+      createdAt: sa.articleId.createdAt,
+      updatedAt: sa.articleId.updatedAt,
+      userId: sa.articleId.userId,
+    }));
+
+    // If you only need the IDs, uncomment the following line and remove the map function:
+    // const savedArticleIds = savedArticles.map(sa => sa.articleId._id);
+    // res.status(200).json({ savedArticles: savedArticleIds });
+
+    res.status(200).json({ savedArticles: articles.map(article => article._id) }); // Return only the IDs for frontend check
+  } catch (error) {
+    console.error("Error fetching saved articles:", error);
+    res.status(500).json({ message: "Error fetching saved articles", error: error.message });
+  }
+});
+
+// DELETE /api/users/saved-articles/:articleId - Unsave an article
+app.delete("/api/users/saved-articles/:articleId", verifyToken, async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const result = await SavedArticle.deleteOne({ userId, articleId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Saved article not found for this user." });
+    }
+
+    res.status(200).json({ message: "Article unsaved successfully!" });
+  } catch (error) {
+    console.error("Error unsaving article:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid article ID format." });
+    }
+    res.status(500).json({ message: "Error unsaving article", error: error.message });
+  }
+});
+
 
 // Start the server
 app.listen(PORT, () => {
