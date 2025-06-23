@@ -613,8 +613,8 @@
                 ></span>
               </div>
               <div class="dropdown-content">
-                <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
-                <a href="#"
+                <!-- Removed "मेरी प्रोफाइल" tab -->
+                <a href="#" id="savedArticlesLink"
                   ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
                 >
                 <a href="#" id="logoutBtn"
@@ -708,10 +708,8 @@
                 ></span>
               </div>
               <div class="flex flex-col space-y-2">
-                <a href="#" class="text-white hover:text-emerald-300"
-                  ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
-                >
-                <a href="#" class="text-white hover:text-emerald-300"
+                <!-- Removed "मेरी प्रोफाइल" tab from mobile -->
+                <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                   ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
                 >
                 <a
@@ -923,7 +921,7 @@
           >
             <div class="flex items-center mb-4">
               <img
-                src="rahul_verma.jpg"
+                src="https://placehold.co/150x150/8a2be2/ffffff?text=RA"
                 alt="Rahul Verma"
                 class="w-12 h-12 rounded-full border-2 border-emerald-400"
               />
@@ -1698,6 +1696,10 @@
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
 
+      // Global variables to store articles and saved article IDs
+      let allArticles = []; // Stores all fetched articles
+      let savedArticleIds = []; // Stores IDs of articles saved by the user
+
       // Function to show messages (success or error)
       function showMessage(message, isError = false) {
         const infoMessage = document.getElementById("infoMessage");
@@ -1732,8 +1734,88 @@
         return null;
       }
 
+      /**
+       * Fetches saved articles for the logged-in user.
+       */
+      async function fetchSavedArticles() {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          savedArticleIds = [];
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/users/saved-articles`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            savedArticleIds = data.savedArticles || [];
+            console.log("Fetched saved article IDs:", savedArticleIds);
+            // Re-render all articles to update save icons based on new savedArticleIds
+            displayArticles(allArticles);
+          } else {
+            console.error("Failed to fetch saved articles:", data.message);
+            savedArticleIds = [];
+          }
+        } catch (error) {
+          console.error("Error fetching saved articles:", error);
+          savedArticleIds = [];
+        }
+      }
+
+
+      /**
+       * Toggles saving/unsaving an article for the current user.
+       * @param {string} articleId - The ID of the article to save/unsave.
+       * @param {HTMLElement} buttonElement - The button element that was clicked.
+       */
+      async function toggleSaveArticle(articleId, buttonElement) {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          openModal("authRequiredModal");
+          return;
+        }
+
+        const isCurrentlySaved = savedArticleIds.includes(articleId);
+        const method = isCurrentlySaved ? "DELETE" : "POST";
+        const url = `${API_BASE_URL}/users/saved-articles/${articleId}`;
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            if (isCurrentlySaved) {
+              savedArticleIds = savedArticleIds.filter((id) => id !== articleId);
+              showMessage("लेख सेव किये गए से हटाया गया।");
+              buttonElement.innerHTML = '<i class="far fa-bookmark"></i>'; // Change to outline icon
+              buttonElement.classList.remove('text-blue-500');
+            } else {
+              savedArticleIds.push(articleId);
+              showMessage("लेख सफलतापूर्वक सेव किया गया!");
+              buttonElement.innerHTML = '<i class="fas fa-bookmark"></i>'; // Change to solid icon
+              buttonElement.classList.add('text-blue-500');
+            }
+            console.log("Updated saved article IDs:", savedArticleIds);
+          } else {
+            throw new Error(data.message || "सेव करने की कार्रवाई विफल रही।");
+          }
+        } catch (error) {
+          console.error("Save article error:", error);
+          showMessage(error.message, true);
+        }
+      }
+
       // Function to update UI based on login status
-      function updateAuthUI() {
+      async function updateAuthUI() { // Made async to await fetchSavedArticles
         const loggedInUser = getCurrentUser();
         const loginBtn = document.getElementById("loginBtn");
         const signupBtn = document.getElementById("signupBtn");
@@ -1771,6 +1853,7 @@
             postContentLink.classList.add("hidden");
             mobilePostContentLink.classList.add("hidden");
           }
+          await fetchSavedArticles(); // Fetch saved articles for the logged-in user
         } else {
           // User is signed out
           loginBtn.classList.remove("hidden");
@@ -1783,8 +1866,9 @@
 
           postContentLink.classList.add("hidden");
           mobilePostContentLink.classList.add("hidden");
+          savedArticleIds = []; // Clear saved articles when logged out
         }
-        loadArticles(); // Re-render articles to show/hide edit/delete buttons
+        loadArticles(); // Always load articles, but UI elements depend on login status
       }
 
       // Header scroll effect
@@ -2144,7 +2228,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // imageUrl removed
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // imageUrl removed, userId added
             });
 
             const data = await response.json();
@@ -2232,149 +2316,14 @@
         try {
           const response = await fetch(`${API_BASE_URL}/articles`);
           const articles = await response.json();
+          allArticles = articles; // Store all articles globally
 
-          if (articles.length === 0) {
+          if (allArticles.length === 0) {
             noArticlesMessage.classList.remove("hidden");
             articlesLoader.style.display = "none";
             return;
           }
-
-          const loggedInUser = getCurrentUser(); // Get current user for showing edit/delete buttons
-
-          articles.forEach((article) => {
-            // Convert timestamp to readable string
-            const timestamp = new Date(article.createdAt).toLocaleString(
-              "hi-IN",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              }
-            );
-
-            // Removed articleImageHtml - No image is expected
-            const articleCard = `
-              <div
-                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
-                data-id="${article._id}"
-              >
-                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
-                  article.category
-                }</span>
-                <h3 class="text-xl font-bold mt-2 mb-2 text-gray-800 hindi-text">${
-                  article.title
-                }</h3>
-                <p class="text-gray-600 text-sm mb-3">लेखक: ${article.author}</p>
-                <p class="text-gray-500 text-xs mb-4">प्रकाशित: ${timestamp}</p>
-                <p class="text-gray-700 leading-relaxed truncate-3-lines hindi-text">
-                  ${article.content
-                    .replace(/<[^>]*>?/gm, "")
-                    .substring(0, 150)}... <!-- Strip HTML and truncate -->
-                </p>
-                <button class="mt-4 text-emerald-600 hover:underline read-more-btn" data-id="${
-                  article._id
-                }">
-                  और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
-                </button>
-                ${
-                  loggedInUser && loggedInUser.role === "admin"
-                    ? `
-                  <div class="mt-4 flex gap-2">
-                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm edit-article-btn" data-id="${article._id}">
-                      <i class="fas fa-edit mr-1"></i>संपादित करें
-                    </button>
-                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm delete-article-btn" data-id="${article._id}">
-                      <i class="fas fa-trash-alt mr-1"></i>हटाएँ
-                    </button>
-                  </div>
-                `
-                    : ""
-                }
-              </div>
-            `;
-            articlesContainer.insertAdjacentHTML("beforeend", articleCard);
-          });
-
-          // Add event listeners to newly created read-more, edit, and delete buttons
-          articlesContainer
-            .querySelectorAll(".content-overlay")
-            .forEach((card) => {
-              card.addEventListener("click", async (e) => {
-                // Only trigger detail modal if not clicking edit/delete buttons
-                if (
-                  !e.target.closest(".edit-article-btn") &&
-                  !e.target.closest(".delete-article-btn")
-                ) {
-                  const articleId = e.currentTarget.dataset.id;
-                  try {
-                    const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                    const article = await response.json();
-                    if (response.ok) {
-                      openArticleDetailModal(article);
-                    } else {
-                      showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
-                    }
-                  } catch (error) {
-                    console.error("Error fetching single article:", error);
-                    showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
-                  }
-                }
-              });
-            });
-
-          articlesContainer
-            .querySelectorAll(".edit-article-btn")
-            .forEach((button) => {
-              button.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent card click event
-                const loggedInUser = getCurrentUser();
-                if (loggedInUser && loggedInUser.role === "admin") {
-                  const articleId = e.currentTarget.dataset.id;
-                  // Fetch article data to populate the edit form
-                  fetch(`${API_BASE_URL}/articles/${articleId}`)
-                    .then(res => res.json())
-                    .then(article => {
-                      if (article) {
-                        document.getElementById("editArticleId").value = article._id;
-                        document.getElementById("editArticleTitle").value = article.title;
-                        document.getElementById("editArticleCategory").value = article.category;
-                        // document.getElementById("editArticleImageUrl").value = article.imageUrl || ""; // Removed image URL field
-                        document.getElementById("editArticleContentEditable").innerHTML = article.content;
-                        openModal("editArticleModal");
-                      } else {
-                        showMessage("लेख नहीं मिला।", true);
-                      }
-                    })
-                    .catch(error => {
-                      console.error("Error fetching article for edit:", error);
-                      showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
-                    });
-                } else if (!loggedInUser) {
-                  openModal("authRequiredModal");
-                } else {
-                  openModal("adminAccessModal");
-                }
-              });
-            });
-
-          articlesContainer
-            .querySelectorAll(".delete-article-btn")
-            .forEach((button) => {
-              button.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent card click event
-                const loggedInUser = getCurrentUser();
-                if (loggedInUser && loggedInUser.role === "admin") {
-                  articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
-                  openModal("confirmationModal");
-                } else if (!loggedInUser) {
-                  openModal("authRequiredModal");
-                } else {
-                  openModal("adminAccessModal");
-                }
-              });
-            });
+          displayArticles(allArticles); // Display all articles by default
         } catch (error) {
           console.error("Error loading articles:", error);
           showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
@@ -2383,6 +2332,147 @@
           articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
         }
       }
+
+      /**
+       * Displays articles in the UI.
+       * @param {Array} articlesToDisplay - Array of article objects.
+       */
+      function displayArticles(articlesToDisplay) {
+        articlesContainer.innerHTML = ""; // Clear current articles
+        const loggedInUser = getCurrentUser(); // Get current user for showing edit/delete buttons
+
+        if (articlesToDisplay.length === 0) {
+            noArticlesMessage.classList.remove("hidden");
+            return;
+        } else {
+            noArticlesMessage.classList.add("hidden");
+        }
+
+        articlesToDisplay.forEach((article) => {
+          // Convert timestamp to readable string
+          const timestamp = new Date(article.createdAt).toLocaleString(
+            "hi-IN",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          );
+
+          // Check if the current article is saved by the user
+          const isSaved = savedArticleIds.includes(article._id);
+          const bookmarkIconClass = isSaved ? "fas fa-bookmark text-blue-500" : "far fa-bookmark";
+
+          const articleCard = `
+            <div
+              class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1"
+              data-id="${article._id}"
+            >
+              <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
+                article.category
+              }</span>
+              <h3 class="text-xl font-bold mt-2 mb-2 text-gray-800 hindi-text">${
+                article.title
+              }</h3>
+              <p class="text-gray-600 text-sm mb-3">लेखक: ${article.author}</p>
+              <p class="text-gray-500 text-xs mb-4">प्रकाशित: ${timestamp}</p>
+              <p class="text-gray-700 leading-relaxed truncate-3-lines hindi-text">
+                ${article.content
+                  .replace(/<[^>]*>?/gm, "")
+                  .substring(0, 150)}... <!-- Strip HTML and truncate -->
+              </p>
+              <div class="flex justify-between items-center mt-4">
+                <button class="mt-4 text-emerald-600 hover:underline read-more-btn" data-id="${
+                  article._id
+                }" onclick="showArticleDetail('${article._id}')">
+                  और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+                ${
+                  loggedInUser ? `
+                  <button
+                    class="text-gray-500 hover:text-blue-500 text-xl save-article-btn"
+                    data-article-id="${article._id}"
+                    onclick="toggleSaveArticle('${article._id}', this)"
+                  >
+                    <i class="${bookmarkIconClass}"></i>
+                  </button>
+                  ` : ''
+                }
+              </div>
+              ${
+                loggedInUser && loggedInUser.role === "admin"
+                  ? `
+                <div class="mt-4 flex gap-2">
+                  <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm edit-article-btn" data-id="${article._id}">
+                    <i class="fas fa-edit mr-1"></i>संपादित करें
+                  </button>
+                  <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm delete-article-btn" data-id="${article._id}">
+                    <i class="fas fa-trash-alt mr-1"></i>हटाएँ
+                  </button>
+                </div>
+              `
+                  : ""
+              }
+            </div>
+          `;
+          articlesContainer.insertAdjacentHTML("beforeend", articleCard);
+        });
+
+        // Add event listeners to newly created edit, and delete buttons
+        articlesContainer
+          .querySelectorAll(".edit-article-btn")
+          .forEach((button) => {
+            button.addEventListener("click", (e) => {
+              e.stopPropagation(); // Prevent card click event
+              const loggedInUser = getCurrentUser();
+              if (loggedInUser && loggedInUser.role === "admin") {
+                const articleId = e.currentTarget.dataset.id;
+                // Fetch article data to populate the edit form
+                fetch(`${API_BASE_URL}/articles/${articleId}`)
+                  .then(res => res.json())
+                  .then(article => {
+                    if (article) {
+                      document.getElementById("editArticleId").value = article._id;
+                      document.getElementById("editArticleTitle").value = article.title;
+                      document.getElementById("editArticleCategory").value = article.category;
+                      document.getElementById("editArticleContentEditable").innerHTML = article.content;
+                      openModal("editArticleModal");
+                    } else {
+                      showMessage("लेख नहीं मिला।", true);
+                    }
+                  })
+                  .catch(error => {
+                    console.error("Error fetching article for edit:", error);
+                    showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
+                  });
+              } else if (!loggedInUser) {
+                openModal("authRequiredModal");
+              } else {
+                openModal("adminAccessModal");
+              }
+            });
+          });
+
+        articlesContainer
+          .querySelectorAll(".delete-article-btn")
+          .forEach((button) => {
+            button.addEventListener("click", (e) => {
+              e.stopPropagation(); // Prevent card click event
+              const loggedInUser = getCurrentUser();
+              if (loggedInUser && loggedInUser.role === "admin") {
+                articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
+                openModal("confirmationModal");
+              } else if (!loggedInUser) {
+                openModal("authRequiredModal");
+              } else {
+                openModal("adminAccessModal");
+              }
+            });
+          });
+      }
+
 
       // Handle delete confirmation (Now interacts with backend)
       document
@@ -2423,7 +2513,12 @@
         });
 
       // Open Article Detail Modal and populate content
-      function openArticleDetailModal(article) {
+      function showArticleDetail(articleId) { // Renamed from openArticleDetailModal to match old code
+        const article = allArticles.find(a => a._id === articleId);
+        if (!article) {
+            showMessage("लेख नहीं मिला।", true);
+            return;
+        }
         document.getElementById("articleDetailTitle").textContent =
           article.title;
         document.getElementById("articleDetailCategory").textContent =
@@ -2478,6 +2573,57 @@
         showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
         closeModal("contactUsModal");
         document.getElementById("contactForm").reset(); // Clear form
+      });
+
+      // Event listener for "सेव किए गए लेख" (Saved Articles) link
+      document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          openModal("authRequiredModal");
+          return;
+        }
+
+        if (savedArticleIds.length === 0) {
+          articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
+          noArticlesMessage.classList.add("hidden");
+        } else {
+          const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
+          if (filteredArticles.length === 0) {
+              articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
+              noArticlesMessage.classList.add("hidden");
+          } else {
+              displayArticles(filteredArticles);
+          }
+        }
+        // Scroll to articles section
+        document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Event listener for mobile "सेव किए गए लेख" (Saved Articles) link
+      document.getElementById("mobileSavedArticlesLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        closeModal("mobileMenu"); // Close mobile menu after clicking
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          openModal("authRequiredModal");
+          return;
+        }
+
+        if (savedArticleIds.length === 0) {
+          articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
+          noArticlesMessage.classList.add("hidden");
+        } else {
+          const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
+          if (filteredArticles.length === 0) {
+              articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
+              noArticlesMessage.classList.add("hidden");
+          } else {
+              displayArticles(filteredArticles);
+          }
+        }
+        // Scroll to articles section
+        document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
       // Initial load of articles and UI update when DOM is ready
