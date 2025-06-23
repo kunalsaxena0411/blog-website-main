@@ -1347,28 +1347,28 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('bold', this)"
+                onclick="formatDoc('bold', 'articleContentEditable', this)"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('italic', this)"
+                onclick="formatDoc('italic', 'articleContentEditable', this)"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('underline', this)"
+                onclick="formatDoc('underline', 'articleContentEditable', this)"
               >
                 <i class="fas fa-underline"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('insertUnorderedList', this)"
+                onclick="formatDoc('insertUnorderedList', 'articleContentEditable', this)"
               >
                 <i class="fas fa-list-ul"></i>
               </button>
@@ -1454,28 +1454,28 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('bold', this)"
+                onclick="formatDocEdit('bold', 'editArticleContentEditable', this)"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('italic', this)"
+                onclick="formatDocEdit('italic', 'editArticleContentEditable', this)"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('underline', this)"
+                onclick="formatDocEdit('underline', 'editArticleContentEditable', this)"
               >
                 <i class="fas fa-underline"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList', this)"
+                onclick="formatDocEdit('insertUnorderedList', 'editArticleContentEditable', this)"
               >
                 <i class="fas fa-list-ul"></i>
               </button>
@@ -2175,9 +2175,25 @@
         .getElementById("mobileLogoutBtn")
         .addEventListener("click", handleLogout);
 
+      // Helper to ensure there's a paragraph in contenteditable div
+      function ensureParagraph(editorId) {
+          const editor = document.getElementById(editorId);
+          if (!editor.innerHTML.trim()) {
+              editor.innerHTML = '<p><br></p>'; // Add an empty paragraph with a break
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.setStart(editor.firstChild.firstChild, 0); // Set cursor inside the <p>
+              range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+          }
+      }
+
       // Rich Text Editor functionality for new article
-      function formatDoc(command, buttonElement) {
-        document.getElementById("articleContentEditable").focus();
+      function formatDoc(command, editorId, buttonElement) {
+        const editor = document.getElementById(editorId);
+        editor.focus();
+        ensureParagraph(editorId); // Ensure there's a paragraph before executing command
         document.execCommand(command, false, null);
         // Add brief active state feedback
         if (buttonElement) {
@@ -2189,8 +2205,10 @@
       }
 
       // Rich Text Editor functionality for edit article
-      function formatDocEdit(command, buttonElement) {
-        document.getElementById("editArticleContentEditable").focus();
+      function formatDocEdit(command, editorId, buttonElement) {
+        const editor = document.getElementById(editorId);
+        editor.focus();
+        ensureParagraph(editorId); // Ensure there's a paragraph before executing command
         document.execCommand(command, false, null);
         // Add brief active state feedback
         if (buttonElement) {
