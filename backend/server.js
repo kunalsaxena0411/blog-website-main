@@ -521,10 +521,15 @@ app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
 
 // --- Saved Article Endpoints ---
 
-// POST /api/users/saved-articles/:articleId - Save an article
-app.post("/api/users/saved-articles/:articleId", verifyToken, async (req, res) => {
-  const { articleId } = req.params;
-  const userId = req.user.userId;
+// POST /api/users/:userId/saved-articles - Save an article for a specific user
+app.post("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
+  const { userId } = req.params;
+  const { articleId } = req.body; // articleId is now in the request body
+
+  // Security check: Ensure the userId in the URL matches the authenticated user's ID
+  if (req.user.userId.toString() !== userId.toString()) {
+    return res.status(403).json({ message: "Forbidden: You can only save articles for your own user ID." });
+  }
 
   try {
     // Check if article exists
@@ -552,44 +557,40 @@ app.post("/api/users/saved-articles/:articleId", verifyToken, async (req, res) =
   }
 });
 
-// GET /api/users/saved-articles - Get all saved articles for the logged-in user
-app.get("/api/users/saved-articles", verifyToken, async (req, res) => {
-  const userId = req.user.userId;
+// GET /api/users/:userId/saved-articles - Get all saved articles for a specific user
+app.get("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
+  const { userId } = req.params;
+
+  // Security check: Ensure the userId in the URL matches the authenticated user's ID
+  if (req.user.userId.toString() !== userId.toString()) {
+    return res.status(403).json({ message: "Forbidden: You can only view your own saved articles." });
+  }
 
   try {
     const savedArticles = await SavedArticle.find({ userId })
-      .populate("articleId") // Populate the full article details
-      .select('articleId') // Select only the articleId field, as populate will replace it
+      .select('articleId') // Select only the articleId field
       .lean(); // Return plain JavaScript objects
 
-    // Map to return just the articles, not the SavedArticle wrappers
-    const articles = savedArticles.map(sa => ({
-      _id: sa.articleId._id,
-      title: sa.articleId.title,
-      author: sa.articleId.author,
-      category: sa.articleId.category,
-      content: sa.articleId.content,
-      imageUrl: sa.articleId.imageUrl,
-      createdAt: sa.articleId.createdAt,
-      updatedAt: sa.articleId.updatedAt,
-      userId: sa.articleId.userId,
-    }));
+    // We only need the IDs on the frontend to check if an article is saved.
+    // The frontend will then fetch full article details as needed.
+    const savedArticleIds = savedArticles.map(sa => sa.articleId.toString());
 
-    // If you only need the IDs, uncomment the following line and remove the map function:
-    // const savedArticleIds = savedArticles.map(sa => sa.articleId._id);
-    // res.status(200).json({ savedArticles: savedArticleIds });
-
-    res.status(200).json({ savedArticles: articles.map(article => article._id) }); // Return only the IDs for frontend check
+    res.status(200).json({ savedArticles: savedArticleIds });
   } catch (error) {
     console.error("Error fetching saved articles:", error);
     res.status(500).json({ message: "Error fetching saved articles", error: error.message });
   }
 });
 
-// DELETE /api/users/saved-articles/:articleId - Unsave an article
-app.delete("/api/users/saved-articles/:articleId", verifyToken, async (req, res) => {
-  const { articleId } = req.params;
-  const userId = req.user.userId;
+
+// DELETE /api/users/:userId/saved-articles/:articleId - Unsave an article for a specific user
+app.delete("/api/users/:userId/saved-articles/:articleId", verifyToken, async (req, res) => {
+  const { userId, articleId } = req.params;
+
+  // Security check: Ensure the userId in the URL matches the authenticated user's ID
+  if (req.user.userId.toString() !== userId.toString()) {
+    return res.status(403).json({ message: "Forbidden: You can only unsave articles for your own user ID." });
+  }
 
   try {
     const result = await SavedArticle.deleteOne({ userId, articleId });
