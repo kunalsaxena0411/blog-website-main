@@ -476,7 +476,6 @@
             >
               <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
             >
-          
 
           <!-- Post Blog Button - Visible only for admins -->
           <a href="#" id="postContentLink" class="post-blog-btn hidden">
@@ -497,8 +496,8 @@
               ></span>
             </div>
             <div class="dropdown-content">
-              <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a>
-              <a href="#"
+              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
+              <a href="#" id="savedArticlesLink"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
               <a href="#" id="logoutBtn"
@@ -592,10 +591,8 @@
               ></span>
             </div>
             <div class="flex flex-col space-y-2">
-              <a href="#" class="text-white hover:text-emerald-300"
-                ><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a
-              >
-              <a href="#" class="text-white hover:text-emerald-300"
+              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
+              <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
               <a
@@ -625,7 +622,8 @@
     </header>
 
     <!-- Main Content Section for Novel Reviews -->
-    <section class="py-16 px-4 pt-32"> <!-- Added pt-32 to push content below fixed header -->
+    <section class="py-16 px-4 pt-32">
+      <!-- Added pt-32 to push content below fixed header -->
       <div class="container mx-auto content-overlay p-8">
         <h1
           class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
@@ -635,18 +633,16 @@
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          यहाँ आपको विभिन्न हिंदी उपन्यासों की विस्तृत समीक्षाएँ मिलेंगी। हमारी
-          समीक्षाएँ न केवल उपन्यास की कहानी, पात्रों और शैली पर प्रकाश डालती
-          हैं, बल्कि उसके सामाजिक, सांस्कृतिक और साहित्यिक महत्व का भी विश्लेषण
-          करती हैं।
+          यहां आप विभिन्न हिंदी उपन्यासों की गहन समीक्षाएं पा सकते हैं। हम
+          उपन्यासों के कथानक, पात्रों के विकास, साहित्यिक शैली और उनके सामाजिक
+          या दार्शनिक महत्व का विश्लेषण करते हैं।
         </p>
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          चाहे आप क्लासिक हिंदी उपन्यासों में रुचि रखते हों या समकालीन कृतियों
-          की तलाश में हों, हमारी समीक्षाएँ आपको सही चुनाव करने और अपनी साहित्यिक
-          समझ को गहरा करने में मदद करेंगी। हम प्रत्येक उपन्यास के मजबूत और कमजोर
-          पहलुओं को निष्पक्ष रूप से प्रस्तुत करने का प्रयास करते हैं।
+          हमारा उद्देश्य पाठकों को नए उपन्यासों की खोज करने और मौजूदा कार्यों
+          की बेहतर समझ विकसित करने में मदद करना है। प्रत्येक समीक्षा आपको उपन्यास
+          की दुनिया में एक गहरी अंतर्दृष्टि प्रदान करेगी।
         </p>
         <div
           id="articlesContainer"
@@ -1175,6 +1171,12 @@
           id="articleDetailContent"
           class="prose max-w-none text-gray-700 leading-relaxed text-base overflow-y-auto h-96"
         ></div>
+        <!-- Save/Unsave button will be added here dynamically -->
+        <div class="mt-4 flex justify-end">
+            <button id="saveArticleBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300">
+                <i class="fas fa-bookmark mr-2"></i>सेव करें
+            </button>
+        </div>
       </div>
     </div>
 
@@ -1341,10 +1343,45 @@
       </div>
     </div>
 
+    <!-- Saved Articles Modal (NEW) -->
+    <div
+      id="savedArticlesModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-3xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('savedArticlesModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          सेव किए गए लेख
+        </h3>
+        <div
+          id="savedArticlesContainer"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2"
+        >
+          <!-- Saved articles will be loaded here dynamically -->
+          <div class="col-span-full text-center">
+            <div id="savedArticlesLoader" class="loader"></div>
+            <p id="noSavedArticlesMessage" class="text-gray-400 hidden">
+              अभी कोई सेव किए गए लेख उपलब्ध नहीं हैं।
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
       const ARTICLE_CATEGORY = "novel-reviews"; // This page's category
+
+      // Global variables to store articles and saved article IDs
+      let allArticles = []; // Stores all fetched articles for this category
+      let savedArticleIds = []; // Stores IDs of articles saved by the user
 
       // Function to show messages (success or error)
       function showMessage(message, isError = false) {
@@ -1380,8 +1417,93 @@
         return null;
       }
 
+      /**
+       * Fetches saved articles for the logged-in user.
+       */
+      async function fetchSavedArticleIds() {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          savedArticleIds = [];
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            savedArticleIds = data.savedArticles || [];
+            console.log("Fetched saved article IDs:", savedArticleIds);
+          } else {
+            console.error("Failed to fetch saved articles:", data.message);
+            savedArticleIds = [];
+          }
+        } catch (error) {
+          console.error("Error fetching saved articles:", error);
+          savedArticleIds = [];
+        }
+      }
+
+      /**
+       * Toggles saving/unsaving an article for the current user.
+       * @param {string} articleId - The ID of the article to save/unsave.
+       * @param {boolean} isCurrentlySaved - True if the article is currently saved, false otherwise.
+       */
+      async function toggleSaveArticle(articleId, isCurrentlySaved) {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+            openModal("authRequiredModal");
+            return;
+        }
+
+        try {
+            let response;
+            if (isCurrentlySaved) {
+                // Unsave the article
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    }
+                });
+            } else {
+                // Save the article
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    },
+                    body: JSON.stringify({ articleId })
+                });
+            }
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showMessage(data.message || (isCurrentlySaved ? "लेख सेव किए गए लेखों से हटा दिया गया!" : "लेख सफलतापूर्वक सेव किया गया!"));
+                await fetchSavedArticleIds(); // Update global saved articles list
+                // Re-render relevant parts of the UI to reflect changes
+                displayArticles(allArticles); // Update main article list
+                if (document.getElementById('savedArticlesModal').classList.contains('open')) {
+                    loadSavedArticles(); // Update saved articles modal if open
+                }
+            } else {
+                showMessage(data.message || "लेख सेव/अनसेव करने में त्रुटि।", true);
+            }
+        } catch (error) {
+            console.error("Error toggling save article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+        }
+      }
+
+
       // Function to update UI based on login status
-      function updateAuthUI() {
+      async function updateAuthUI() { // Made async to await fetchSavedArticleIds
         const loggedInUser = getCurrentUser();
         const loginBtn = document.getElementById("loginBtn");
         const signupBtn = document.getElementById("signupBtn");
@@ -1419,6 +1541,7 @@
             postContentLink.classList.add("hidden");
             mobilePostContentLink.classList.add("hidden");
           }
+          await fetchSavedArticleIds(); // Fetch saved article IDs for the logged-in user
         } else {
           // User is signed out
           loginBtn.classList.remove("hidden");
@@ -1431,8 +1554,9 @@
 
           postContentLink.classList.add("hidden");
           mobilePostContentLink.classList.add("hidden");
+          savedArticleIds = []; // Clear saved articles when logged out
         }
-        loadArticlesByCategory(); // Re-render articles to show/hide edit/delete buttons
+        await loadArticlesByCategory(); // Always load articles, but UI elements depend on login status
       }
 
       // Header scroll effect
@@ -1545,7 +1669,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्d है।", true);
           }
         });
 
@@ -1578,7 +1702,7 @@
             }
           } catch (error) {
             console.error("Reset password error:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1612,7 +1736,7 @@
           }
         } catch (error) {
           console.error("Login error:", error);
-          showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       });
 
@@ -1645,7 +1769,7 @@
           }
         } catch (error) {
           console.error("Signup error:", error);
-          showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1675,7 +1799,6 @@
             document.execCommand(command, false, null);
         }
       }
-
 
       // Rich Text Editor functionality for edit article
       function formatDocEdit(command) {
@@ -1754,7 +1877,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${loggedInUser.token}`,
               },
-              body: JSON.stringify({ title, category, content, author: loggedInUser.email }), // Send author as logged-in user's email
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // Send author as logged-in user's email
             });
 
             const data = await response.json();
@@ -1771,7 +1894,7 @@
             }
           } catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1825,7 +1948,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1845,29 +1968,57 @@
             `${API_BASE_URL}/articles?category=${ARTICLE_CATEGORY}`
           );
           const articles = await response.json();
+          allArticles = articles; // Store all articles globally
 
-          if (articles.length === 0) {
+          if (allArticles.length === 0) {
             noArticlesMessage.classList.remove("hidden");
             articlesLoader.style.display = "none";
             return;
           }
+          displayArticles(allArticles); // Display all articles by default
+        } catch (error) {
+          console.error("Error loading articles:", error);
+          showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
+          noArticlesMessage.classList.remove("hidden"); // Show message if API fails
+        } finally {
+          articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
+        }
+      }
 
-          const loggedInUser = getCurrentUser(); // Get current user for showing edit/delete buttons
+      /**
+       * Displays articles in the UI.
+       * @param {Array} articlesToDisplay - Array of article objects.
+       */
+      function displayArticles(articlesToDisplay) {
+        articlesContainer.innerHTML = ""; // Clear current articles
+        const loggedInUser = getCurrentUser(); // Get current user for showing edit/delete buttons
 
-          articles.forEach((article) => {
-            // Convert timestamp to readable string
-            const timestamp = new Date(article.createdAt).toLocaleString(
-              "hi-IN",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              }
-            );
+        if (articlesToDisplay.length === 0) {
+            noArticlesMessage.classList.remove("hidden");
+            return;
+        } else {
+            noArticlesMessage.classList.add("hidden");
+        }
 
-            // Removed the image tag here
+        articlesToDisplay.forEach((article) => {
+          // Convert timestamp to readable string
+          const timestamp = new Date(article.createdAt).toLocaleString(
+            "hi-IN",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          );
+
+          // Check if the current article is saved by the user
+          const isSaved = savedArticleIds.includes(article._id);
+          const saveButtonText = isSaved ? "सेव किया गया" : "सेव करें";
+          const saveButtonClass = isSaved ? "bg-gray-500 hover:bg-gray-600" : "bg-blue-500 hover:bg-blue-600";
+          const saveButtonIcon = isSaved ? "fas fa-check" : "fas fa-bookmark";
+
             const articleCard = `
               <div
                 class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
@@ -1886,11 +2037,18 @@
                     .replace(/<[^>]*>?/gm, "")
                     .substring(0, 150)}... <!-- Strip HTML and truncate -->
                 </p>
-                <button class="mt-4 text-emerald-600 hover:underline read-more-btn" data-id="${
-                  article._id
-                }">
-                  और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
-                </button>
+                <div class="mt-4 flex gap-2 justify-between items-center">
+                    <button class="text-emerald-600 hover:underline read-more-btn" data-id="${
+                    article._id
+                    }">
+                    और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                    ${loggedInUser ? `
+                        <button class="${saveButtonClass} text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="${isSaved}">
+                            <i class="${saveButtonIcon} mr-1"></i>${saveButtonText}
+                        </button>
+                    ` : ''}
+                </div>
                 ${
                   loggedInUser && loggedInUser.role === "admin"
                     ? `
@@ -1908,93 +2066,107 @@
               </div>
             `;
             articlesContainer.insertAdjacentHTML("beforeend", articleCard);
-          });
+        });
 
-          // Add event listeners to newly created read-more, edit, and delete buttons
-          articlesContainer
+        // Add event listeners to newly created read-more, edit, delete, and save buttons
+        articlesContainer
             .querySelectorAll(".content-overlay")
             .forEach((card) => {
-              card.addEventListener("click", async (e) => {
-                // Only trigger detail modal if not clicking edit/delete buttons
-                if (
-                  !e.target.closest(".edit-article-btn") &&
-                  !e.target.closest(".delete-article-btn")
-                ) {
-                  const articleId = e.currentTarget.dataset.id;
-                  try {
-                    const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                    const article = await response.json();
-                    if (response.ok) {
-                      openArticleDetailModal(article);
-                    } else {
-                      showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
+                card.addEventListener("click", async (e) => {
+                    // Only trigger detail modal if not clicking edit/delete/save buttons
+                    if (
+                        !e.target.closest(".edit-article-btn") &&
+                        !e.target.closest(".delete-article-btn") &&
+                        !e.target.closest(".toggle-save-btn")
+                    ) {
+                        const articleId = e.currentTarget.dataset.id;
+                        try {
+                            const response = await fetch(
+                                `${API_BASE_URL}/articles/${articleId}`
+                            );
+                            const article = await response.json();
+                            if (response.ok) {
+                                openArticleDetailModal(article);
+                            } else {
+                                showMessage(
+                                    article.message || "लेख लोड करने में त्रुटि।",
+                                    true
+                                );
+                            }
+                        } catch (error) {
+                            console.error("Error fetching single article:", error);
+                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        }
                     }
-                  } catch (error) {
-                    console.error("Error fetching single article:", error);
-                    showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
-                  }
-                }
-              });
+                });
             });
 
-          articlesContainer
+        articlesContainer
             .querySelectorAll(".edit-article-btn")
             .forEach((button) => {
-              button.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent card click event
-                const loggedInUser = getCurrentUser();
-                if (loggedInUser && loggedInUser.role === "admin") {
-                  const articleId = e.currentTarget.dataset.id;
-                  // Fetch article data to populate the edit form
-                  fetch(`${API_BASE_URL}/articles/${articleId}`)
-                    .then(res => res.json())
-                    .then(article => {
-                      if (article) {
-                        document.getElementById("editArticleId").value = article._id;
-                        document.getElementById("editArticleTitle").value = article.title;
-                        document.getElementById("editArticleCategory").value = article.category;
-                        document.getElementById("editArticleContentEditable").innerHTML = article.content;
-                        openModal("editArticleModal");
-                      } else {
-                        showMessage("लेख नहीं मिला।", true);
-                      }
-                    })
-                    .catch(error => {
-                      console.error("Error fetching article for edit:", error);
-                      showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
-                    });
-                } else if (!loggedInUser) {
-                  openModal("authRequiredModal");
-                } else {
-                  openModal("adminAccessModal");
-                }
-              });
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    const loggedInUser = getCurrentUser();
+                    if (loggedInUser && loggedInUser.role === "admin") {
+                        const articleId = e.currentTarget.dataset.id;
+                        // Fetch article data to populate the edit form
+                        fetch(`${API_BASE_URL}/articles/${articleId}`)
+                            .then((res) => res.json())
+                            .then((article) => {
+                                if (article) {
+                                    document.getElementById("editArticleId").value =
+                                        article._id;
+                                    document.getElementById("editArticleTitle").value =
+                                        article.title;
+                                    document.getElementById("editArticleCategory").value =
+                                        article.category;
+                                    document.getElementById(
+                                        "editArticleContentEditable"
+                                    ).innerHTML = article.content;
+                                    openModal("editArticleModal");
+                                } else {
+                                    showMessage("लेख नहीं मिला।", true);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error fetching article for edit:", error);
+                                showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
+                            });
+                    } else if (!loggedInUser) {
+                        openModal("authRequiredModal");
+                    } else {
+                        openModal("adminAccessModal");
+                    }
+                });
             });
 
-          articlesContainer
+        articlesContainer
             .querySelectorAll(".delete-article-btn")
             .forEach((button) => {
-              button.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent card click event
-                const loggedInUser = getCurrentUser();
-                if (loggedInUser && loggedInUser.role === "admin") {
-                  articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
-                  openModal("confirmationModal");
-                } else if (!loggedInUser) {
-                  openModal("authRequiredModal");
-                } else {
-                  openModal("adminAccessModal");
-                }
-              });
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    const loggedInUser = getCurrentUser();
+                    if (loggedInUser && loggedInUser.role === "admin") {
+                        articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
+                        openModal("confirmationModal");
+                    } else if (!loggedInUser) {
+                        openModal("authRequiredModal");
+                    } else {
+                        openModal("adminAccessModal");
+                    }
+                });
             });
-        } catch (error) {
-          console.error("Error loading articles:", error);
-          showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
-          noArticlesMessage.classList.remove("hidden"); // Show message if API fails
-        } finally {
-          articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
-        }
+
+        articlesContainer.querySelectorAll('.toggle-save-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent card click event
+                const articleId = e.currentTarget.dataset.id;
+                const isCurrentlySaved = e.currentTarget.dataset.saved === 'true';
+                await toggleSaveArticle(articleId, isCurrentlySaved);
+            });
+        });
       }
+
 
       // Handle delete confirmation (Now interacts with backend)
       document
@@ -2026,7 +2198,7 @@
               }
             } catch (error) {
               console.error("Error deleting article:", error);
-              showMessage("नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
+              showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
             }
           } else {
             showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
@@ -2055,6 +2227,24 @@
         ).textContent = `प्रकाशित: ${timestamp}`;
         document.getElementById("articleDetailContent").innerHTML =
           article.content; // Use innerHTML for rich text
+
+        // Update save button in detail modal
+        const saveArticleBtn = document.getElementById('saveArticleBtn');
+        const loggedInUser = getCurrentUser();
+        if (loggedInUser) {
+            saveArticleBtn.style.display = 'block';
+            const isSaved = savedArticleIds.includes(article._id);
+            saveArticleBtn.textContent = isSaved ? "सेव किया गया" : "सेव करें";
+            saveArticleBtn.classList.toggle('bg-gray-500', isSaved);
+            saveArticleBtn.classList.toggle('hover:bg-gray-600', isSaved);
+            saveArticleBtn.classList.toggle('bg-blue-500', !isSaved);
+            saveArticleBtn.classList.toggle('hover:bg-blue-600', !isSaved);
+            saveArticleBtn.querySelector('i').className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
+            saveArticleBtn.onclick = () => toggleSaveArticle(article._id, isSaved);
+        } else {
+            saveArticleBtn.style.display = 'none'; // Hide save button if not logged in
+        }
+
         openModal("articleDetailModal");
       }
 
@@ -2069,7 +2259,7 @@
             backToTopBtn.classList.remove("opacity-0", "scale-0");
           } else {
             backToTopBtn.classList.add("opacity-0", "scale-0");
-            backToTopBtn.classList.remove("opacity-100", "scale-100");
+            backToTopBtn.classList.remove("opacity-100", "scale-0");
           }
         };
 
@@ -2106,6 +2296,144 @@
                 contactForm.reset(); // Clear form
             });
         }
+
+        // Load Saved Articles Function (NEW)
+        const savedArticlesContainer = document.getElementById("savedArticlesContainer");
+        const savedArticlesLoader = document.getElementById("savedArticlesLoader");
+        const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
+
+        async function loadSavedArticles() {
+            const loggedInUser = getCurrentUser();
+            if (!loggedInUser) {
+                openModal("authRequiredModal");
+                return;
+            }
+
+            savedArticlesLoader.style.display = "block";
+            noSavedArticlesMessage.classList.add("hidden");
+            savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
+
+            try {
+                // Fetch the full article details for the saved article IDs
+                const response = await fetch(
+                    `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${loggedInUser.token}`,
+                        },
+                    }
+                );
+
+                const savedArticlesResponse = await response.json(); // Renamed to avoid conflict
+
+                if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
+                    // Fetch full article objects based on the IDs returned
+                    const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
+                        const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                        return articleRes.json();
+                    });
+                    const fullSavedArticles = await Promise.all(fullArticlesPromises);
+
+                    // Filter out any articles that might have failed to fetch or are null
+                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
+
+                    if (validSavedArticles.length === 0) {
+                        noSavedArticlesMessage.classList.remove("hidden");
+                        noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
+                    } else {
+                        validSavedArticles.forEach((article) => {
+                            const timestamp = new Date(article.createdAt).toLocaleString(
+                                "hi-IN",
+                                {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                }
+                            );
+
+                            const savedArticleCard = `
+                                <div
+                                    class="content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
+                                    data-id="${article._id}"
+                                >
+                                    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
+                                    <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
+                                    <p class="text-gray-600 text-sm mb-2">लेखक: ${article.author}</p>
+                                    <p class="text-gray-500 text-xs mb-3">प्रकाशित: ${timestamp}</p>
+                                    <p class="text-gray-700 leading-relaxed truncate-2-lines hindi-text">
+                                        ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
+                                    </p>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <button class="text-emerald-600 hover:underline read-more-btn" data-id="${article._id}">
+                                            और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                                        </button>
+                                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
+                                            <i class="fas fa-trash-alt mr-1"></i>हटाएँ
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            savedArticlesContainer.insertAdjacentHTML("beforeend", savedArticleCard);
+                        });
+
+                        // Add event listeners for read-more and unsave buttons in the modal
+                        savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
+                            card.addEventListener('click', async (e) => {
+                                if (!e.target.closest('.toggle-save-btn')) {
+                                    const articleId = e.currentTarget.dataset.id;
+                                    try {
+                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                                        const article = await response.json();
+                                        if (response.ok) {
+                                            openArticleDetailModal(article);
+                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                        } else {
+                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
+                                        }
+                                    } catch (error) {
+                                        console.error("Error fetching single article for saved modal:", error);
+                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    }
+                                }
+                            });
+                        });
+
+                        savedArticlesContainer.querySelectorAll('.toggle-save-btn').forEach(button => {
+                            button.addEventListener('click', async (e) => {
+                                e.stopPropagation();
+                                const articleId = e.currentTarget.dataset.id;
+                                await toggleSaveArticle(articleId, true); // Always true for unsaving from this modal
+                            });
+                        });
+                    }
+                } else {
+                    noSavedArticlesMessage.classList.remove("hidden");
+                    noSavedArticlesMessage.textContent = "आपके पास कोई सेव किया गया लेख नहीं है।";
+                }
+            } catch (error) {
+                console.error("Error loading saved articles:", error);
+                noSavedArticlesMessage.classList.remove("hidden");
+                noSavedArticlesMessage.textContent = "सेव किए गए लेख लोड करने में त्रुटि हुई।";
+            } finally {
+                savedArticlesLoader.style.display = "none";
+            }
+        }
+
+        // Event listener for "सेव किए गए लेख" link
+        document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
+            e.preventDefault();
+            openModal("savedArticlesModal");
+            loadSavedArticles(); // Load articles when modal opens
+        });
+        document.getElementById("mobileSavedArticlesLink").addEventListener("click", (e) => {
+            e.preventDefault();
+            closeModal("mobileMenu"); // Close mobile menu after clicking
+            openModal("savedArticlesModal");
+            loadSavedArticles(); // Load articles when modal opens
+        });
+
 
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
         // loadArticlesByCategory is called inside updateAuthUI()
