@@ -1368,9 +1368,9 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('insertUnorderedList', 'articleContentEditable', this)"
+                onclick="formatDoc('insertOrderedList', 'articleContentEditable', this)"
               >
-                <i class="fas fa-list-ul"></i>
+                <i class="fas fa-list-ol"></i> <!-- Changed to ordered list icon -->
               </button>
               <!-- Image insert button removed -->
             </div>
@@ -1475,9 +1475,9 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList', 'editArticleContentEditable', this)"
+                onclick="formatDocEdit('insertOrderedList', 'editArticleContentEditable', this)"
               >
-                <i class="fas fa-list-ul"></i>
+                <i class="fas fa-list-ol"></i> <!-- Changed to ordered list icon -->
               </button>
               <!-- Image insert button removed -->
             </div>
@@ -1513,7 +1513,8 @@
         <h3
           id="articleDetailTitle"
           class="text-3xl font-bold text-gray-800 mb-4 hindi-text"
-        ></h3>
+        ></h3
+        >
         <p class="text-gray-600 text-sm mb-2">
           <span
             id="articleDetailCategory"
@@ -2055,7 +2056,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्h", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध", true);
           }
         });
 
