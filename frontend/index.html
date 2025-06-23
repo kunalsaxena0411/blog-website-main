@@ -1809,6 +1809,8 @@
               buttonElement.classList.add('text-blue-500');
             }
             console.log("Updated saved article IDs:", savedArticleIds);
+            // Added: Re-load and display articles to refresh all bookmark icons on the page
+            loadArticles();
           } else {
             throw new Error(data.message || "सेव करने की कार्रवाई विफल रही।");
           }
