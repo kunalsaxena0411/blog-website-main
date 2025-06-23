@@ -1785,13 +1785,19 @@
         console.log(`Attempting to toggle save for articleId: ${articleId}, userId: ${loggedInUser.userId}`); // Added logging
         const isCurrentlySaved = savedArticleIds.includes(articleId);
         const method = isCurrentlySaved ? "DELETE" : "POST";
-        // CORRECTED: Include userId in the API URL for POST and DELETE
-        const url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`;
+        
+        let url;
+        // Adjust URL based on method: POST expects articleId in body, DELETE expects it in URL
+        if (method === "POST") {
+            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`; // Backend expects POST to this URL
+        } else { // DELETE
+            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`; // Backend expects DELETE to this URL
+        }
 
         try {
           const response = await fetch(url, {
             method: method,
-            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+            headers: { Authorization: `Bearer ${loggedInUser.token}`, 'Content-Type': 'application/json' }, // Ensure Content-Type for POST
             // For POST, send articleId in body. For DELETE, it's in URL params.
             body: method === "POST" ? JSON.stringify({ articleId }) : undefined,
           });
@@ -2043,7 +2049,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्h", true);
           }
         });
 
@@ -2246,7 +2252,7 @@
           ).innerHTML;
 
           if (!title || !category || !content) {
-            showMessage("सभी फ़ੀल्ड भरें!", true);
+            showMessage("सभी फ़ील्ड भरें!", true);
             return;
           }
 
@@ -2302,7 +2308,7 @@
           ).innerHTML;
 
           if (!title || !category || !content) {
-            showMessage("सभी फ़ील्ड भरें!", true);
+            showMessage("सभी फ़ీल्ड भरें!", true);
             return;
           }
 
