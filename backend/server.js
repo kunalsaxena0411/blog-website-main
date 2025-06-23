@@ -183,7 +183,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
     // Send welcome email after successful signup
     const mailOptions = {
-      from: "nirzara.antiai@gmail.com", // Sender address
+      from: "gammakauaa.com@gmail.com", // Sender address
       to: newUser.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
@@ -241,7 +241,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // Send welcome email on login (if not sent before or as a reminder)
     const mailOptions = {
-      from: "nirzara.antiai@gmail.com", // Sender address
+      from: "gammakauaa.com@gmail.com", // Sender address
       to: user.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
