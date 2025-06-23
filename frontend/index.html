@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="hi">
   <head>
@@ -1747,7 +1745,8 @@
         }
 
         try {
-          const response = await fetch(`${API_BASE_URL}/users/saved-articles`, {
+          // CORRECTED: Include userId in the API URL
+          const response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
             method: "GET",
             headers: { Authorization: `Bearer ${loggedInUser.token}` },
           });
@@ -1784,12 +1783,15 @@
 
         const isCurrentlySaved = savedArticleIds.includes(articleId);
         const method = isCurrentlySaved ? "DELETE" : "POST";
-        const url = `${API_BASE_URL}/users/saved-articles/${articleId}`;
+        // CORRECTED: Include userId in the API URL for POST and DELETE
+        const url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`;
 
         try {
           const response = await fetch(url, {
             method: method,
             headers: { Authorization: `Bearer ${loggedInUser.token}` },
+            // For POST, send articleId in body. For DELETE, it's in URL params.
+            body: method === "POST" ? JSON.stringify({ articleId }) : undefined,
           });
 
           const data = await response.json();
@@ -2179,6 +2181,7 @@
         .getElementById("mobilePostContentLink")
         .addEventListener("click", (e) => {
           e.preventDefault();
+          closeModal("mobileMenu"); // Close mobile menu when opening modal
           const loggedInUser = getCurrentUser();
           if (!loggedInUser) {
             openModal("authRequiredModal");
@@ -2590,12 +2593,13 @@
           articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
           noArticlesMessage.classList.add("hidden");
         } else {
+          // Filter articles from the globally available allArticles
           const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
           if (filteredArticles.length === 0) {
               articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
               noArticlesMessage.classList.add("hidden");
           } else {
-              displayArticles(filteredArticles);
+              displayArticles(filteredArticles); // Display only saved articles
           }
         }
         // Scroll to articles section
@@ -2616,12 +2620,13 @@
           articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
           noArticlesMessage.classList.add("hidden");
         } else {
+          // Filter articles from the globally available allArticles
           const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
           if (filteredArticles.length === 0) {
               articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
               noArticlesMessage.classList.add("hidden");
           } else {
-              displayArticles(filteredArticles);
+              displayArticles(filteredArticles); // Display only saved articles
           }
         }
         // Scroll to articles section
