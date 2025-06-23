@@ -338,26 +338,19 @@
         gap: 8px;
         margin-bottom: 12px;
         flex-wrap: wrap;
-        background-color: #f3f4f6;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        border: 1px solid #e5e7eb;
-        /* Initially hidden, shown when expanded */
-        display: none;
       }
 
       .editor-btn {
-        background: #ffffff;
-        border: 1px solid #d1d5db;
+        background: #e2e8f0;
+        border: none;
         padding: 6px 12px;
         border-radius: 4px;
         cursor: pointer;
         transition: background 0.2s;
-        color: #374151;
       }
 
       .editor-btn:hover {
-        background: #e5e7eb;
+        background: #cbd5e1;
       }
 
       .editor-btn.active {
@@ -429,50 +422,6 @@
         transform: scaleX(1);
         transform-origin: bottom left;
       }
-
-      /* Styles for expandable content */
-      .article-summary {
-        max-height: 100px; /* Adjust as needed */
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 1rem;
-      }
-
-      .article-summary::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 30px; /* Fade height */
-        background: linear-gradient(to top, rgba(255, 255, 255, 0.75), transparent);
-        pointer-events: none; /* Allows clicks on content below */
-      }
-
-      .article-full-content {
-        display: none; /* Hidden by default */
-        margin-bottom: 1rem;
-      }
-
-      .article-full-content[contenteditable="true"] {
-        border: 1px dashed #ccc;
-        padding: 10px;
-        border-radius: 0.5rem;
-      }
-
-      .read-more-button, .read-less-button {
-        display: block;
-        margin-top: 1rem;
-        text-align: center;
-        color: #3b82f6;
-        font-weight: 600;
-        cursor: pointer;
-        transition: color 0.2s ease;
-      }
-
-      .read-more-button:hover, .read-less-button:hover {
-        color: #10b981;
-      }
     </style>
   </head>
   <body class="text-gray-800">
@@ -489,7 +438,7 @@
           <!-- Logo with link to homepage -->
           <div class="logo-container">
             <img
-              src="https://placehold.co/50x50/10B981/FFFFFF?text=GA"
+              src="20211011_204121_0000-1.png"
               alt="Gamakauaa Logo"
               class="logo-img"
             />
@@ -685,8 +634,8 @@
         >
           हिंदी साहित्य एक विशाल और समृद्ध परंपरा है जो सदियों से विकसित हुई है।
           यह भाषा की सुंदरता और उसकी अभिव्यंजक शक्ति का एक जीवंत प्रमाण है। इस
-          अनुभाग में, हम हिंदी साहित्य के विभिन्न कालों, प्रमुख लेखकों और उनकी
-          कालजयी रचनाओं पर विस्तृत जानकारी प्रदान करते हैं।
+          अनुभाग में, हम हिंदी साहित्य के विभिन्न कालों, प्रमुख लेखकों, उनकी
+          रचनाओं और साहित्यिक आंदोलनों पर विस्तृत जानकारी प्रदान करते हैं।
         </p>
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
@@ -1196,7 +1145,7 @@
       </div>
     </div>
 
-    <!-- Article Detail Modal (This modal is still present but now only for display purposes, article expansion happens in-card) -->
+    <!-- Article Detail Modal -->
     <div
       id="articleDetailModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1427,145 +1376,16 @@
     </div>
 
 
-    <script type="module">
-      // Firebase SDK imports
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-      import {
-        getAuth,
-        signInWithEmailAndPassword,
-        createUserWithEmailAndPassword,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-        getDocs,
-        doc,
-        getDoc,
-        updateDoc,
-        deleteDoc,
-        query,
-        where,
-        orderBy,
-        limit,
-        arrayUnion,
-        arrayRemove,
-        serverTimestamp
-      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+      // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
+      const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
+      const ARTICLE_CATEGORY = "hindi-literature"; // This page's category
 
-      // Global variables (provided by the Canvas environment)
-      const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-      const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-
-      // Dummy articles data (replace with actual backend fetch, but includes full content now)
-      const DUMMY_ARTICLES = [
-        {
-          _id: "hindi-lit-1",
-          category: "hindi-literature",
-          title: "हिंदी साहित्य का इतिहास",
-          summary: "हिंदी साहित्य के विभिन्न कालों और उनकी प्रमुख विशेषताओं का संक्षिप्त परिचय। यह भारतीय साहित्य की एक समृद्ध और विविध परंपरा है।",
-          content: "<p>हिंदी साहित्य का इतिहास आदिकाल से लेकर आधुनिक काल तक विस्तृत है। आदिकाल में वीरगाथाएँ और भक्ति काव्य प्रमुख थे। भक्तिकाल को हिंदी साहित्य का स्वर्ण युग माना जाता है, जिसमें कबीर, सूर, तुलसी, और मीरा जैसे महान कवियों ने अपनी रचनाओं से समाज को नई दिशा दी। रीतिकाल में शृंगार रस की प्रधानता रही, जबकि आधुनिक काल में गद्य साहित्य, उपन्यास, कहानियाँ, नाटक, और निबंध का विकास हुआ। भारतेन्दु हरिश्चंद्र, प्रेमचंद, जयशंकर प्रसाद, महादेवी वर्मा, और सूर्यकांत त्रिपाठी 'निराला' जैसे साहित्यकारों ने हिंदी साहित्य को नई ऊंचाइयों पर पहुँचाया। वर्तमान में भी हिंदी साहित्य विभिन्न विधाओं में निरंतर विकसित हो रहा है, जिसमें समकालीन सामाजिक, राजनीतिक और सांस्कृतिक मुद्दों को उठाया जा रहा है।</p><p>भक्तिकाल के कवियों ने अपनी रचनाओं के माध्यम से सामाजिक समरसता और धार्मिक सद्भाव का संदेश दिया। कबीर की 'साखी' और 'सबद' में निर्गुण भक्ति का दर्शन मिलता है, वहीं सूरदास के 'सूरसागर' में कृष्ण भक्ति का अनूठा चित्रण है। गोस्वामी तुलसीदास का 'रामचरितमानस' भारतीय संस्कृति का एक अभिन्न अंग बन गया है। मीराबाई के पद कृष्ण प्रेम में डूबे हुए हैं।</p>",
-          author: "आदित्य शर्मा",
-          createdAt: new Date().toISOString(),
-          imageUrl: "https://placehold.co/600x400/3B82F6/FFFFFF?text=Hindi+Lit+1",
-        },
-        {
-          _id: "hindi-lit-2",
-          category: "hindi-literature",
-          title: "आधुनिक हिंदी कविता",
-          summary: "छायावाद, प्रगतिवाद, प्रयोगवाद और नई कविता के प्रमुख कवियों और उनकी शैलियों का अन्वेषण।",
-          content: "<p>आधुनिक हिंदी कविता में कई प्रमुख आंदोलन हुए हैं। छायावाद (1918-1936) में प्रकृति, प्रेम और व्यक्तिगत भावनाओं को महत्व दिया गया, जिसमें जयशंकर प्रसाद, सूर्यकांत त्रिपाठी 'निराला', सुमित्रानंदन पंत और महादेवी वर्मा प्रमुख कवि थे। प्रगतिवाद (1936-1943) ने सामाजिक यथार्थवाद और मजदूर वर्ग के संघर्षों पर ध्यान केंद्रित किया, जिसमें नागार्जुन, मुक्तिबोध और केदारनाथ अग्रवाल जैसे कवि शामिल थे। प्रयोगवाद (1943-1950) ने कविता में नए प्रयोगों और शैलियों को बढ़ावा दिया, जिसके अग्रणी अज्ञेय थे। नई कविता (1950 के बाद) ने समकालीन जीवन की जटिलताओं और अस्तित्ववादी विचारों को व्यक्त किया, जिसमें धर्मवीर भारती और जगदीश गुप्त जैसे कवि शामिल थे।</p><p>छायावादी कवियों ने अपनी कविताओं में कल्पना और सौंदर्य का अद्भुत मिश्रण प्रस्तुत किया। प्रसाद की 'आँसू' और 'लहर' में प्रेम और विरह की मार्मिक अभिव्यक्ति मिलती है। पंत की 'पल्लव' और 'गुंजन' प्रकृति के अनुपम सौंदर्य का वर्णन करती हैं। निराला की 'जूही की कली' और 'सरोज स्मृति' उनकी विद्रोही भावना और नवीनता को दर्शाती हैं। महादेवी वर्मा की 'नीहार' और 'रश्मि' में वेदना और रहस्यवाद का गहरा अनुभव होता है।</p>",
-          author: "अंजलि कुमारी",
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-          imageUrl: "https://placehold.co/600x400/10B981/FFFFFF?text=Hindi+Lit+2",
-        },
-        {
-          _id: "hindi-lit-3",
-          category: "hindi-literature",
-          title: "प्रेमचंद: कहानी सम्राट",
-          summary: "मुंशी प्रेमचंद के जीवन, लेखन शैली और उनके प्रमुख उपन्यासों और कहानियों का विश्लेषण।",
-          content: "<p>मुंशी प्रेमचंद (1880-1936) को हिंदी साहित्य का कहानी सम्राट कहा जाता है। उनका वास्तविक नाम धनपत राय श्रीवास्तव था। उन्होंने अपने लेखन में ग्रामीण जीवन, किसानों की समस्याएँ, सामाजिक कुरीतियाँ, और राष्ट्रीय आंदोलन को प्रमुखता दी। उनकी कहानियाँ और उपन्यास यथार्थवादी चित्रण के लिए जाने जाते हैं। 'गोदान', 'निर्मला', 'गबन', और 'कर्मभूमि' उनके प्रमुख उपन्यास हैं, जबकि 'कफन', 'पूस की रात', 'ईदगाह', और 'बड़े घर की बेटी' उनकी प्रसिद्ध कहानियाँ हैं। प्रेमचंद ने अपनी सरल और प्रभावी भाषा शैली से हिंदी साहित्य को एक नई दिशा दी।</p><p>प्रेमचंद के 'गोदान' उपन्यास में भारतीय किसान के जीवन की त्रासदी का मार्मिक चित्रण है। 'निर्मला' में दहेज प्रथा और अनमेल विवाह की समस्या को उठाया गया है। 'गबन' में मध्यवर्गीय समाज की महत्वाकांक्षाओं और नैतिक पतन को दर्शाया गया है। उनकी कहानियाँ जैसे 'कफन' और 'पूस की रात' समाज के सबसे निचले तबके के लोगों की लाचारी और संघर्ष को उजागर करती हैं। 'ईदगाह' एक बच्चे के निस्वार्थ प्रेम और त्याग की कहानी है, जो पाठकों को भावुक कर देती है।</p>",
-          author: "राहुल गुप्ता",
-          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-          imageUrl: "https://placehold.co/600x400/F97316/FFFFFF?text=Premchand",
-        },
-        {
-          _id: "hindi-lit-4",
-          category: "hindi-literature",
-          title: "भक्तिकाल: स्वर्ण युग",
-          summary: "भक्तिकाल की प्रमुख धाराएँ - निर्गुण और सगुण भक्ति - और उनके महत्वपूर्ण कवि।",
-          content: "<p>हिंदी साहित्य में भक्तिकाल (लगभग 1350-1650 ईस्वी) को 'स्वर्ण युग' कहा जाता है। यह काल सामाजिक और धार्मिक उथल-पुथल का समय था, जिसने भक्ति आंदोलन को जन्म दिया। भक्तिकाल की दो प्रमुख धाराएँ थीं: निर्गुण भक्ति (ईश्वर का निराकार स्वरूप) और सगुण भक्ति (ईश्वर का साकार स्वरूप)।</p><p>निर्गुण भक्ति धारा को दो शाखाओं में बांटा गया: ज्ञानाश्रयी (संत काव्य) और प्रेमाश्रयी (सूफी काव्य)। ज्ञानाश्रयी शाखा के प्रमुख कवि कबीरदास थे, जिन्होंने अपनी 'साखी', 'सबद' और 'रमैनी' के माध्यम से जाति-पाति का विरोध किया और निर्गुण ब्रह्म की उपासना का संदेश दिया। उनकी भाषा 'सधुक्कड़ी' कहलाती थी, जिसमें विभिन्न बोलियों का मिश्रण था। प्रेमाश्रयी शाखा के प्रमुख कवि मलिक मुहम्मद जायसी थे, जिनकी 'पद्मावत' एक प्रसिद्ध प्रेमगाथा है, जिसमें लौकिक प्रेम के माध्यम से अलौकिक प्रेम की अभिव्यक्ति की गई है।</p><p>सगुण भक्ति धारा भी दो शाखाओं में विभाजित थी: राम भक्ति शाखा और कृष्ण भक्ति शाखा। राम भक्ति शाखा के सर्वोच्च कवि गोस्वामी तुलसीदास थे, जिनका 'रामचरितमानस' भारतीय संस्कृति और धर्म का एक अमूल्य ग्रंथ है। उन्होंने लोक मंगल की भावना से राम के आदर्श चरित्र का चित्रण किया। कृष्ण भक्ति शाखा के प्रमुख कवि सूरदास थे, जिन्होंने 'सूरसागर' में भगवान कृष्ण की बाल लीलाओं और राधा-कृष्ण के प्रेम का अत्यंत मनोहारी चित्रण किया। मीराबाई और रसखान भी कृष्ण भक्ति के प्रमुख कवि थे, जिनकी रचनाएँ आज भी भक्तों द्वारा गाई जाती हैं।</p>",
-          author: "पूजा देवी",
-          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-          imageUrl: "https://placehold.co/600x400/9CA3AF/FFFFFF?text=Bhakti+Kal",
-        },
-      ];
-
-
-      // DOM Elements
-      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
-      const loginBtn = document.getElementById("loginBtn");
-      const signupBtn = document.getElementById("signupBtn");
-      const logoutBtn = document.getElementById("logoutBtn");
-      const authModal = document.getElementById("loginModal"); // Renamed loginModal to authModal for consistency with user's original code for modal handling
-      const authForm = document.getElementById("loginForm"); // Renamed loginForm to authForm
-      const authEmail = document.getElementById("loginEmail"); // Renamed loginEmail to authEmail
-      const authPassword = document.getElementById("loginPassword"); // Renamed loginPassword to authPassword
-      const loginSubmitBtn = document.getElementById("loginForm").querySelector('button[type="submit"]'); // Get the login button
-      const signupToggleBtn = document.getElementById("signupBtn"); // Reusing signupBtn for the toggle functionality
-      const userProfileDropdown = document.getElementById("userProfileDropdown");
-      const userEmailDisplay = document.getElementById("userEmailDisplay");
-      const postContentLink = document.getElementById("postContentLink");
-      const postContentModal = document.getElementById("postContentModal");
-      const postContentForm = document.getElementById("newArticleForm"); // Renamed
-      const postTitle = document.getElementById("articleTitle"); // Renamed
-      const postCategory = document.getElementById("articleCategory"); // Renamed
-      const postContent = document.getElementById("articleContentEditable"); // Renamed
-      const articlesSection = document.getElementById("articles-section");
-      const articleDetailModal = document.getElementById("articleDetailModal");
-      const articleDetailTitle = document.getElementById("articleDetailTitle");
-      const articleDetailCategory = document.getElementById("articleDetailCategory");
-      const articleDetailAuthor = document.getElementById("articleDetailAuthor");
-      const articleDetailTimestamp = document.getElementById("articleDetailTimestamp");
-      const articleDetailContent = document.getElementById("articleDetailContent");
-      const saveArticleBtn = document.getElementById("saveArticleBtn");
-      const infoMessage = document.getElementById("infoMessage");
-      const infoMessageText = document.getElementById("infoMessageText");
-      const authRequiredModal = document.getElementById("authRequiredModal");
-      const savedArticlesLink = document.getElementById("savedArticlesLink");
-      const savedArticlesModal = document.getElementById("savedArticlesModal");
-      const savedArticlesContainer = document.getElementById("savedArticlesContainer");
-      const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
-      const savedArticlesLoader = document.getElementById("savedArticlesLoader");
-      const mobileLoginBtn = document.getElementById("mobileLoginBtn");
-      const mobileSignupBtn = document.getElementById("mobileSignupBtn");
-      const mobilePostContentLink = document.getElementById("mobilePostContentLink");
-      const mobileUserProfile = document.getElementById("mobileUserProfile");
-      const mobileUserEmailDisplay = document.getElementById("mobileUserEmailDisplay");
-      const mobileSavedArticlesLink = document.getElementById("mobileSavedArticlesLink");
-      const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
-      const mainHeader = document.getElementById("mainHeader");
-      const articlesLoader = document.getElementById("articlesLoader");
-      const articlesContainer = document.getElementById("articlesContainer");
-      const articleToDeleteId = null; // This variable isn't used globally in this simplified version.
-
-
-      let currentAuthUser = null; // Stores the Firebase User object
-      let isSignUpMode = false; // To toggle between login and signup in the auth modal
+      // Global variables to store articles and saved article IDs
       let allArticles = []; // Stores all fetched articles for this category
       let savedArticleIds = []; // Stores IDs of articles saved by the user
 
-
-      // Helper to show messages
+      // Function to show messages (success or error)
       function showMessage(message, isError = false) {
         const infoMessage = document.getElementById("infoMessage");
         const infoMessageText = document.getElementById("infoMessageText");
@@ -1588,14 +1408,19 @@
 
       // Function to get current user data from localStorage
       function getCurrentUser() {
-        // This function is being updated to reflect Firebase auth state.
-        // For actual user data, `currentAuthUser` (set by onAuthStateChanged) should be used.
-        // LocalStorage is generally not used for auth tokens with Firebase SDK directly.
-        return currentAuthUser; // Return the Firebase user object directly
+        const token = localStorage.getItem("token");
+        const userEmail = localStorage.getItem("userEmail");
+        const userRole = localStorage.getItem("userRole");
+        const userId = localStorage.getItem("userId"); // Retrieve userId
+
+        if (token && userEmail && userRole && userId) {
+          return { token, email: userEmail, role: userRole, userId };
+        }
+        return null;
       }
 
       /**
-       * Fetches saved articles for the logged-in user from Firestore.
+       * Fetches saved articles for the logged-in user.
        */
       async function fetchSavedArticleIds() {
         const loggedInUser = getCurrentUser();
@@ -1605,77 +1430,83 @@
         }
 
         try {
-          // Firestore path for user's saved articles: artifacts/{appId}/users/{userId}/savedArticles/userArticles
-          const userDocRef = doc(db, `artifacts/${appId}/users/${loggedInUser.uid}/savedArticles`, "userArticles");
-          const docSnap = await getDoc(userDocRef);
+          const response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
 
-          if (docSnap.exists()) {
-            savedArticleIds = docSnap.data().articleIds || [];
+          const data = await response.json();
+
+          if (response.ok) {
+            savedArticleIds = data.savedArticles || [];
             console.log("Fetched saved article IDs:", savedArticleIds);
           } else {
-            console.log("No saved articles document found for user, creating one.");
-            // Create the document if it doesn't exist
-            await setDoc(userDocRef, { articleIds: [] });
+            console.error("Failed to fetch saved articles:", data.message);
             savedArticleIds = [];
           }
         } catch (error) {
-          console.error("Error fetching or creating saved articles document:", error);
+          console.error("Error fetching saved articles:", error);
           savedArticleIds = [];
         }
       }
 
 
       /**
-       * Toggles saving/unsaving an article for the current user in Firestore.
+       * Toggles saving/unsaving an article for the current user.
        * @param {string} articleId - The ID of the article to save/unsave.
        * @param {boolean} isCurrentlySaved - True if the article is currently saved, false otherwise.
-       * @param {HTMLElement} buttonElement - The button element that triggered the action.
        */
-      async function toggleSaveArticle(articleId, isCurrentlySaved, buttonElement) {
+      async function toggleSaveArticle(articleId, isCurrentlySaved) {
         const loggedInUser = getCurrentUser();
         if (!loggedInUser) {
-            closeModal("articleDetailModal"); // Close detail modal if open before showing auth modal
             openModal("authRequiredModal");
             return;
         }
 
-        buttonElement.disabled = true; // Disable button to prevent multiple clicks
-
         try {
-            const userId = loggedInUser.uid;
-            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedArticles`, "userArticles");
-
+            let response;
             if (isCurrentlySaved) {
                 // Unsave the article
-                await updateDoc(userDocRef, {
-                    articleIds: arrayRemove(articleId)
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    }
                 });
-                showMessage("लेख सेव किए गए लेखों से हटा दिया गया!");
             } else {
                 // Save the article
-                await updateDoc(userDocRef, {
-                    articleIds: arrayUnion(articleId)
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    },
+                    body: JSON.stringify({ articleId })
                 });
-                showMessage("लेख सफलतापूर्वक सेव किया गया!");
             }
-            await fetchSavedArticleIds(); // Re-fetch updated saved IDs
-            loadArticlesByCategory(); // Re-render all articles to update save buttons
-            if (document.getElementById('savedArticlesModal').classList.contains('open')) {
-                loadSavedArticles(); // Re-render saved articles modal if open
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showMessage(data.message || (isCurrentlySaved ? "लेख सेव किए गए लेखों से हटा दिया गया!" : "लेख सफलतापूर्वक सेव किया गया!"));
+                await fetchSavedArticleIds(); // Update global saved articles list
+                // Re-render relevant parts of the UI to reflect changes
+                displayArticles(allArticles); // Update main article list
+                if (document.getElementById('savedArticlesModal').classList.contains('open')) {
+                    loadSavedArticles(); // Update saved articles modal if open
+                }
+            } else {
+                showMessage(data.message || "लेख सेव/अनसेव करने में त्रुटि।", true);
             }
         } catch (error) {
             console.error("Error toggling save article:", error);
-            showMessage("लेख सेव/अनसेव करने में त्रुटि।", true);
-        } finally {
-            buttonElement.disabled = false; // Re-enable button
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       }
 
-      // Function to update UI based on authentication status and user role (simplified admin check)
+      // Function to update UI based on login status
       async function updateAuthUI() { // Made async to await fetchSavedArticleIds
-        // Use Firebase's `currentAuthUser` directly
-        const user = currentAuthUser;
-
+        const loggedInUser = getCurrentUser();
         const loginBtn = document.getElementById("loginBtn");
         const signupBtn = document.getElementById("signupBtn");
         const userProfileDropdown = document.getElementById(
@@ -1693,21 +1524,19 @@
           "mobilePostContentLink"
         );
 
-        if (user) {
+        if (loggedInUser) {
           // User is signed in
           loginBtn.classList.add("hidden");
           signupBtn.classList.add("hidden");
           userProfileDropdown.classList.remove("hidden");
-          userEmailDisplay.textContent = user.email || "अतिथि"; // Display email or "Guest"
+          userEmailDisplay.textContent = loggedInUser.email;
 
           mobileLoginBtn.classList.add("hidden");
           mobileSignupBtn.classList.add("hidden");
           mobileUserProfile.classList.remove("hidden");
-          mobileUserEmailDisplay.textContent = user.email || "अतिथि";
+          mobileUserEmailDisplay.textContent = loggedInUser.email;
 
-          // Admin check: For demo, let's say 'admin@example.com' is admin
-          const isAdmin = user.email === "admin@example.com";
-          if (isAdmin) {
+          if (loggedInUser.role === "admin") {
             postContentLink.classList.remove("hidden");
             mobilePostContentLink.classList.remove("hidden");
           } else {
@@ -1773,13 +1602,13 @@
         .addEventListener("click", () => openModal("loginModal"));
       document
         .getElementById("mobileLoginBtn")
-        .addEventListener("click", () => {closeModal("mobileMenu"); openModal("loginModal")});
+        .addEventListener("click", () => openModal("loginModal"));
       document
         .getElementById("signupBtn")
         .addEventListener("click", () => openModal("signupModal"));
       document
         .getElementById("mobileSignupBtn")
-        .addEventListener("click", () => {closeModal("mobileMenu"); openModal("signupModal")});
+        .addEventListener("click", () => openModal("signupModal"));
 
       // Auth Required Modal buttons
       document.getElementById("authLoginBtn").addEventListener("click", () => {
@@ -1814,7 +1643,7 @@
           openModal("forgotPasswordModal");
         });
 
-      // Forgot Password Form Submission (No change, uses API_BASE_URL)
+      // Forgot Password Form Submission
       document
         .getElementById("forgotPasswordForm")
         .addEventListener("submit", async (e) => {
@@ -1822,19 +1651,31 @@
           const email = document.getElementById("forgotEmail").value;
 
           try {
-            // Placeholder for API call
-            console.log(`Sending OTP to: ${email}`);
-            showMessage("OTP आपके ईमेल पर भेजा गया है। (सिम्युलेटेड)");
-            closeModal("forgotPasswordModal");
-            document.getElementById("resetEmail").value = email; // Pre-fill email for reset modal
-            openModal("resetPasswordModal");
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "OTP आपके ईमेल पर भेजा गया है।");
+              closeModal("forgotPasswordModal");
+              document.getElementById("resetEmail").value = email; // Pre-fill email for reset modal
+              openModal("resetPasswordModal");
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट अनुरोध विफल रहा।", true);
+            }
           } catch (error) {
             console.error("Forgot password error:", error);
             showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
-      // Reset Password Form Submission (No change, uses API_BASE_URL)
+      // Reset Password Form Submission
       document
         .getElementById("resetPasswordForm")
         .addEventListener("submit", async (e) => {
@@ -1844,81 +1685,123 @@
           const newPassword = document.getElementById("newPassword").value;
 
           try {
-            // Placeholder for API call
-            console.log(`Resetting password for ${email} with OTP ${otp} and new password.`);
-            showMessage("पासवर्ड सफलतापूर्वक रीसेट किया गया। अब लॉग इन करें। (सिम्युलेटेड)");
-            closeModal("resetPasswordModal");
-            openModal("loginModal"); // Prompt user to login with new password
+            const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, otp, newPassword }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "पासवर्ड सफलतापूर्वक रीसेट किया गया। अब लॉग इन करें।");
+              closeModal("resetPasswordModal");
+              openModal("loginModal"); // Prompt user to login with new password
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट विफल रहा।", true);
+            }
           } catch (error) {
             console.error("Reset password error:", error);
             showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
-      // Login Form Submission (Now uses Firebase Auth)
+      // Login Form Submission (Client-side now interacts with backend)
       document.getElementById("loginForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
 
         try {
-          await signInWithEmailAndPassword(auth, email, password);
-          showMessage("सफलतापूर्वक लॉग इन किया गया!");
-          closeModal("loginModal");
-          // updateAuthUI is called by onAuthStateChanged listener
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userEmail", data.user.email);
+            localStorage.setItem("userRole", data.user.role);
+            localStorage.setItem("userId", data.user.id); // Store userId from backend
+            showMessage("सफलतापूर्वक लॉग इन किया गया!");
+            closeModal("loginModal");
+            updateAuthUI();
+          } else {
+            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+          }
         } catch (error) {
           console.error("Login error:", error);
-          showMessage(`लॉगिन विफल: ${error.message}`, true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       });
 
-      // Signup Form Submission (Now uses Firebase Auth)
+      // Signup Form Submission (Client-side now interacts with backend)
       document.getElementById("signupForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("signupEmail").value;
         const password = document.getElementById("signupPassword").value;
 
         try {
-          await createUserWithEmailAndPassword(auth, email, password);
-          showMessage("सफलतापूर्वक साइन अप किया गया!");
-          closeModal("signupModal");
-          // Optionally clear signup form, then open login modal
-          document.getElementById("signupEmail").value = "";
-          document.getElementById("signupPassword").value = "";
-          openModal("loginModal"); // Prompt for login after signup
-          // updateAuthUI is called by onAuthStateChanged listener
+          const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
+            closeModal("signupModal");
+            // Optionally clear signup form, then open login modal
+            document.getElementById("signupEmail").value = "";
+            document.getElementById("signupPassword").value = "";
+            openModal("loginModal"); // Prompt for login after signup
+          } else {
+            showMessage(data.message || "साइन अप विफल रहा।", true); // Display error from server
+          }
         } catch (error) {
           console.error("Signup error:", error);
-          showMessage(`साइन अप विफल: ${error.message}`, true);
-        }
-      });
-
-      // Logout (Uses Firebase Auth)
-      function handleLogout() {
-        signOut(auth).then(() => {
-          showMessage("सफलतापूर्वक लॉग आउट किया गया!");
-          // updateAuthUI is called by onAuthStateChanged listener
-        }).catch((error) => {
-          console.error("Logout error:", error);
-          showMessage(`लॉग आउट विफल: ${error.message}`, true);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
         });
+
+      // Logout
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("userId"); // Remove userId on logout
+        showMessage("सफलतापूर्वक लॉग आउट किया गया!");
+        updateAuthUI();
       }
       document
         .getElementById("logoutBtn")
         .addEventListener("click", handleLogout);
       document
         .getElementById("mobileLogoutBtn")
-        .addEventListener("click", () => { closeModal("mobileMenu"); handleLogout(); });
+        .addEventListener("click", handleLogout);
 
-
-      // Rich Text Editor functionality for new article (kept for consistency)
+      // Rich Text Editor functionality for new article (kept for consistency, though this page doesn't post directly)
       function formatDoc(command) {
+        // This function is for the 'newArticleForm', which is not directly used on this page for posting.
+        // It's included to make the rich text editor logic consistent if this modal is reused or copied.
         const editableDiv = document.getElementById("articleContentEditable");
         if (editableDiv) {
             editableDiv.focus();
             document.execCommand(command, false, null);
         }
       }
+
 
       // Rich Text Editor functionality for edit article
       function formatDocEdit(command) {
@@ -1932,48 +1815,44 @@
         .addEventListener("click", (e) => {
           e.preventDefault();
           const loggedInUser = getCurrentUser();
-          const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
           if (!loggedInUser) {
             openModal("authRequiredModal");
-          } else if (!isAdmin) {
+          } else if (loggedInUser.role !== "admin") {
             openModal("adminAccessModal");
           } else {
+            openModal("postContentModal");
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
-            document.getElementById("articleCategory").value = "hindi-literature"; // Pre-select category for this page
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for this page
             document.getElementById("articleContentEditable").innerHTML = "";
-            openModal("postContentModal");
           }
         });
       document
         .getElementById("mobilePostContentLink")
         .addEventListener("click", (e) => {
           e.preventDefault();
-          closeModal("mobileMenu");
           const loggedInUser = getCurrentUser();
-          const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
           if (!loggedInUser) {
             openModal("authRequiredModal");
-          } else if (!isAdmin) {
+          } else if (loggedInUser.role !== "admin") {
             openModal("adminAccessModal");
           } else {
+            openModal("postContentModal");
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
-            document.getElementById("articleCategory").value = "hindi-literature"; // Pre-select category for this page
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for this page
             document.getElementById("articleContentEditable").innerHTML = "";
-            openModal("postContentModal");
           }
         });
 
-      // New Article Form Submission (Now uses Firestore)
+      // New Article Form Submission (Now interacts with backend)
       document
         .getElementById("newArticleForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
 
           const loggedInUser = getCurrentUser();
-          const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
-          if (!loggedInUser || !isAdmin) {
+          if (!loggedInUser || loggedInUser.role !== "admin") {
             showMessage(
               "लेख पोस्ट करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।",
               true
@@ -1988,7 +1867,6 @@
           const content = document.getElementById(
             "articleContentEditable"
           ).innerHTML;
-          const authorEmail = loggedInUser.email; // Use logged-in user's email as author
 
           if (!title || !category || !content) {
             showMessage("सभी फ़ील्ड भरें!", true);
@@ -1996,33 +1874,41 @@
           }
 
           try {
-            await addDoc(collection(db, `artifacts/${appId}/public/data/articles`), {
-              title,
-              category,
-              content,
-              author: authorEmail,
-              userId: loggedInUser.uid, // Store Firebase UID
-              createdAt: serverTimestamp(),
-              lastUpdated: serverTimestamp()
+            const response = await fetch(`${API_BASE_URL}/articles`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loggedInUser.token}`,
+              },
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // Send author as logged-in user's email
             });
-            showMessage("लेख सफलतापूर्वक पोस्ट किया गया!");
-            closeModal("postContentModal");
-            loadArticlesByCategory(); // Re-render articles for current category
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "लेख सफलतापूर्वक पोस्ट किया गया!");
+              closeModal("postContentModal");
+              // Check if the posted article belongs to this category before reloading
+              if (category === ARTICLE_CATEGORY) {
+                loadArticlesByCategory(); // Re-render articles for current category
+              }
+            } else {
+              showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
+            }
           } catch (error) {
-            console.error("Error posting article to Firestore:", error);
-            showMessage(`लेख पोस्ट करने में त्रुटि: ${error.message}`, true);
+            console.error("Error posting article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
-      // Edit Article Form Submission (Now uses Firestore)
+      // Edit Article Form Submission (Now interacts with backend)
       document
         .getElementById("editArticleForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
 
           const loggedInUser = getCurrentUser();
-          const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
-          if (!loggedInUser || !isAdmin) {
+          if (!loggedInUser || loggedInUser.role !== "admin") {
             showMessage(
               "लेख संपादित करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।",
               true
@@ -2045,27 +1931,35 @@
           }
 
           try {
-            const articleDocRef = doc(db, `artifacts/${appId}/public/data/articles`, articleId);
-            await updateDoc(articleDocRef, {
-              title,
-              category,
-              content,
-              lastUpdated: serverTimestamp()
+            const response = await fetch(`${API_BASE_URL}/articles/${articleId}`, {
+              method: "PUT", // Or PATCH
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loggedInUser.token}`,
+              },
+              body: JSON.stringify({ title, category, content }),
             });
-            showMessage("लेख सफलतापूर्वक अपडेट किया गया!");
-            closeModal("editArticleModal");
-            loadArticlesByCategory(); // Re-render articles
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "लेख सफलतापूर्वक अपडेट किया गया!");
+              closeModal("editArticleModal");
+              loadArticlesByCategory(); // Re-render articles
+            } else {
+              showMessage(data.message || "लेख अद्यतन करने में त्रुटि।", true);
+            }
           } catch (error) {
-            console.error("Error updating article in Firestore:", error);
-            showMessage(`लेख अद्यतन करने में त्रुटि: ${error.message}`, true);
+            console.error("Error updating article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
-      // Load and Display Articles from DUMMY_ARTICLES (simulating backend fetch for category "hindi-literature")
+      // Load and Display Articles from Backend for this specific category
       const articlesContainer = document.getElementById("articlesContainer");
       const articlesLoader = document.getElementById("articlesLoader");
       const noArticlesMessage = document.getElementById("noArticlesMessage");
-      let currentArticleToDeleteId = null; // Renamed to avoid conflict
+      let articleToDeleteId = null; // To store the ID of the article to be deleted
 
       async function loadArticlesByCategory() {
         articlesLoader.style.display = "block"; // Show loader
@@ -2073,48 +1967,18 @@
         articlesContainer.innerHTML = ""; // Clear previous articles
 
         try {
-          // Simulate fetching from Firestore filtered by category
-          const articlesRef = collection(db, `artifacts/${appId}/public/data/articles`);
-          const q = query(articlesRef, where("category", "==", "hindi-literature"), orderBy("createdAt", "desc"));
-          const querySnapshot = await getDocs(q);
-          
-          let fetchedArticles = [];
-          querySnapshot.forEach((doc) => {
-            fetchedArticles.push({ id: doc.id, ...doc.data() });
-          });
-
-          // If no articles fetched from Firestore, use dummy data as fallback for demonstration
-          if (fetchedArticles.length === 0) {
-            fetchedArticles = DUMMY_ARTICLES.filter(article => article.category === "hindi-literature");
-            // Also attempt to add dummy data to Firestore if it's empty
-            if (querySnapshot.empty && DUMMY_ARTICLES.length > 0) {
-                console.log("Firestore is empty for this category, adding dummy data.");
-                for (const dummyArticle of DUMMY_ARTICLES) {
-                    // Check if article already exists using a query by title or some unique field
-                    const existingArticleQuery = query(articlesRef, where("title", "==", dummyArticle.title));
-                    const existingSnap = await getDocs(existingArticleQuery);
-                    if (existingSnap.empty) {
-                        await addDoc(articlesRef, {
-                            ...dummyArticle,
-                            createdAt: serverTimestamp(),
-                            lastUpdated: serverTimestamp(),
-                            // Ensure imageUrl is handled
-                            imageUrl: dummyArticle.imageUrl || 'https://placehold.co/600x400/CCCCCC/333333?text=No+Image',
-                        });
-                    }
-                }
-                // Re-fetch after adding dummy data
-                const updatedQuerySnapshot = await getDocs(q);
-                fetchedArticles = updatedQuerySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            }
-          }
-
-          allArticles = fetchedArticles; // Store all articles globally
+          const response = await fetch(
+            `${API_BASE_URL}/articles?category=${ARTICLE_CATEGORY}`
+          );
+          const articles = await response.json();
+          allArticles = articles; // Store all articles globally
 
           if (allArticles.length === 0) {
             noArticlesMessage.classList.remove("hidden");
+            articlesLoader.style.display = "none";
+            return;
           }
-          displayArticles(allArticles); // Display all articles
+          displayArticles(allArticles); // Display all articles by default
         } catch (error) {
           console.error("Error loading articles:", error);
           showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
@@ -2125,7 +1989,7 @@
       }
 
       /**
-       * Displays articles in the UI with "और पढ़ें" functionality and bullet point editor.
+       * Displays articles in the UI.
        * @param {Array} articlesToDisplay - Array of article objects.
        */
       function displayArticles(articlesToDisplay) {
@@ -2141,7 +2005,7 @@
 
         articlesToDisplay.forEach((article) => {
           // Convert timestamp to readable string
-          const timestamp = article.createdAt ? new Date(article.createdAt.toDate()).toLocaleString( // Handle Firestore Timestamp object
+          const timestamp = new Date(article.createdAt).toLocaleString(
             "hi-IN",
             {
               year: "numeric",
@@ -2150,23 +2014,19 @@
               hour: "2-digit",
               minute: "2-digit",
             }
-          ) : 'उपलब्ध नहीं';
+          );
 
           // Check if the current article is saved by the user
-          const isSaved = savedArticleIds.includes(article.id); // Use article.id for Firestore docs
+          const isSaved = savedArticleIds.includes(article._id);
           const saveButtonText = isSaved ? "सेव किया गया" : "सेव करें";
           const saveButtonClass = isSaved ? "bg-gray-500 hover:bg-gray-600" : "bg-blue-500 hover:bg-blue-600";
           const saveButtonIcon = isSaved ? "fas fa-check" : "fas fa-bookmark";
 
             const articleCard = `
               <div
-                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1"
-                data-id="${article.id}"
+                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
+                data-id="${article._id}"
               >
-                <img src="${article.imageUrl || 'https://placehold.co/600x400/CCCCCC/333333?text=No+Image'}" 
-                     alt="${article.title}" 
-                     class="w-full h-48 object-cover rounded-md mb-4"
-                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found';">
                 <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
                   article.category
                 }</span>
@@ -2175,40 +2035,31 @@
                 }</h3>
                 <p class="text-gray-600 text-sm mb-3">लेखक: ${article.author}</p>
                 <p class="text-gray-500 text-xs mb-4">प्रकाशित: ${timestamp}</p>
-                
-                <!-- Article Content: Summary and Full content -->
-                <div class="article-summary text-gray-700 leading-relaxed hindi-text">
-                  ${article.summary}
-                </div>
-                <div class="article-full-content text-gray-700 leading-relaxed hindi-text" contenteditable="true">
-                  ${article.content}
-                </div>
-
-                <!-- Editor Toolbar for expanded content -->
-                <div class="editor-toolbar mt-4">
-                  <button type="button" class="editor-btn bullet-btn" title="बुलेट पॉइंट">
-                    <i class="fas fa-list-ul"></i> बुलेट पॉइंट
-                  </button>
-                </div>
-
+                <p class="text-gray-700 leading-relaxed truncate-3-lines hindi-text">
+                  ${article.content
+                    .replace(/<[^>]*>?/gm, "")
+                    .substring(0, 150)}... <!-- Strip HTML and truncate -->
+                </p>
                 <div class="mt-4 flex gap-2 justify-between items-center">
-                    <button class="text-emerald-600 hover:underline read-more-toggle-btn" data-id="${article.id}" data-expanded="false">
+                    <button class="text-emerald-600 hover:underline read-more-btn" data-id="${
+                    article._id
+                    }">
                     और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
                     </button>
                     ${loggedInUser ? `
-                        <button class="${saveButtonClass} text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article.id}" data-saved="${isSaved}">
+                        <button class="${saveButtonClass} text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="${isSaved}">
                             <i class="${saveButtonIcon} mr-1"></i>${saveButtonText}
                         </button>
                     ` : ''}
                 </div>
                 ${
-                  loggedInUser && loggedInUser.email === "admin@example.com" // Admin check
+                  loggedInUser && loggedInUser.role === "admin"
                     ? `
                   <div class="mt-4 flex gap-2">
-                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm edit-article-btn" data-id="${article.id}">
+                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm edit-article-btn" data-id="${article._id}">
                       <i class="fas fa-edit mr-1"></i>संपादित करें
                     </button>
-                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm delete-article-btn" data-id="${article.id}">
+                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm delete-article-btn" data-id="${article._id}">
                       <i class="fas fa-trash-alt mr-1"></i>हटाएँ
                     </button>
                   </div>
@@ -2220,53 +2071,38 @@
             articlesContainer.insertAdjacentHTML("beforeend", articleCard);
         });
 
-        // Add event listeners to newly created elements
-        articlesContainer.querySelectorAll(".read-more-toggle-btn").forEach(button => {
-            button.addEventListener("click", (e) => {
-                const articleCard = e.target.closest(".content-overlay");
-                const summaryDiv = articleCard.querySelector(".article-summary");
-                const fullContentDiv = articleCard.querySelector(".article-full-content");
-                const editorToolbar = articleCard.querySelector(".editor-toolbar");
-
-                const isExpanded = e.target.dataset.expanded === "true";
-
-                if (isExpanded) {
-                    // Collapse
-                    summaryDiv.style.display = "block";
-                    fullContentDiv.style.display = "none";
-                    fullContentDiv.removeAttribute("contenteditable");
-                    editorToolbar.style.display = "none";
-                    e.target.textContent = "और पढ़ें ";
-                    e.target.dataset.expanded = "false";
-                    e.target.querySelector('i').className = "fas fa-arrow-right ml-1";
-                } else {
-                    // Expand
-                    summaryDiv.style.display = "none";
-                    fullContentDiv.style.display = "block";
-                    fullContentDiv.setAttribute("contenteditable", "true");
-                    editorToolbar.style.display = "flex"; // Show toolbar
-                    e.target.textContent = "कम पढ़ें ";
-                    e.target.dataset.expanded = "true";
-                    e.target.querySelector('i').className = "fas fa-arrow-left ml-1"; // Optional: change icon
-                    fullContentDiv.focus(); // Focus on content for editing
-                }
+        // Add event listeners to newly created read-more, edit, delete, and save buttons
+        articlesContainer
+            .querySelectorAll(".content-overlay")
+            .forEach((card) => {
+                card.addEventListener("click", async (e) => {
+                    // Only trigger detail modal if not clicking edit/delete/save buttons
+                    if (
+                        !e.target.closest(".edit-article-btn") &&
+                        !e.target.closest(".delete-article-btn") &&
+                        !e.target.closest(".toggle-save-btn")
+                    ) {
+                        const articleId = e.currentTarget.dataset.id;
+                        try {
+                            const response = await fetch(
+                                `${API_BASE_URL}/articles/${articleId}`
+                            );
+                            const article = await response.json();
+                            if (response.ok) {
+                                openArticleDetailModal(article);
+                            } else {
+                                showMessage(
+                                    article.message || "लेख लोड करने में त्रुटि।",
+                                    true
+                                );
+                            }
+                        } catch (error) {
+                            console.error("Error fetching single article:", error);
+                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        }
+                    }
+                });
             });
-        });
-
-        // Delegate event listener for bullet buttons
-        articlesContainer.addEventListener('click', (e) => {
-            const bulletButton = e.target.closest('.bullet-btn');
-            if (bulletButton) {
-                const articleCard = bulletButton.closest('.content-overlay');
-                const editableContent = articleCard.querySelector('.article-full-content[contenteditable="true"]');
-                if (editableContent) {
-                    applyBulletPoints(editableContent);
-                } else {
-                    showMessage("कृपया लेख के पूर्ण सामग्री क्षेत्र का विस्तार करें और टेक्स्ट का चयन करें।", true);
-                }
-            }
-        });
-
 
         articlesContainer
             .querySelectorAll(".edit-article-btn")
@@ -2274,21 +2110,31 @@
                 button.addEventListener("click", (e) => {
                     e.stopPropagation(); // Prevent card click event
                     const loggedInUser = getCurrentUser();
-                    const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
-                    if (loggedInUser && isAdmin) {
+                    if (loggedInUser && loggedInUser.role === "admin") {
                         const articleId = e.currentTarget.dataset.id;
-                        // Fetch article data to populate the edit form from allArticles (local data)
-                        const articleToEdit = allArticles.find(a => a.id === articleId || a._id === articleId); // Check both 'id' and '_id'
-
-                        if (articleToEdit) {
-                            document.getElementById("editArticleId").value = articleToEdit.id || articleToEdit._id;
-                            document.getElementById("editArticleTitle").value = articleToEdit.title;
-                            document.getElementById("editArticleCategory").value = articleToEdit.category;
-                            document.getElementById("editArticleContentEditable").innerHTML = articleToEdit.content;
-                            openModal("editArticleModal");
-                        } else {
-                            showMessage("लेख नहीं मिला।", true);
-                        }
+                        // Fetch article data to populate the edit form
+                        fetch(`${API_BASE_URL}/articles/${articleId}`)
+                            .then((res) => res.json())
+                            .then((article) => {
+                                if (article) {
+                                    document.getElementById("editArticleId").value =
+                                        article._id;
+                                    document.getElementById("editArticleTitle").value =
+                                        article.title;
+                                    document.getElementById("editArticleCategory").value =
+                                        article.category;
+                                    document.getElementById(
+                                        "editArticleContentEditable"
+                                    ).innerHTML = article.content;
+                                    openModal("editArticleModal");
+                                } else {
+                                    showMessage("लेख नहीं मिला।", true);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error fetching article for edit:", error);
+                                showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
+                            });
                     } else if (!loggedInUser) {
                         openModal("authRequiredModal");
                     } else {
@@ -2303,9 +2149,8 @@
                 button.addEventListener("click", (e) => {
                     e.stopPropagation(); // Prevent card click event
                     const loggedInUser = getCurrentUser();
-                    const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
-                    if (loggedInUser && isAdmin) {
-                        currentArticleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
+                    if (loggedInUser && loggedInUser.role === "admin") {
+                        articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
                         openModal("confirmationModal");
                     } else if (!loggedInUser) {
                         openModal("authRequiredModal");
@@ -2320,68 +2165,43 @@
                 e.stopPropagation(); // Prevent card click event
                 const articleId = e.currentTarget.dataset.id;
                 const isCurrentlySaved = e.currentTarget.dataset.saved === 'true';
-                await toggleSaveArticle(articleId, isCurrentlySaved, e.currentTarget);
+                await toggleSaveArticle(articleId, isCurrentlySaved);
             });
         });
       }
 
-      /**
-       * Applies bullet points to the selected text in a contenteditable element.
-       * This uses document.execCommand for basic rich text editing.
-       * @param {HTMLElement} editableElement The contenteditable div to apply formatting to.
-       */
-      function applyBulletPoints(editableElement) {
-          editableElement.focus(); // Ensure the element has focus
 
-          const selection = window.getSelection();
-          if (!selection.rangeCount) {
-              showMessage("बुलेट पॉइंट लगाने के लिए कृपया टेक्स्ट चुनें।", true);
-              return;
-          }
-
-          const range = selection.getRangeAt(0);
-
-          // Check if the current selection is already within a list item (UL/OL)
-          // If so, execCommand might toggle it off.
-          const parentUL = range.commonAncestorContainer.closest('ul, ol');
-          if (parentUL) {
-              // If already in a list, try to remove/toggle list
-              document.execCommand('outdent', false, null); // Try to outdent if in a list
-              document.execCommand('insertUnorderedList', false, null); // Toggle off list if already applied
-          } else {
-              // If not in a list, apply unordered list
-              document.execCommand('insertUnorderedList', false, null);
-          }
-      }
-
-
-      // Handle delete confirmation (Now interacts with Firestore)
+      // Handle delete confirmation (Now interacts with backend)
       document
         .getElementById("confirmDeleteBtn")
         .addEventListener("click", async () => {
           const loggedInUser = getCurrentUser();
-          const isAdmin = loggedInUser && loggedInUser.email === "admin@example.com";
-
           if (
-            currentArticleToDeleteId &&
+            articleToDeleteId &&
             loggedInUser &&
-            isAdmin
+            loggedInUser.role === "admin"
           ) {
             try {
-              const articleDocRef = doc(db, `artifacts/${appId}/public/data/articles`, currentArticleToDeleteId);
-              await deleteDoc(articleDocRef);
-              showMessage("लेख सफलतापूर्वक हटाया गया!");
-              closeModal("confirmationModal");
-              loadArticlesByCategory(); // Re-render articles
-              currentArticleToDeleteId = null; // Clear stored ID
+              const response = await fetch(`${API_BASE_URL}/articles/${articleToDeleteId}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${loggedInUser.token}`,
+                },
+              });
 
-              // Optionally, remove articleId from all users' saved lists (more complex client-side,
-              // typically handled by a Cloud Function in production for scalability).
-              // For a simple client-side example, we can re-evaluate saved lists on next fetch.
+              const data = await response.json();
 
+              if (response.ok) {
+                showMessage(data.message || "लेख सफलतापूर्वक हटाया गया!");
+                closeModal("confirmationModal");
+                loadArticlesByCategory(); // Re-render articles
+                articleToDeleteId = null; // Clear stored ID
+              } else {
+                showMessage(data.message || "लेख हटाने में त्रुटि।", true);
+              }
             } catch (error) {
-              console.error("Error deleting article from Firestore:", error);
-              showMessage(`लेख हटाने में त्रुटि: ${error.message}`, true);
+              console.error("Error deleting article:", error);
+              showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
             }
           } else {
             showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
@@ -2389,8 +2209,7 @@
           }
         });
 
-      // Open Article Detail Modal and populate content (This modal is still present but now only for display purposes, article expansion happens in-card)
-      // This function might become less frequently used if in-card expansion is preferred.
+      // Open Article Detail Modal and populate content
       function openArticleDetailModal(article) {
         document.getElementById("articleDetailTitle").textContent =
           article.title;
@@ -2399,33 +2218,32 @@
         document.getElementById("articleDetailAuthor").textContent =
           article.author;
         // Format timestamp
-        const timestamp = article.createdAt ? new Date(article.createdAt.toDate()).toLocaleString("hi-IN", {
+        const timestamp = new Date(article.createdAt).toLocaleString("hi-IN", {
           year: "numeric",
           month: "long",
           day: "numeric",
           hour: "2-digit",
           minute: "2-digit",
-        }) : 'उपलब्ध नहीं';
+        });
         document.getElementById(
           "articleDetailTimestamp"
         ).textContent = `प्रकाशित: ${timestamp}`;
         document.getElementById("articleDetailContent").innerHTML =
           article.content; // Use innerHTML for rich text
 
-
         // Update save button in detail modal
         const saveArticleBtn = document.getElementById('saveArticleBtn');
         const loggedInUser = getCurrentUser();
         if (loggedInUser) {
             saveArticleBtn.style.display = 'block';
-            const isSaved = savedArticleIds.includes(article.id); // Use article.id
+            const isSaved = savedArticleIds.includes(article._id);
             saveArticleBtn.textContent = isSaved ? "सेव किया गया" : "सेव करें";
             saveArticleBtn.classList.toggle('bg-gray-500', isSaved);
             saveArticleBtn.classList.toggle('hover:bg-gray-600', isSaved);
             saveArticleBtn.classList.toggle('bg-blue-500', !isSaved);
             saveArticleBtn.classList.toggle('hover:bg-blue-600', !isSaved);
             saveArticleBtn.querySelector('i').className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
-            saveArticleBtn.onclick = () => toggleSaveArticle(article.id, isSaved, saveArticleBtn);
+            saveArticleBtn.onclick = () => toggleSaveArticle(article._id, isSaved);
         } else {
             saveArticleBtn.style.display = 'none'; // Hide save button if not logged in
         }
@@ -2490,7 +2308,6 @@
         async function loadSavedArticles() {
             const loggedInUser = getCurrentUser();
             if (!loggedInUser) {
-                closeModal("savedArticlesModal"); // Close the modal before showing auth required
                 openModal("authRequiredModal");
                 return;
             }
@@ -2500,37 +2317,35 @@
             savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
 
             try {
-                // Fetch the full article details for the saved article IDs from Firestore
-                const userDocRef = doc(db, `artifacts/${appId}/users/${loggedInUser.uid}/savedArticles`, "userArticles");
-                const docSnap = await getDoc(userDocRef);
-
-                let savedArticleIdsFromDB = [];
-                if (docSnap.exists()) {
-                    savedArticleIdsFromDB = docSnap.data().articleIds || [];
-                }
-
-                if (savedArticleIdsFromDB.length > 0) {
-                    const articlesToDisplay = [];
-                    for (const articleId of savedArticleIdsFromDB) {
-                        const articleDocRef = doc(db, `artifacts/${appId}/public/data/articles`, articleId);
-                        const articleSnap = await getDoc(articleDocRef);
-                        if (articleSnap.exists()) {
-                            articlesToDisplay.push({ id: articleSnap.id, ...articleSnap.data() });
-                        } else {
-                            // If article no longer exists, clean up user's saved list
-                            await updateDoc(userDocRef, {
-                                articleIds: arrayRemove(articleId)
-                            });
-                            console.warn(`Article ${articleId} not found, removed from saved list.`);
-                        }
+                // Fetch the full article details for the saved article IDs
+                const response = await fetch(
+                    `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${loggedInUser.token}`,
+                        },
                     }
+                );
 
-                    if (articlesToDisplay.length === 0) {
+                const savedArticlesResponse = await response.json(); // Renamed to avoid conflict
+
+                if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
+                    // Fetch full article objects based on the IDs returned
+                    const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
+                        const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                        return articleRes.json();
+                    });
+                    const fullSavedArticles = await Promise.all(fullArticlesPromises);
+
+                    // Filter out any articles that might have failed to fetch or are null
+                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
+
+                    if (validSavedArticles.length === 0) {
                         noSavedArticlesMessage.classList.remove("hidden");
                         noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
                     } else {
-                        articlesToDisplay.forEach((article) => {
-                            const timestamp = article.createdAt ? new Date(article.createdAt.toDate()).toLocaleString(
+                        validSavedArticles.forEach((article) => {
+                            const timestamp = new Date(article.createdAt).toLocaleString(
                                 "hi-IN",
                                 {
                                     year: "numeric",
@@ -2539,12 +2354,12 @@
                                     hour: "2-digit",
                                     minute: "2-digit",
                                 }
-                            ) : 'उपलब्ध नहीं';
+                            );
 
                             const savedArticleCard = `
                                 <div
                                     class="content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
-                                    data-id="${article.id}"
+                                    data-id="${article._id}"
                                 >
                                     <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
                                     <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
@@ -2554,10 +2369,10 @@
                                         ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
                                     </p>
                                     <div class="mt-3 flex justify-between items-center">
-                                        <button class="text-emerald-600 hover:underline read-more-toggle-btn" data-id="${article.id}" data-expanded="false">
+                                        <button class="text-emerald-600 hover:underline read-more-btn" data-id="${article._id}">
                                             और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
                                         </button>
-                                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article.id}" data-saved="true">
+                                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
                                             <i class="fas fa-trash-alt mr-1"></i>हटाएँ
                                         </button>
                                     </div>
@@ -2567,16 +2382,23 @@
                         });
 
                         // Add event listeners for read-more and unsave buttons in the modal
-                        savedArticlesContainer.querySelectorAll('.read-more-toggle-btn').forEach(button => {
-                            button.addEventListener('click', async (e) => {
-                                // This read-more in saved modal still opens the main detail modal
-                                const articleId = e.target.dataset.id;
-                                const selectedArticle = allArticles.find(a => a.id === articleId || a._id === articleId);
-                                if (selectedArticle) {
-                                    openArticleDetailModal(selectedArticle);
-                                    closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
-                                } else {
-                                    showMessage("लेख लोड करने में त्रुटि।", true);
+                        savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
+                            card.addEventListener('click', async (e) => {
+                                if (!e.target.closest('.toggle-save-btn')) {
+                                    const articleId = e.currentTarget.dataset.id;
+                                    try {
+                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                                        const article = await response.json();
+                                        if (response.ok) {
+                                            openArticleDetailModal(article);
+                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                        } else {
+                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
+                                        }
+                                    } catch (error) {
+                                        console.error("Error fetching single article for saved modal:", error);
+                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    }
                                 }
                             });
                         });
@@ -2585,7 +2407,7 @@
                             button.addEventListener('click', async (e) => {
                                 e.stopPropagation();
                                 const articleId = e.currentTarget.dataset.id;
-                                await toggleSaveArticle(articleId, true, e.currentTarget); // Always true for unsaving from this modal
+                                await toggleSaveArticle(articleId, true); // Always true for unsaving from this modal
                             });
                         });
                     }
@@ -2616,34 +2438,8 @@
             loadSavedArticles(); // Load articles when modal opens
         });
 
-        // Listen for Firebase auth state changes
-        onAuthStateChanged(auth, async (user) => {
-          currentAuthUser = user; // Set global currentAuthUser
-          // Attempt to sign in anonymously if no user is already logged in (for Canvas environment)
-          if (!user && initialAuthToken) {
-              try {
-                  await signInWithCustomToken(auth, initialAuthToken);
-                  console.log("Signed in with custom token.");
-              } catch (error) {
-                  console.error("Error signing in with custom token:", error);
-                  try {
-                      await signInAnonymously(auth);
-                      console.log("Signed in anonymously as fallback.");
-                  } catch (anonError) {
-                      console.error("Error signing in anonymously:", anonError);
-                  }
-              }
-          } else if (!user) { // If no initial token, sign in anonymously
-              try {
-                  await signInAnonymously(auth);
-                  console.log("Signed in anonymously.");
-              } catch (anonError) {
-                  console.error("Error signing in anonymously:", anonError);
-              }
-          }
-          // After auth state is determined (or anonymous sign-in), update UI and load articles
-          updateAuthUI();
-        });
+        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
+        // loadArticlesByCategory is called inside updateAuthUI()
       });
     </script>
   </body>
