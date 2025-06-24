@@ -1013,6 +1013,13 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('insertUnorderedList')"
+              >
+                <i class="fas fa-list-ul"></i>
+              </button>
             </div>
             <div
               id="articleContentEditable"
@@ -1110,6 +1117,13 @@
                 onclick="formatDocEdit('underline')"
               >
                 <i class="fas fa-underline"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDocEdit('insertUnorderedList')"
+              >
+                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1719,7 +1733,7 @@
             closeModal("loginModal");
             updateAuthUI();
           } else {
-            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
+            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
           }
         } catch (error) {
           console.error("Login error:", error);
@@ -2222,22 +2236,12 @@
         if (loggedInUser) {
             saveArticleBtn.style.display = 'block';
             const isSaved = savedArticleIds.includes(article._id);
-
-            // Clear existing content (icon and text)
-            saveArticleBtn.innerHTML = '';
-
-            // Create new icon
-            const icon = document.createElement('i');
-            icon.className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
-
-            // Append icon and text
-            saveArticleBtn.appendChild(icon);
-            saveArticleBtn.appendChild(document.createTextNode(isSaved ? "सेव किया गया" : "सेव करें"));
-
+            saveArticleBtn.textContent = isSaved ? "सेव किया गया" : "सेव करें";
             saveArticleBtn.classList.toggle('bg-gray-500', isSaved);
             saveArticleBtn.classList.toggle('hover:bg-gray-600', isSaved);
             saveArticleBtn.classList.toggle('bg-blue-500', !isSaved);
             saveArticleBtn.classList.toggle('hover:bg-blue-600', !isSaved);
+            saveArticleBtn.querySelector('i').className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
             saveArticleBtn.onclick = () => toggleSaveArticle(article._id, isSaved);
         } else {
             saveArticleBtn.style.display = 'none'; // Hide save button if not logged in
@@ -2257,7 +2261,7 @@
             backToTopBtn.classList.remove("opacity-0", "scale-0");
           } else {
             backToTopBtn.classList.add("opacity-0", "scale-0");
-            backToTopBtn.classList.remove("opacity-100", "scale-100");
+            backToTopBtn.classList.remove("opacity-100", "scale-0");
           }
         };
 
