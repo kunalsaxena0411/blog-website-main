@@ -510,7 +510,8 @@
         color: white;
       }
 
-      /* Text style dropdown specific styles */
+      /* Text style dropdown specific styles (removed from HTML, keeping for reference in case user wants to add back) */
+      /*
       .text-style-dropdown-container {
         position: relative;
         display: inline-block;
@@ -519,9 +520,9 @@
       .text-style-dropdown-menu {
         display: none;
         position: absolute;
-        top: 100%; /* Position below the button */
+        top: 100%;
         left: 0;
-        background-color: #1e293b; /* Dark background */
+        background-color: #1e293b;
         min-width: 150px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         z-index: 10;
@@ -550,6 +551,7 @@
       .text-style-dropdown-menu button:hover {
         background-color: #334155;
       }
+      */
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
@@ -1407,49 +1409,7 @@
                 <i class="fas fa-underline"></i>
               </button>
 
-              <!-- Text Style Dropdown for New Article -->
-              <div class="text-style-dropdown-container">
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="toggleTextStyleDropdown('articleContentEditable')"
-                  id="newArticleTextStyleBtn"
-                >
-                  <i class="fas fa-text-height"></i>
-                  <i class="fas fa-caret-down ml-1"></i>
-                </button>
-                <div
-                  id="newArticleTextStyleDropdown"
-                  class="text-style-dropdown-menu"
-                >
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('articleContentEditable', 'h1')"
-                  >
-                    Heading 1
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('articleContentEditable', 'h2')"
-                  >
-                    Heading 2
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('articleContentEditable', 'p')"
-                  >
-                    Paragraph
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('articleContentEditable', 'pre')"
-                  >
-                    Code Block
-                  </button>
-                </div>
-              </div>
-              <!-- End Text Style Dropdown -->
-
+              <!-- Text Style Dropdown for New Article Removed -->
             </div>
             <div
               id="articleContentEditable"
@@ -1550,49 +1510,7 @@
                 <i class="fas fa-underline"></i>
               </button>
 
-              <!-- Text Style Dropdown for Edit Article -->
-              <div class="text-style-dropdown-container">
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="toggleTextStyleDropdown('editArticleContentEditable')"
-                  id="editArticleTextStyleBtn"
-                >
-                  <i class="fas fa-text-height"></i>
-                  <i class="fas fa-caret-down ml-1"></i>
-                </button>
-                <div
-                  id="editArticleTextStyleDropdown"
-                  class="text-style-dropdown-menu"
-                >
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('editArticleContentEditable', 'h1')"
-                  >
-                    Heading 1
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('editArticleContentEditable', 'h2')"
-                  >
-                    Heading 2
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('editArticleContentEditable', 'p')"
-                  >
-                    Paragraph
-                  </button>
-                  <button
-                    type="button"
-                    onclick="applyTextStyle('editArticleContentEditable', 'pre')"
-                  >
-                    Code Block
-                  </button>
-                </div>
-              </div>
-              <!-- End Text Style Dropdown -->
-
+              <!-- Text Style Dropdown for Edit Article Removed -->
             </div>
             <div
               id="editArticleContentEditable"
@@ -2311,7 +2229,7 @@
         }
       }
 
-      // Rich Text Editor functionality for new article
+      // Rich Text Editor functionality for new article and edit article (unified function)
       function formatDoc(command, editorId, buttonElement) {
         const editor = document.getElementById(editorId);
         editor.focus();
@@ -2327,23 +2245,11 @@
         }
       }
 
-      // Rich Text Editor functionality for edit article
-      function formatDocEdit(command, editorId, buttonElement) {
-        const editor = document.getElementById(editorId);
-        editor.focus();
-        ensureBasicContentStructure(editorId); // Ensure there's a basic structure
-        document.execCommand(command, false, null);
+      // The formatDocEdit function can now simply call formatDoc as they have identical functionality
+      const formatDocEdit = formatDoc;
 
-        // Add brief active state feedback
-        if (buttonElement) {
-            buttonElement.classList.add('active');
-            setTimeout(() => {
-                buttonElement.classList.remove('active');
-            }, 150); // Remove active class after 150ms
-        }
-      }
-
-      // Function to toggle text style dropdown
+      // Removed toggleTextStyleDropdown and applyTextStyle functions as text styling options are removed
+      /*
       function toggleTextStyleDropdown(editorId) {
         const dropdownId = editorId.includes('newArticle') ? 'newArticleTextStyleDropdown' : 'editArticleTextStyleDropdown';
         const dropdown = document.getElementById(dropdownId);
@@ -2357,7 +2263,6 @@
         });
       }
 
-      // Function to apply a specific text style (block format)
       function applyTextStyle(editorId, tagName) {
           const editor = document.getElementById(editorId);
           editor.focus(); // Ensure the editor is focused
@@ -2399,6 +2304,7 @@
           }
           console.log("Editor innerHTML after formatBlock:", editor.innerHTML);
       }
+      */
 
 
       // Post Content Link handler - Checks for admin access
