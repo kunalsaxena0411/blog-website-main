@@ -994,30 +994,23 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('bold')"
+                onclick="formatDoc('bold', 'articleContentEditable')"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('italic')"
+                onclick="formatDoc('italic', 'articleContentEditable')"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('underline')"
+                onclick="formatDoc('underline', 'articleContentEditable')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDoc('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1099,30 +1092,23 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('bold')"
+                onclick="formatDocEdit('bold', 'editArticleContentEditable')"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('italic')"
+                onclick="formatDocEdit('italic', 'editArticleContentEditable')"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('underline')"
+                onclick="formatDocEdit('underline', 'editArticleContentEditable')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1730,7 +1716,7 @@
             closeModal("loginModal");
             updateAuthUI();
           } else {
-            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
           }
         } catch (error) {
           console.error("Login error:", error);
@@ -1788,10 +1774,8 @@
         .addEventListener("click", handleLogout);
 
       // Rich Text Editor functionality for new article (kept for consistency, though this page doesn't post directly)
-      function formatDoc(command) {
-        // This function is for the 'newArticleForm', which is not directly used on this page for posting.
-        // It's included to make the rich text editor logic consistent if this modal is reused or copied.
-        const editableDiv = document.getElementById("articleContentEditable");
+      function formatDoc(command, editorId) {
+        const editableDiv = document.getElementById(editorId);
         if (editableDiv) {
             editableDiv.focus();
             document.execCommand(command, false, null);
@@ -1799,8 +1783,8 @@
       }
 
       // Rich Text Editor functionality for edit article
-      function formatDocEdit(command) {
-        document.getElementById("editArticleContentEditable").focus();
+      function formatDocEdit(command, editorId) {
+        document.getElementById(editorId).focus();
         document.execCommand(command, false, null);
       }
 
@@ -2070,7 +2054,7 @@
         articlesContainer
             .querySelectorAll(".content-overlay")
             .forEach((card) => {
-                card.addEventListener("click", async (e) => {
+                card.addEventListener("click", (e) => { // Removed async as no fetch here
                     // Only trigger detail modal if not clicking edit/delete/save buttons
                     if (
                         !e.target.closest(".edit-article-btn") &&
@@ -2078,22 +2062,12 @@
                         !e.target.closest(".toggle-save-btn")
                     ) {
                         const articleId = e.currentTarget.dataset.id;
-                        try {
-                            const response = await fetch(
-                                `${API_BASE_URL}/articles/${articleId}`
-                            );
-                            const article = await response.json();
-                            if (response.ok) {
-                                openArticleDetailModal(article);
-                            } else {
-                                showMessage(
-                                    article.message || "लेख लोड करने में त्रुटि।",
-                                    true
-                                );
-                            }
-                        } catch (error) {
-                            console.error("Error fetching single article:", error);
-                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                        if (article) {
+                            openArticleDetailModal(article);
+                        } else {
+                            // This case should ideally not happen if allArticles is kept updated
+                            showMessage("लेख नहीं मिला।", true);
                         }
                     }
                 });
@@ -2164,7 +2138,6 @@
             });
         });
       }
-
 
       // Handle delete confirmation (Now interacts with backend)
       document
@@ -2379,21 +2352,15 @@
 
                         // Add event listeners for read-more and unsave buttons in the modal
                         savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
-                            card.addEventListener('click', async (e) => {
+                            card.addEventListener('click', (e) => {
                                 if (!e.target.closest('.toggle-save-btn')) {
                                     const articleId = e.currentTarget.dataset.id;
-                                    try {
-                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                                        const article = await response.json();
-                                        if (response.ok) {
-                                            openArticleDetailModal(article);
-                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
-                                        } else {
-                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
-                                        }
-                                    } catch (error) {
-                                        console.error("Error fetching single article for saved modal:", error);
-                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                                    if (article) {
+                                        openArticleDetailModal(article);
+                                        closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                    } else {
+                                        showMessage("लेख नहीं मिला।", true);
                                     }
                                 }
                             });
