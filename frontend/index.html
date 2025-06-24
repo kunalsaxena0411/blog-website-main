@@ -510,6 +510,47 @@
         color: white;
       }
 
+      /* Text style dropdown specific styles */
+      .text-style-dropdown-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .text-style-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%; /* Position below the button */
+        left: 0;
+        background-color: #1e293b; /* Dark background */
+        min-width: 150px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 10;
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 8px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .text-style-dropdown-menu.show {
+        display: block;
+      }
+
+      .text-style-dropdown-menu button {
+        background: none;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        text-align: left;
+        width: 100%;
+        display: block;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .text-style-dropdown-menu button:hover {
+        background-color: #334155;
+      }
+
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .logo-text {
@@ -1365,14 +1406,50 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDoc('insertUnorderedList', 'articleContentEditable', this)"
-              >
-                <i class="fas fa-list-ul"></i> <!-- Changed to unordered list icon -->
-              </button>
-              <!-- Image insert button removed -->
+
+              <!-- Text Style Dropdown for New Article -->
+              <div class="text-style-dropdown-container">
+                <button
+                  type="button"
+                  class="editor-btn"
+                  onclick="toggleTextStyleDropdown('articleContentEditable')"
+                  id="newArticleTextStyleBtn"
+                >
+                  <i class="fas fa-text-height"></i>
+                  <i class="fas fa-caret-down ml-1"></i>
+                </button>
+                <div
+                  id="newArticleTextStyleDropdown"
+                  class="text-style-dropdown-menu"
+                >
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('articleContentEditable', 'h1')"
+                  >
+                    Heading 1
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('articleContentEditable', 'h2')"
+                  >
+                    Heading 2
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('articleContentEditable', 'p')"
+                  >
+                    Paragraph
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('articleContentEditable', 'pre')"
+                  >
+                    Code Block
+                  </button>
+                </div>
+              </div>
+              <!-- End Text Style Dropdown -->
+
             </div>
             <div
               id="articleContentEditable"
@@ -1472,14 +1549,50 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList', 'editArticleContentEditable', this)"
-              >
-                <i class="fas fa-list-ul"></i> <!-- Changed to unordered list icon -->
-              </button>
-              <!-- Image insert button removed -->
+
+              <!-- Text Style Dropdown for Edit Article -->
+              <div class="text-style-dropdown-container">
+                <button
+                  type="button"
+                  class="editor-btn"
+                  onclick="toggleTextStyleDropdown('editArticleContentEditable')"
+                  id="editArticleTextStyleBtn"
+                >
+                  <i class="fas fa-text-height"></i>
+                  <i class="fas fa-caret-down ml-1"></i>
+                </button>
+                <div
+                  id="editArticleTextStyleDropdown"
+                  class="text-style-dropdown-menu"
+                >
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('editArticleContentEditable', 'h1')"
+                  >
+                    Heading 1
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('editArticleContentEditable', 'h2')"
+                  >
+                    Heading 2
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('editArticleContentEditable', 'p')"
+                  >
+                    Paragraph
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyTextStyle('editArticleContentEditable', 'pre')"
+                  >
+                    Code Block
+                  </button>
+                </div>
+              </div>
+              <!-- End Text Style Dropdown -->
+
             </div>
             <div
               id="editArticleContentEditable"
@@ -2202,35 +2315,8 @@
       function formatDoc(command, editorId, buttonElement) {
         const editor = document.getElementById(editorId);
         editor.focus();
-
-        if (command === 'insertUnorderedList') {
-            // Check if the editor is essentially empty. This is crucial for the initial list creation.
-            const isEmptyContent = !editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>';
-            
-            if (isEmptyContent) {
-                // If empty, insert an empty unordered list with a break to ensure cursor is inside an <li>
-                editor.innerHTML = '<ul><li><br></li></ul>';
-                // Set cursor inside the first list item for immediate typing
-                const range = document.createRange();
-                const sel = window.getSelection();
-                const li = editor.querySelector('li');
-                if (li && li.firstChild) {
-                    range.setStart(li.firstChild, 0);
-                } else if (li) { // If li exists but has no children (e.g., just <li></li>)
-                    range.setStart(li, 0);
-                }
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else {
-                // For non-empty content, let execCommand handle it (e.g., convert paragraph to list item)
-                document.execCommand(command, false, null);
-            }
-        } else {
-            // For other commands (bold, italic, underline), ensure basic content structure
-            ensureBasicContentStructure(editorId);
-            document.execCommand(command, false, null);
-        }
+        ensureBasicContentStructure(editorId); // Ensure there's a basic structure
+        document.execCommand(command, false, null);
 
         // Add brief active state feedback
         if (buttonElement) {
@@ -2245,30 +2331,8 @@
       function formatDocEdit(command, editorId, buttonElement) {
         const editor = document.getElementById(editorId);
         editor.focus();
-
-        if (command === 'insertUnorderedList') {
-            const isEmptyContent = !editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>' || editor.innerHTML === '<br>';
-
-            if (isEmptyContent) {
-                editor.innerHTML = '<ul><li><br></li></ul>';
-                const range = document.createRange();
-                const sel = window.getSelection();
-                const li = editor.querySelector('li');
-                 if (li && li.firstChild) {
-                    range.setStart(li.firstChild, 0);
-                } else if (li) {
-                    range.setStart(li, 0);
-                }
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else {
-                document.execCommand(command, false, null);
-            }
-        } else {
-            ensureBasicContentStructure(editorId);
-            document.execCommand(command, false, null);
-        }
+        ensureBasicContentStructure(editorId); // Ensure there's a basic structure
+        document.execCommand(command, false, null);
 
         // Add brief active state feedback
         if (buttonElement) {
@@ -2279,10 +2343,61 @@
         }
       }
 
-      // Function to insert image into content editable div (removed image URL prompt)
-      // This function is still present but will not be called from the UI after removing the button.
-      function insertImage(editorId) {
-        alert("छवि डालने की सुविधा हटा दी गई है।"); // Inform user if they try to call this directly
+      // Function to toggle text style dropdown
+      function toggleTextStyleDropdown(editorId) {
+        const dropdownId = editorId.includes('newArticle') ? 'newArticleTextStyleDropdown' : 'editArticleTextStyleDropdown';
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.classList.toggle('show');
+
+        // Close other text style dropdowns if open
+        document.querySelectorAll('.text-style-dropdown-menu').forEach(menu => {
+            if (menu.id !== dropdownId) {
+                menu.classList.remove('show');
+            }
+        });
+      }
+
+      // Function to apply a specific text style (block format)
+      function applyTextStyle(editorId, tagName) {
+          const editor = document.getElementById(editorId);
+          editor.focus(); // Ensure the editor is focused
+
+          // Hide dropdown immediately after a style is chosen
+          document.querySelectorAll('.text-style-dropdown-menu').forEach(menu => {
+              menu.classList.remove('show');
+          });
+
+          // Get the current selection
+          const selection = window.getSelection();
+          if (!selection.rangeCount) {
+              console.warn("No selection found. Cannot apply text style.");
+              return;
+          }
+
+          const range = selection.getRangeAt(0);
+          console.log("Current selection range:", range);
+          console.log("Current editor innerHTML before formatBlock:", editor.innerHTML);
+
+          // If the editor is empty or just has a break, insert the new block directly
+          if (!editor.textContent.trim() && editor.innerHTML.includes('<br>')) {
+              editor.innerHTML = `<${tagName}><br></${tagName}>`;
+              // Move cursor inside the newly created block
+              const newElement = editor.querySelector(tagName);
+              if (newElement && newElement.firstChild) {
+                  range.setStart(newElement.firstChild, 0);
+              } else if (newElement) {
+                   range.setStart(newElement, 0);
+              }
+              range.collapse(true);
+              selection.removeAllRanges();
+              selection.addRange(range);
+          } else {
+              // Apply block format to the current selection or line
+              // document.execCommand('formatBlock') applies to the block containing the selection.
+              // It will replace the current block if it's already a block element like <p>
+              document.execCommand('formatBlock', false, `<${tagName}>`);
+          }
+          console.log("Editor innerHTML after formatBlock:", editor.innerHTML);
       }
 
 
