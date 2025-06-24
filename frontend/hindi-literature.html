@@ -1014,13 +1014,6 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDoc('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
-              </button>
             </div>
             <div
               id="articleContentEditable"
@@ -1118,13 +1111,6 @@
                 onclick="formatDocEdit('underline')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1734,7 +1720,7 @@
             closeModal("loginModal");
             updateAuthUI();
           } else {
-            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
           }
         } catch (error) {
           console.error("Login error:", error);
@@ -1790,6 +1776,28 @@
       document
         .getElementById("mobileLogoutBtn")
         .addEventListener("click", handleLogout);
+
+      // Helper to ensure the contenteditable div has a basic structure (like <p><br></p>)
+      // This is crucial for `execCommand` to work correctly when the div is initially truly empty.
+      function ensureBasicContentStructure(editorId) {
+        const editor = document.getElementById(editorId);
+        // Check for truly empty or placeholder content that won't allow execCommand to work.
+        if (!editor.innerHTML.trim() || editor.innerHTML === '<p><br></p>') {
+            editor.innerHTML = '<p><br></p>'; // Ensure a basic paragraph for typing
+            // Set cursor inside the newly created paragraph
+            const range = document.createRange();
+            const sel = window.getSelection();
+            if (editor.firstChild && editor.firstChild.firstChild) {
+                range.setStart(editor.firstChild.firstChild, 0);
+            } else {
+                // Fallback if structure is not as expected after setting innerHTML
+                range.setStart(editor, 0);
+            }
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+      }
 
       // Rich Text Editor functionality for new article (kept for consistency, though this page doesn't post directly)
       function formatDoc(command) {
@@ -1895,7 +1903,8 @@
             } else {
               showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
             }
-          } catch (error) {
+          }
+          catch (error) {
             console.error("Error posting article:", error);
             showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
@@ -2075,7 +2084,7 @@
         articlesContainer
             .querySelectorAll(".content-overlay")
             .forEach((card) => {
-                card.addEventListener("click", async (e) => {
+                card.addEventListener("click", (e) => { // Removed async as no fetch here
                     // Only trigger detail modal if not clicking edit/delete/save buttons
                     if (
                         !e.target.closest(".edit-article-btn") &&
@@ -2083,22 +2092,12 @@
                         !e.target.closest(".toggle-save-btn")
                     ) {
                         const articleId = e.currentTarget.dataset.id;
-                        try {
-                            const response = await fetch(
-                                `${API_BASE_URL}/articles/${articleId}`
-                            );
-                            const article = await response.json();
-                            if (response.ok) {
-                                openArticleDetailModal(article);
-                            } else {
-                                showMessage(
-                                    article.message || "लेख लोड करने में त्रुटि।",
-                                    true
-                                );
-                            }
-                        } catch (error) {
-                            console.error("Error fetching single article:", error);
-                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                        if (article) {
+                            openArticleDetailModal(article);
+                        } else {
+                            // This case should ideally not happen if allArticles is kept updated
+                            showMessage("लेख नहीं मिला।", true);
                         }
                     }
                 });
@@ -2383,21 +2382,15 @@
 
                         // Add event listeners for read-more and unsave buttons in the modal
                         savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
-                            card.addEventListener('click', async (e) => {
+                            card.addEventListener('click', (e) => { // Removed async as no fetch here
                                 if (!e.target.closest('.toggle-save-btn')) {
                                     const articleId = e.currentTarget.dataset.id;
-                                    try {
-                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                                        const article = await response.json();
-                                        if (response.ok) {
-                                            openArticleDetailModal(article);
-                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
-                                        } else {
-                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
-                                        }
-                                    } catch (error) {
-                                        console.error("Error fetching single article for saved modal:", error);
-                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                                    if (article) {
+                                        openArticleDetailModal(article);
+                                        closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                    } else {
+                                        showMessage("लेख नहीं मिला।", true);
                                     }
                                 }
                             });
