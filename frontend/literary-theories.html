@@ -1013,13 +1013,6 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDoc('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
-              </button>
             </div>
             <div
               id="articleContentEditable"
@@ -1117,13 +1110,6 @@
                 onclick="formatDocEdit('underline')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1453,7 +1439,7 @@
       /**
        * Toggles saving/unsaving an article for the current user.
        * @param {string} articleId - The ID of the article to save/unsave.
-       * @param {HTMLElement} buttonElement - The button element that was clicked.
+       * @param {boolean} isCurrentlySaved - True if the article is currently saved, false otherwise.
        */
       async function toggleSaveArticle(articleId, isCurrentlySaved) {
         const loggedInUser = getCurrentUser();
@@ -1670,7 +1656,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्h.");
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1733,7 +1719,7 @@
             closeModal("loginModal");
             updateAuthUI();
           } else {
-            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
           }
         } catch (error) {
           console.error("Login error:", error);
@@ -2074,7 +2060,7 @@
         articlesContainer
             .querySelectorAll(".content-overlay")
             .forEach((card) => {
-                card.addEventListener("click", async (e) => {
+                card.addEventListener("click", (e) => {
                     // Only trigger detail modal if not clicking edit/delete/save buttons
                     if (
                         !e.target.closest(".edit-article-btn") &&
@@ -2082,22 +2068,12 @@
                         !e.target.closest(".toggle-save-btn")
                     ) {
                         const articleId = e.currentTarget.dataset.id;
-                        try {
-                            const response = await fetch(
-                                `${API_BASE_URL}/articles/${articleId}`
-                            );
-                            const article = await response.json();
-                            if (response.ok) {
-                                openArticleDetailModal(article);
-                            } else {
-                                showMessage(
-                                    article.message || "लेख लोड करने में त्रुटि।",
-                                    true
-                                );
-                            }
-                        } catch (error) {
-                            console.error("Error fetching single article:", error);
-                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                        if (article) {
+                            openArticleDetailModal(article);
+                        } else {
+                            // This case should ideally not happen if allArticles is kept updated
+                            showMessage("लेख नहीं मिला।", true);
                         }
                     }
                 });
@@ -2383,21 +2359,15 @@
 
                         // Add event listeners for read-more and unsave buttons in the modal
                         savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
-                            card.addEventListener('click', async (e) => {
+                            card.addEventListener('click', (e) => {
                                 if (!e.target.closest('.toggle-save-btn')) {
                                     const articleId = e.currentTarget.dataset.id;
-                                    try {
-                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                                        const article = await response.json();
-                                        if (response.ok) {
-                                            openArticleDetailModal(article);
-                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
-                                        } else {
-                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
-                                        }
-                                    } catch (error) {
-                                        console.error("Error fetching single article for saved modal:", error);
-                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    const article = allArticles.find(a => a._id === articleId); // Find from loaded articles
+                                    if (article) {
+                                        openArticleDetailModal(article);
+                                        closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                    } else {
+                                        showMessage("लेख नहीं मिला।", true);
                                     }
                                 }
                             });
