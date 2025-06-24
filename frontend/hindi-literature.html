@@ -1907,7 +1907,7 @@
           }
           catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्tिध।", true);
           }
         });
 
@@ -2227,17 +2227,27 @@
         // Update save button in detail modal
         const saveArticleBtn = document.getElementById('saveArticleBtn');
         const loggedInUser = getCurrentUser();
-        if (loggedInUser) {
+        if (loggedInUser && saveArticleBtn) { // Ensure saveArticleBtn exists
             saveArticleBtn.style.display = 'block';
             const isSaved = savedArticleIds.includes(article._id);
-            saveArticleBtn.textContent = isSaved ? "सेव किया गया" : "सेव करें";
+
+            // Clear existing content (icon and text)
+            saveArticleBtn.innerHTML = '';
+
+            // Create new icon
+            const icon = document.createElement('i');
+            icon.className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
+
+            // Append icon and text
+            saveArticleBtn.appendChild(icon);
+            saveArticleBtn.appendChild(document.createTextNode(isSaved ? "सेव किया गया" : "सेव करें"));
+
             saveArticleBtn.classList.toggle('bg-gray-500', isSaved);
             saveArticleBtn.classList.toggle('hover:bg-gray-600', isSaved);
             saveArticleBtn.classList.toggle('bg-blue-500', !isSaved);
             saveArticleBtn.classList.toggle('hover:bg-blue-600', !isSaved);
-            saveArticleBtn.querySelector('i').className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
             saveArticleBtn.onclick = () => toggleSaveArticle(article._id, isSaved);
-        } else {
+        } else if (saveArticleBtn) { // If saveArticleBtn exists but not logged in
             saveArticleBtn.style.display = 'none'; // Hide save button if not logged in
         }
 
