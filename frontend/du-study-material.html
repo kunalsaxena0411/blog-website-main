@@ -1013,6 +1013,2434 @@
               >
                 <i class="fas fa-underline"></i>
               </button>
+            </div>
+            <div
+              id="articleContentEditable"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-64 overflow-y-auto"
+              contenteditable="true"
+              placeholder="लेख की सामग्री यहाँ लिखें..."
+              data-text="लेख की सामग्री यहाँ लिखें..."
+            ></div>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            लेख पोस्ट करें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Article Modal -->
+    <div
+      id="editArticleModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-2xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('editArticleModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          लेख संपादित करें
+        </h3>
+        <form id="editArticleForm" class="space-y-4">
+          <input type="hidden" id="editArticleId" />
+          <div>
+            <label
+              for="editArticleTitle"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >शीर्षक:</label
+            >
+            <input
+              type="text"
+              id="editArticleTitle"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख का शीर्षक"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="editArticleCategory"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >श्रेणी:</label
+            >
+            <select
+              id="editArticleCategory"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            >
+              <option value="">श्रेणी चुनें</option>
+              <option value="hindi-literature">हिंदी साहित्य</option>
+              <option value="literary-theories">साहित्यिक सिद्धांत</option>
+              <option value="story-reviews">कहानी समीक्षाएं</option>
+              <option value="novel-reviews">उपन्यास समीक्षाएँ</option>
+              <option value="du-study-material">डीयू अध्ययन सामग्री</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="editArticleContent"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >सामग्री:</label
+            >
+            <div class="editor-toolbar">
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDocEdit('bold')"
+              >
+                <i class="fas fa-bold"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDocEdit('italic')"
+              >
+                <i class="fas fa-italic"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDocEdit('underline')"
+              >
+                <i class="fas fa-underline"></i>
+              </button>
+            </div>
+            <div
+              id="editArticleContentEditable"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-64 overflow-y-auto"
+              contenteditable="true"
+              placeholder="लेख की सामग्री यहाँ लिखें..."
+              data-text="लेख की सामग्री यहाँ लिखें..."
+            ></div>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            लेख अपडेट करें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Article Detail Modal -->
+    <div
+      id="articleDetailModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-3xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('articleDetailModal')"
+          >&times;</span
+        >
+        <h3
+          id="articleDetailTitle"
+          class="text-3xl font-bold text-gray-800 mb-4 hindi-text"
+        ></h3>
+        <p class="text-gray-600 text-sm mb-2">
+          <span
+            id="articleDetailCategory"
+            class="font-semibold text-blue-600"
+          ></span>
+          - <span id="articleDetailAuthor" class="italic"></span> द्वारा
+        </p>
+        <p id="articleDetailTimestamp" class="text-gray-500 text-xs mb-4"></p>
+        <div
+          id="articleDetailContent"
+          class="prose max-w-none text-gray-700 leading-relaxed text-base overflow-y-auto h-96"
+        ></div>
+        <!-- Save/Unsave button will be added here dynamically -->
+        <div class="mt-4 flex justify-end">
+            <button id="saveArticleBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300">
+                <i class="fas fa-bookmark mr-2"></i>सेव करें
+            </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth Required Modal -->
+    <div
+      id="authRequiredModal"
+      class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('authRequiredModal')"
+          >&times;</span
+        >
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
+          साइन इन आवश्यक है
+        </h3>
+        <p class="text-gray-700 mb-6 hindi-text">
+          इस सुविधा का उपयोग करने के लिए आपको लॉग इन या साइन अप करना होगा।
+        </p>
+        <div class="auth-required-buttons">
+          <button
+            id="authLoginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन करें
+          </button>
+          <button
+            id="authSignupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Access Required Modal -->
+    <div
+      id="adminAccessModal"
+      class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('adminAccessModal')"
+          >&times;</span
+        >
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
+          व्यवस्थापक पहुँच आवश्यक है
+        </h3>
+        <p class="text-gray-700 mb-6 hindi-text">
+          इस सुविधा का उपयोग करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।
+        </p>
+        <div class="auth-required-buttons">
+          <button
+            id="adminAccessLoginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन करें
+          </button>
+          <button
+            id="adminAccessSignupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal for Delete -->
+    <div
+      id="confirmationModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('confirmationModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-4 text-center hindi-text"
+        >
+          पुष्टि करें
+        </h3>
+        <p class="text-gray-700 mb-6 text-center hindi-text">
+          क्या आप वाकई इस लेख को हटाना चाहते हैं?
+        </p>
+        <div class="flex justify-center gap-4">
+          <button
+            id="confirmDeleteBtn"
+            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            हाँ, हटाएँ
+          </button>
+          <button
+            class="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+            onclick="closeModal('confirmationModal')"
+          >
+            नहीं, रहने दें
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Us Modal (already present, reused) -->
+    <div id="contactModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-button" id="closeModalBtn" onclick="closeModal('contactModal')">&times;</span>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
+          हमसे संपर्क करें
+        </h3>
+        <form id="contactForm">
+          <div class="mb-4">
+            <label
+              for="contactName"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका नाम:</label
+            >
+            <input
+              type="text"
+              id="contactName"
+              name="name"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="अपना नाम दर्ज करें"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="contactEmail"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका ईमेल:</label
+            >
+            <input
+              type="email"
+              id="contactEmail"
+              name="email"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="अपना ईमेल दर्ज करें"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              for="contactMessage"
+              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
+              >आपका संदेश:</label
+            >
+            <textarea
+              id="contactMessage"
+              name="message"
+              rows="4"
+              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
+              placeholder="यहां अपना संदेश लिखें"
+              required
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <button
+              type="submit"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline transition duration-300 transform hover:scale-105 hindi-text"
+            >
+              संदेश भेजें
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Saved Articles Modal (New) -->
+    <div
+      id="savedArticlesModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-3xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('savedArticlesModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          सेव किए गए लेख
+        </h3>
+        <div
+          id="savedArticlesContainer"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2"
+        >
+          <!-- Saved articles will be loaded here dynamically -->
+          <div class="col-span-full text-center">
+            <div id="savedArticlesLoader" class="loader"></div>
+            <p id="noSavedArticlesMessage" class="text-gray-400 hidden">
+              अभी कोई सेव किए गए लेख उपलब्ध नहीं हैं।
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
+      const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
+      const ARTICLE_CATEGORY = "du-study-material"; // This page's category
+
+      // Global variables to store articles and saved article IDs
+      let allArticles = []; // Stores all fetched articles for this category
+      let savedArticleIds = []; // Stores IDs of articles saved by the user
+
+      // Function to show messages (success or error)
+      function showMessage(message, isError = false) {
+        const infoMessage = document.getElementById("infoMessage");
+        const infoMessageText = document.getElementById("infoMessageText");
+        infoMessageText.textContent = message;
+
+        // Reset classes
+        infoMessage.classList.remove("show", "error");
+        if (isError) {
+          infoMessage.classList.add("error");
+          infoMessage.querySelector("i").className = "fas fa-times-circle mr-2"; // Error icon
+        } else {
+          infoMessage.querySelector("i").className = "fas fa-check-circle mr-2"; // Success icon
+        }
+
+        infoMessage.classList.add("show");
+        setTimeout(() => {
+          infoMessage.classList.remove("show");
+        }, 3000); // Message disappears after 3 seconds
+      }
+
+      // Function to get current user data from localStorage
+      function getCurrentUser() {
+        const token = localStorage.getItem("token");
+        const userEmail = localStorage.getItem("userEmail");
+        const userRole = localStorage.getItem("userRole");
+        const userId = localStorage.getItem("userId"); // Retrieve userId
+
+        if (token && userEmail && userRole && userId) {
+          return { token, email: userEmail, role: userRole, userId };
+        }
+        return null;
+      }
+
+      /**
+       * Fetches saved articles for the logged-in user.
+       */
+      async function fetchSavedArticleIds() {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+          savedArticleIds = [];
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${loggedInUser.token}` },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            savedArticleIds = data.savedArticles || [];
+            console.log("Fetched saved article IDs:", savedArticleIds);
+          } else {
+            console.error("Failed to fetch saved articles:", data.message);
+            savedArticleIds = [];
+          }
+        } catch (error) {
+          console.error("Error fetching saved articles:", error);
+          savedArticleIds = [];
+        }
+      }
+
+
+      /**
+       * Toggles saving/unsaving an article for the current user.
+       * @param {string} articleId - The ID of the article to save/unsave.
+       * @param {HTMLElement} buttonElement - The button element that was clicked.
+       */
+      async function toggleSaveArticle(articleId, isCurrentlySaved) {
+        const loggedInUser = getCurrentUser();
+        if (!loggedInUser) {
+            openModal("authRequiredModal");
+            return;
+        }
+
+        try {
+            let response;
+            if (isCurrentlySaved) {
+                // Unsave the article
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    }
+                });
+            } else {
+                // Save the article
+                response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${loggedInUser.token}`
+                    },
+                    body: JSON.stringify({ articleId })
+                });
+            }
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showMessage(data.message || (isCurrentlySaved ? "लेख सेव किए गए लेखों से हटा दिया गया!" : "लेख सफलतापूर्वक सेव किया गया!"));
+                await fetchSavedArticleIds(); // Update global saved articles list
+                // Re-render relevant parts of the UI to reflect changes
+                displayArticles(allArticles); // Update main article list
+                if (document.getElementById('savedArticlesModal').classList.contains('open')) {
+                    loadSavedArticles(); // Update saved articles modal if open
+                }
+            } else {
+                showMessage(data.message || "लेख सेव/अनसेव करने में त्रुटि।", true);
+            }
+        } catch (error) {
+            console.error("Error toggling save article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+        }
+      }
+
+      // Function to update UI based on login status
+      async function updateAuthUI() { // Made async to await fetchSavedArticleIds
+        const loggedInUser = getCurrentUser();
+        const loginBtn = document.getElementById("loginBtn");
+        const signupBtn = document.getElementById("signupBtn");
+        const userProfileDropdown = document.getElementById(
+          "userProfileDropdown"
+        );
+        const userEmailDisplay = document.getElementById("userEmailDisplay");
+        const mobileLoginBtn = document.getElementById("mobileLoginBtn");
+        const mobileSignupBtn = document.getElementById("mobileSignupBtn");
+        const mobileUserProfile = document.getElementById("mobileUserProfile");
+        const mobileUserEmailDisplay = document.getElementById(
+          "mobileUserEmailDisplay"
+        );
+        const postContentLink = document.getElementById("postContentLink");
+        const mobilePostContentLink = document.getElementById(
+          "mobilePostContentLink"
+        );
+
+        if (loggedInUser) {
+          // User is signed in
+          loginBtn.classList.add("hidden");
+          signupBtn.classList.add("hidden");
+          userProfileDropdown.classList.remove("hidden");
+          userEmailDisplay.textContent = loggedInUser.email;
+
+          mobileLoginBtn.classList.add("hidden");
+          mobileSignupBtn.classList.add("hidden");
+          mobileUserProfile.classList.remove("hidden");
+          mobileUserEmailDisplay.textContent = loggedInUser.email;
+
+          if (loggedInUser.role === "admin") {
+            postContentLink.classList.remove("hidden");
+            mobilePostContentLink.classList.remove("hidden");
+          } else {
+            postContentLink.classList.add("hidden");
+            mobilePostContentLink.classList.add("hidden");
+          }
+          await fetchSavedArticleIds(); // Fetch saved article IDs for the logged-in user
+        } else {
+          // User is signed out
+          loginBtn.classList.remove("hidden");
+          signupBtn.classList.remove("hidden");
+          userProfileDropdown.classList.add("hidden");
+
+          mobileLoginBtn.classList.remove("hidden");
+          mobileSignupBtn.classList.remove("hidden");
+          mobileUserProfile.classList.add("hidden");
+
+          postContentLink.classList.add("hidden");
+          mobilePostContentLink.classList.add("hidden");
+          savedArticleIds = []; // Clear saved articles when logged out
+        }
+        await loadArticlesByCategory(); // Always load articles, but UI elements depend on login status
+      }
+
+      // Header scroll effect
+      const mainHeader = document.getElementById("mainHeader");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+          mainHeader.classList.add("scrolled");
+        } else {
+          mainHeader.classList.remove("scrolled");
+        }
+      });
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Generic Modal Functions
+      function openModal(modalId) {
+        document.getElementById(modalId).classList.add("open");
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("open");
+      }
+
+      // Close modal on outside click
+      document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            closeModal(overlay.id);
+          }
+        });
+      });
+
+      // Login/Signup Modal Handlers
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", () => openModal("loginModal"));
+      document
+        .getElementById("mobileLoginBtn")
+        .addEventListener("click", () => openModal("loginModal"));
+      document
+        .getElementById("signupBtn")
+        .addEventListener("click", () => openModal("signupModal"));
+      document
+        .getElementById("mobileSignupBtn")
+        .addEventListener("click", () => openModal("signupModal"));
+
+      // Auth Required Modal buttons
+      document.getElementById("authLoginBtn").addEventListener("click", () => {
+        closeModal("authRequiredModal");
+        openModal("loginModal");
+      });
+      document.getElementById("authSignupBtn").addEventListener("click", () => {
+        closeModal("authRequiredModal");
+        openModal("signupModal");
+      });
+
+      // Admin Access Required Modal buttons
+      document
+        .getElementById("adminAccessLoginBtn")
+        .addEventListener("click", () => {
+          closeModal("adminAccessModal");
+          openModal("loginModal");
+        });
+      document
+        .getElementById("adminAccessSignupBtn")
+        .addEventListener("click", () => {
+          closeModal("adminAccessModal");
+          openModal("signupModal");
+        });
+
+      // Forgot Password Link handler
+      document
+        .getElementById("forgotPasswordLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          closeModal("loginModal");
+          openModal("forgotPasswordModal");
+        });
+
+      // Forgot Password Form Submission
+      document
+        .getElementById("forgotPasswordForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("forgotEmail").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "OTP आपके ईमेल पर भेजा गया है।");
+              closeModal("forgotPasswordModal");
+              document.getElementById("resetEmail").value = email; // Pre-fill email for reset modal
+              openModal("resetPasswordModal");
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट अनुरोध विफल रहा।", true);
+            }
+          } catch (error) {
+            console.error("Forgot password error:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Reset Password Form Submission
+      document
+        .getElementById("resetPasswordForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("resetEmail").value;
+          const otp = document.getElementById("resetOtp").value;
+          const newPassword = document.getElementById("newPassword").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, otp, newPassword }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "पासवर्ड सफलतापूर्वक रीसेट किया गया। अब लॉग इन करें।");
+              closeModal("resetPasswordModal");
+              openModal("loginModal"); // Prompt user to login with new password
+            } else {
+              showMessage(data.message || "पासवर्ड रीसेट विफल रहा।", true);
+            }
+          } catch (error) {
+            console.error("Reset password error:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Login Form Submission (Client-side now interacts with backend)
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userEmail", data.user.email);
+            localStorage.setItem("userRole", data.user.role);
+            localStorage.setItem("userId", data.user.id); // Store userId from backend
+            showMessage("सफलतापूर्वक लॉग इन किया गया!");
+            closeModal("loginModal");
+            updateAuthUI();
+          } else {
+            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+        }
+      });
+
+      // Signup Form Submission (Client-side now interacts with backend)
+      document.getElementById("signupForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
+            closeModal("signupModal");
+            // Optionally clear signup form, then open login modal
+            document.getElementById("signupEmail").value = "";
+            document.getElementById("signupPassword").value = "";
+            openModal("loginModal"); // Prompt for login after signup
+          } else {
+            showMessage(data.message || "साइन अप विफल रहा।", true); // Display error from server
+          }
+        } catch (error) {
+          console.error("Signup error:", error);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Logout
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("userId"); // Remove userId on logout
+        showMessage("सफलतापूर्वक लॉग आउट किया गया!");
+        updateAuthUI();
+      }
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", handleLogout);
+      document
+        .getElementById("mobileLogoutBtn")
+        .addEventListener("click", handleLogout);
+
+      // Rich Text Editor functionality for new article
+      function formatDoc(command) {
+        const editableDiv = document.getElementById("articleContentEditable");
+        if (editableDiv) {
+            editableDiv.focus();
+            document.execCommand(command, false, null);
+        }
+      }
+
+      // Rich Text Editor functionality for edit article
+      function formatDocEdit(command) {
+        document.getElementById("editArticleContentEditable").focus();
+        document.execCommand(command, false, null);
+      }
+
+      // Post Content Link handler - Checks for admin access
+      document
+        .getElementById("postContentLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+          } else if (loggedInUser.role !== "admin") {
+            openModal("adminAccessModal");
+          } else {
+            openModal("postContentModal");
+            // Clear form fields when opening for new post
+            document.getElementById("articleTitle").value = "";
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for this page
+            document.getElementById("articleContentEditable").innerHTML = "";
+          }
+        });
+      document
+        .getElementById("mobilePostContentLink")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+            openModal("authRequiredModal");
+          } else if (loggedInUser.role !== "admin") {
+            openModal("adminAccessModal");
+          } else {
+            openModal("postContentModal");
+            // Clear form fields when opening for new post
+            document.getElementById("articleTitle").value = "";
+            document.getElementById("articleCategory").value = ARTICLE_CATEGORY; // Pre-select category for this page
+            document.getElementById("articleContentEditable").innerHTML = "";
+          }
+        });
+
+      // New Article Form Submission (Now interacts with backend)
+      document
+        .getElementById("newArticleForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser || loggedInUser.role !== "admin") {
+            showMessage(
+              "लेख पोस्ट करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।",
+              true
+            );
+            closeModal("postContentModal");
+            openModal("adminAccessModal");
+            return;
+          }
+
+          const title = document.getElementById("articleTitle").value;
+          const category = document.getElementById("articleCategory").value;
+          const content = document.getElementById(
+            "articleContentEditable"
+          ).innerHTML;
+
+          if (!title || !category || !content) {
+            showMessage("सभी फ़ील्ड भरें!", true);
+            return;
+          }
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/articles`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loggedInUser.token}`,
+              },
+              body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // Send author as logged-in user's email
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "लेख सफलतापूर्वक पोस्ट किया गया!");
+              closeModal("postContentModal");
+              // Check if the posted article belongs to this category before reloading
+              if (category === ARTICLE_CATEGORY) {
+                loadArticlesByCategory(); // Re-render articles for current category
+              }
+            } else {
+              showMessage(data.message || "लेख पोस्ट करने में त्रुटि।", true);
+            }
+          } catch (error) {
+            console.error("Error posting article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्huद।", true);
+          }
+        });
+
+      // Edit Article Form Submission (Now interacts with backend)
+      document
+        .getElementById("editArticleForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser || loggedInUser.role !== "admin") {
+            showMessage(
+              "लेख संपादित करने के लिए आपके पास व्यवस्थापक अधिकार होने चाहिए।",
+              true
+            );
+            closeModal("editArticleModal");
+            openModal("adminAccessModal");
+            return;
+          }
+
+          const articleId = document.getElementById("editArticleId").value;
+          const title = document.getElementById("editArticleTitle").value;
+          const category = document.getElementById("editArticleCategory").value;
+          const content = document.getElementById(
+            "editArticleContentEditable"
+          ).innerHTML;
+
+          if (!title || !category || !content) {
+            showMessage("सभी फ़ील्ड भरें!", true);
+            return;
+          }
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/articles/${articleId}`, {
+              method: "PUT", // Or PATCH
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loggedInUser.token}`,
+              },
+              body: JSON.stringify({ title, category, content }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(data.message || "लेख सफलतापूर्वक अपडेट किया गया!");
+              closeModal("editArticleModal");
+              loadArticlesByCategory(); // Re-render articles
+            } else {
+              showMessage(data.message || "लेख अद्यतन करने में त्रुटि।", true);
+            }
+          } catch (error) {
+            console.error("Error updating article:", error);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          }
+        });
+
+      // Load and Display Articles from Backend for this specific category
+      const articlesContainer = document.getElementById("articlesContainer");
+      const articlesLoader = document.getElementById("articlesLoader");
+      const noArticlesMessage = document.getElementById("noArticlesMessage");
+      let articleToDeleteId = null; // To store the ID of the article to be deleted
+
+      async function loadArticlesByCategory() {
+        articlesLoader.style.display = "block"; // Show loader
+        noArticlesMessage.classList.add("hidden"); // Hide no articles message
+        articlesContainer.innerHTML = ""; // Clear previous articles
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/articles?category=${ARTICLE_CATEGORY}`
+          );
+          const articles = await response.json();
+          allArticles = articles; // Store all articles globally
+
+          if (allArticles.length === 0) {
+            noArticlesMessage.classList.remove("hidden");
+            articlesLoader.style.display = "none";
+            return;
+          }
+          displayArticles(allArticles); // Display all articles by default
+        } catch (error) {
+          console.error("Error loading articles:", error);
+          showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
+          noArticlesMessage.classList.remove("hidden"); // Show message if API fails
+        } finally {
+          articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
+        }
+      }
+
+      /**
+       * Displays articles in the UI.
+       * @param {Array} articlesToDisplay - Array of article objects.
+       */
+      function displayArticles(articlesToDisplay) {
+        articlesContainer.innerHTML = ""; // Clear current articles
+        const loggedInUser = getCurrentUser(); // Get current user for showing edit/delete buttons
+
+        if (articlesToDisplay.length === 0) {
+            noArticlesMessage.classList.remove("hidden");
+            return;
+        } else {
+            noArticlesMessage.classList.add("hidden");
+        }
+
+        articlesToDisplay.forEach((article) => {
+          // Convert timestamp to readable string
+          const timestamp = new Date(article.createdAt).toLocaleString(
+            "hi-IN",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          );
+
+          // Check if the current article is saved by the user
+          const isSaved = savedArticleIds.includes(article._id);
+          const saveButtonText = isSaved ? "सेव किया गया" : "सेव करें";
+          const saveButtonClass = isSaved ? "bg-gray-500 hover:bg-gray-600" : "bg-blue-500 hover:bg-blue-600";
+          const saveButtonIcon = isSaved ? "fas fa-check" : "fas fa-bookmark";
+
+            const articleCard = `
+              <div
+                class="content-overlay p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
+                data-id="${article._id}"
+              >
+                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
+                  article.category
+                }</span>
+                <h3 class="text-xl font-bold mt-2 mb-2 text-gray-800 hindi-text">${
+                  article.title
+                }</h3>
+                <p class="text-gray-600 text-sm mb-3">लेखक: ${article.author}</p>
+                <p class="text-gray-500 text-xs mb-4">प्रकाशित: ${timestamp}</p>
+                <p class="text-gray-700 leading-relaxed truncate-3-lines hindi-text">
+                  ${article.content
+                    .replace(/<[^>]*>?/gm, "")
+                    .substring(0, 150)}... <!-- Strip HTML and truncate -->
+                </p>
+                <div class="mt-4 flex gap-2 justify-between items-center">
+                    <button class="text-emerald-600 hover:underline read-more-btn" data-id="${
+                    article._id
+                    }">
+                    और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                    ${loggedInUser ? `
+                        <button class="${saveButtonClass} text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="${isSaved}">
+                            <i class="${saveButtonIcon} mr-1"></i>${saveButtonText}
+                        </button>
+                    ` : ''}
+                </div>
+                ${
+                  loggedInUser && loggedInUser.role === "admin"
+                    ? `
+                  <div class="mt-4 flex gap-2">
+                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm edit-article-btn" data-id="${article._id}">
+                      <i class="fas fa-edit mr-1"></i>संपादित करें
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm delete-article-btn" data-id="${article._id}">
+                      <i class="fas fa-trash-alt mr-1"></i>हटाएँ
+                    </button>
+                  </div>
+                `
+                    : ""
+                }
+              </div>
+            `;
+            articlesContainer.insertAdjacentHTML("beforeend", articleCard);
+        });
+
+        // Add event listeners to newly created read-more, edit, delete, and save buttons
+        articlesContainer
+            .querySelectorAll(".content-overlay")
+            .forEach((card) => {
+                card.addEventListener("click", async (e) => {
+                    // Only trigger detail modal if not clicking edit/delete/save buttons
+                    if (
+                        !e.target.closest(".edit-article-btn") &&
+                        !e.target.closest(".delete-article-btn") &&
+                        !e.target.closest(".toggle-save-btn")
+                    ) {
+                        const articleId = e.currentTarget.dataset.id;
+                        try {
+                            const response = await fetch(
+                                `${API_BASE_URL}/articles/${articleId}`
+                            );
+                            const article = await response.json();
+                            if (response.ok) {
+                                openArticleDetailModal(article);
+                            } else {
+                                showMessage(
+                                    article.message || "लेख लोड करने में त्रुटि।",
+                                    true
+                                );
+                            }
+                        } catch (error) {
+                            console.error("Error fetching single article:", error);
+                            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                        }
+                    }
+                });
+            });
+
+        articlesContainer
+            .querySelectorAll(".edit-article-btn")
+            .forEach((button) => {
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    const loggedInUser = getCurrentUser();
+                    if (loggedInUser && loggedInUser.role === "admin") {
+                        const articleId = e.currentTarget.dataset.id;
+                        // Fetch article data to populate the edit form
+                        fetch(`${API_BASE_URL}/articles/${articleId}`)
+                            .then((res) => res.json())
+                            .then((article) => {
+                                if (article) {
+                                    document.getElementById("editArticleId").value =
+                                        article._id;
+                                    document.getElementById("editArticleTitle").value =
+                                        article.title;
+                                    document.getElementById("editArticleCategory").value =
+                                        article.category;
+                                    document.getElementById(
+                                        "editArticleContentEditable"
+                                    ).innerHTML = article.content;
+                                    openModal("editArticleModal");
+                                } else {
+                                    showMessage("लेख नहीं मिला।", true);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error fetching article for edit:", error);
+                                showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
+                            });
+                    } else if (!loggedInUser) {
+                        openModal("authRequiredModal");
+                    } else {
+                        openModal("adminAccessModal");
+                    }
+                });
+            });
+
+        articlesContainer
+            .querySelectorAll(".delete-article-btn")
+            .forEach((button) => {
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    const loggedInUser = getCurrentUser();
+                    if (loggedInUser && loggedInUser.role === "admin") {
+                        articleToDeleteId = e.currentTarget.dataset.id; // Store ID for confirmation
+                        openModal("confirmationModal");
+                    } else if (!loggedInUser) {
+                        openModal("authRequiredModal");
+                    } else {
+                        openModal("adminAccessModal");
+                    }
+                });
+            });
+
+        articlesContainer.querySelectorAll('.toggle-save-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent card click event
+                const articleId = e.currentTarget.dataset.id;
+                const isCurrentlySaved = e.currentTarget.dataset.saved === 'true';
+                await toggleSaveArticle(articleId, isCurrentlySaved);
+            });
+        });
+      }
+
+
+      // Handle delete confirmation (Now interacts with backend)
+      document
+        .getElementById("confirmDeleteBtn")
+        .addEventListener("click", async () => {
+          const loggedInUser = getCurrentUser();
+          if (
+            articleToDeleteId &&
+            loggedInUser &&
+            loggedInUser.role === "admin"
+          ) {
+            try {
+              const response = await fetch(`${API_BASE_URL}/articles/${articleToDeleteId}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${loggedInUser.token}`,
+                },
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                showMessage(data.message || "लेख सफलतापूर्वक हटाया गया!");
+                closeModal("confirmationModal");
+                loadArticlesByCategory(); // Re-render articles
+                articleToDeleteId = null; // Clear stored ID
+              } else {
+                showMessage(data.message || "लेख हटाने में त्रुटि।", true);
+              }
+            } catch (error) {
+              console.error("Error deleting article:", error);
+              showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            }
+          } else {
+            showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
+            closeModal("confirmationModal");
+          }
+        });
+
+      // Open Article Detail Modal and populate content
+      function openArticleDetailModal(article) {
+        document.getElementById("articleDetailTitle").textContent =
+          article.title;
+        document.getElementById("articleDetailCategory").textContent =
+          article.category;
+        document.getElementById("articleDetailAuthor").textContent =
+          article.author;
+        // Format timestamp
+        const timestamp = new Date(article.createdAt).toLocaleString("hi-IN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        document.getElementById(
+          "articleDetailTimestamp"
+        ).textContent = `प्रकाशित: ${timestamp}`;
+        document.getElementById("articleDetailContent").innerHTML =
+          article.content; // Use innerHTML for rich text
+
+        // Update save button in detail modal
+        const saveArticleBtn = document.getElementById('saveArticleBtn');
+        const loggedInUser = getCurrentUser();
+        if (loggedInUser) {
+            saveArticleBtn.style.display = 'block';
+            const isSaved = savedArticleIds.includes(article._id);
+            saveArticleBtn.textContent = isSaved ? "सेव किया गया" : "सेव करें";
+            saveArticleBtn.classList.toggle('bg-gray-500', isSaved);
+            saveArticleBtn.classList.toggle('hover:bg-gray-600', isSaved);
+            saveArticleBtn.classList.toggle('bg-blue-500', !isSaved);
+            saveArticleBtn.classList.toggle('hover:bg-blue-600', !isSaved);
+            saveArticleBtn.querySelector('i').className = isSaved ? "fas fa-check mr-2" : "fas fa-bookmark mr-2";
+            saveArticleBtn.onclick = () => toggleSaveArticle(article._id, isSaved);
+        } else {
+            saveArticleBtn.style.display = 'none'; // Hide save button if not logged in
+        }
+
+        openModal("articleDetailModal");
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Back to Top button functionality
+        const backToTopBtn = document.getElementById("backToTopBtn");
+
+        const toggleBackToTopButton = () => {
+          if (window.scrollY > 300) {
+            // Show after scrolling 300px
+            backToTopBtn.classList.add("opacity-100", "scale-100");
+            backToTopBtn.classList.remove("opacity-0", "scale-0");
+          } else {
+            backToTopBtn.classList.add("opacity-0", "scale-0");
+            backToTopBtn.classList.remove("opacity-100", "scale-0");
+          }
+        };
+
+        window.addEventListener("scroll", toggleBackToTopButton);
+        backToTopBtn.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+
+        // Contact Us Modal functionality
+        const contactUsLink = document.getElementById("contactUsLink");
+        const contactModal = document.getElementById("contactModal");
+        const contactForm = document.getElementById("contactForm"); // Get the contact form
+
+        if (contactUsLink) {
+          contactUsLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            openModal("contactModal"); // Use generic openModal
+          });
+        }
+
+        // Contact Form Submission
+        if (contactForm) {
+            contactForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const name = document.getElementById("contactName").value;
+                const email = document.getElementById("contactEmail").value;
+                const message = document.getElementById("contactMessage").value;
+                console.log(`Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`);
+                showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
+                closeModal("contactModal"); // Use generic closeModal
+                contactForm.reset(); // Clear form
+            });
+        }
+
+        // Load Saved Articles Function (New)
+        const savedArticlesContainer = document.getElementById("savedArticlesContainer");
+        const savedArticlesLoader = document.getElementById("savedArticlesLoader");
+        const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
+
+        async function loadSavedArticles() {
+            const loggedInUser = getCurrentUser();
+            if (!loggedInUser) {
+                openModal("authRequiredModal");
+                return;
+            }
+
+            savedArticlesLoader.style.display = "block";
+            noSavedArticlesMessage.classList.add("hidden");
+            savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
+
+            try {
+                // Fetch the full article details for the saved article IDs
+                const response = await fetch(
+                    `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${loggedInUser.token}`,
+                        },
+                    }
+                );
+
+                const savedArticlesResponse = await response.json(); // Renamed to avoid conflict
+
+                if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
+                    // Fetch full article objects based on the IDs returned
+                    const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
+                        const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                        return articleRes.json();
+                    });
+                    const fullSavedArticles = await Promise.all(fullArticlesPromises);
+
+                    // Filter out any articles that might have failed to fetch or are null
+                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
+
+                    if (validSavedArticles.length === 0) {
+                        noSavedArticlesMessage.classList.remove("hidden");
+                        noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
+                    } else {
+                        validSavedArticles.forEach((article) => {
+                            const timestamp = new Date(article.createdAt).toLocaleString(
+                                "hi-IN",
+                                {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                }
+                            );
+
+                            const savedArticleCard = `
+                                <div
+                                    class="content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
+                                    data-id="${article._id}"
+                                >
+                                    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
+                                    <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
+                                    <p class="text-gray-600 text-sm mb-2">लेखक: ${article.author}</p>
+                                    <p class="text-gray-500 text-xs mb-3">प्रकाशित: ${timestamp}</p>
+                                    <p class="text-gray-700 leading-relaxed truncate-2-lines hindi-text">
+                                        ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
+                                    </p>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <button class="text-emerald-600 hover:underline read-more-btn" data-id="${article._id}">
+                                            और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                                        </button>
+                                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
+                                            <i class="fas fa-trash-alt mr-1"></i>हटाएँ
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            savedArticlesContainer.insertAdjacentHTML("beforeend", savedArticleCard);
+                        });
+
+                        // Add event listeners for read-more and unsave buttons in the modal
+                        savedArticlesContainer.querySelectorAll('.content-overlay').forEach(card => {
+                            card.addEventListener('click', async (e) => {
+                                if (!e.target.closest('.toggle-save-btn')) {
+                                    const articleId = e.currentTarget.dataset.id;
+                                    try {
+                                        const response = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                                        const article = await response.json();
+                                        if (response.ok) {
+                                            openArticleDetailModal(article);
+                                            closeModal("savedArticlesModal"); // Close saved articles modal when opening detail
+                                        } else {
+                                            showMessage(article.message || "लेख लोड करने में त्रुटि।", true);
+                                        }
+                                    } catch (error) {
+                                        console.error("Error fetching single article for saved modal:", error);
+                                        showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                                    }
+                                }
+                            });
+                        });
+
+                        savedArticlesContainer.querySelectorAll('.toggle-save-btn').forEach(button => {
+                            button.addEventListener('click', async (e) => {
+                                e.stopPropagation();
+                                const articleId = e.currentTarget.dataset.id;
+                                await toggleSaveArticle(articleId, true); // Always true for unsaving from this modal
+                            });
+                        });
+                    }
+                } else {
+                    noSavedArticlesMessage.classList.remove("hidden");
+                    noSavedArticlesMessage.textContent = "आपके पास कोई सेव किया गया लेख नहीं है।";
+                }
+            } catch (error) {
+                console.error("Error loading saved articles:", error);
+                noSavedArticlesMessage.classList.remove("hidden");
+                noSavedArticlesMessage.textContent = "सेव किए गए लेख लोड करने में त्रुटि हुई।";
+            } finally {
+                savedArticlesLoader.style.display = "none";
+            }
+        }
+
+
+        // Event listener for "सेव किए गए लेख" link
+        document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
+            e.preventDefault();
+            openModal("savedArticlesModal");
+            loadSavedArticles(); // Load articles when modal opens
+        });
+        document.getElementById("mobileSavedArticlesLink").addEventListener("click", (e) => {
+            e.preventDefault();
+            closeModal("mobileMenu"); // Close mobile menu after clicking
+            openModal("savedArticlesModal");
+            loadSavedArticles(); // Load articles when modal opens
+        });
+
+        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
+        // loadArticlesByCategory is called inside updateAuthUI()
+      });
+    </script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>डीयू अध्ययन सामग्री - गामाकौआ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Base font-family and smooth scroll behavior */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Noto Sans Devanagari", "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-image: url("https://images.unsplash.com/photo-1518495973347-1f4806a6c4b2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"); /* Unsplash B&W abstract image */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-color: #0d1a2f; /* Fallback dark color */
+        color: #e2e8f0; /* Default light text color */
+      }
+
+      /* Header styling with glass morphism effect */
+      header {
+        background: rgba(
+          26,
+          32,
+          44,
+          0.7
+        ); /* Darker, more transparent for glass effect */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: #e2e8f0;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      header.scrolled {
+        background: rgba(15, 23, 42, 0.9);
+        padding: 10px 0;
+      }
+
+      /* Logo styling */
+      .logo-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #10b981;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* Content section with glass morphism effect */
+      .content-overlay {
+        background: rgba(
+          255,
+          255,
+          255,
+          0.75
+        ); /* Light, more transparent white for glass effect */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        color: #374151; /* Darker text inside content overlays */
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .content-overlay:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Gradient text for headings (optional, consistent with main page) */
+      .gradient-text {
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* Modal specific styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .modal-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        position: relative;
+        max-width: 90%;
+        width: 500px;
+        transform: scale(0.8);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(245, 245, 245, 0.95) 100%
+        );
+      }
+
+      .modal-overlay.open .modal-content {
+        transform: scale(1);
+      }
+
+      .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #4a5568;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .close-button:hover {
+        color: #ef4444;
+        transform: rotate(90deg);
+      }
+
+      /* Floating action button (Back to Top) */
+      .floating-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #10b981);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        cursor: pointer;
+        z-index: 999;
+        transition: all 0.3s ease;
+      }
+
+      .floating-btn:hover {
+        transform: scale(1.1) rotate(10deg);
+        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+      }
+
+      /* Hindi font adjustments */
+      .hindi-text {
+        line-height: 1.8;
+        letter-spacing: 0.5px;
+      }
+
+      /* Loader styles */
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+        display: none;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Message styling */
+      .info-message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        transform: translateX(150%);
+        transition: transform 0.3s ease-out;
+      }
+
+      .info-message.error {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+      }
+
+      .info-message.show {
+        transform: translateX(0);
+      }
+
+      /* User profile dropdown */
+      .profile-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .profile-btn {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .profile-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 8px;
+        object-fit: cover;
+        border: 2px solid #3b82f6;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #1e293b;
+        min-width: 200px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.3s;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #334155;
+      }
+
+      .profile-dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      /* Post blog button styling */
+      .post-blog-btn {
+        background: linear-gradient(135deg, #3b82f6, #10b981);
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .post-blog-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      .post-blog-btn i {
+        margin-right: 8px;
+      }
+
+      /* Auth required modal */
+      .auth-required-modal {
+        text-align: center;
+      }
+
+      .auth-required-modal .modal-content {
+        max-width: 400px;
+      }
+
+      .auth-required-modal h3 {
+        margin-bottom: 16px;
+      }
+
+      .auth-required-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      /* Blog editor styling (for edit modal) */
+      .editor-toolbar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+
+      .editor-btn {
+        background: #e2e8f0;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .editor-btn:hover {
+        background: #cbd5e1;
+      }
+
+      .editor-btn.active {
+        background: #94a3b8;
+        color: white;
+      }
+
+      /* Custom styling for article detail modal content for better readability */
+      #articleDetailContent {
+        white-space: pre-wrap; /* Preserves whitespace and wraps text */
+        word-break: break-word; /* Breaks long words */
+      }
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .logo-text {
+          font-size: 1.2rem;
+        }
+
+        .logo-img {
+          width: 40px;
+          height: 40px;
+        }
+
+        .post-blog-btn {
+          padding: 8px 16px;
+          font-size: 0.9rem;
+        }
+
+        .auth-required-buttons {
+          flex-direction: column;
+          gap: 8px;
+        }
+        /* Ensure mobile menu buttons and links stack properly */
+        #mobileMenu .flex-col > a,
+        #mobileMenu .flex-col > button {
+          width: 100%;
+          text-align: left;
+          padding: 0.75rem 0;
+        }
+        /* Remove top border if it causes visual issues on mobile */
+        #mobileMenu {
+          border-top: none;
+        }
+        /* Adjust font size of main content heading on mobile */
+        .content-overlay h1 {
+            font-size: 2.5rem; /* Smaller for mobile view */
+        }
+      }
+      /* Animated underline for navigation links */
+      .underline-animation {
+        position: relative;
+        display: inline-block;
+      }
+
+      .underline-animation::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+      }
+
+      .underline-animation:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+      }
+    </style>
+  </head>
+  <body class="text-gray-800">
+    <!-- Message Container (for success/error) -->
+    <div id="infoMessage" class="info-message">
+      <i class="fas fa-check-circle"></i>
+      <span id="infoMessageText"></span>
+    </div>
+
+    <!-- Header Section -->
+    <header id="mainHeader" class="fixed top-0 left-0 w-full z-50">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+          <!-- Logo with link to homepage -->
+          <div class="logo-container">
+            <img
+              src="20211011_204121_0000-1.png"
+              alt="Gamakauaa Logo"
+              class="logo-img"
+            />
+            <a href="index.html" class="logo-text">गामाकौआ</a>
+          </div>
+          <nav class="hidden md:flex space-x-6 items-center">
+            <a
+              href="hindi-literature.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-book mr-2"></i>हिंदी साहित्य</a
+            >
+            <a
+              href="literary-theories.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत</a
+            >
+            <a
+              href="story-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं</a
+            >
+            <a
+              href="novel-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-book-reader mr-2"></i>उपन्यास समीक्षाएँ</a
+            >
+            <a
+              href="du-study-material.html"
+              class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
+            >
+              <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
+            >
+
+          <!-- Post Blog Button - Visible only for admins -->
+          <a href="#" id="postContentLink" class="post-blog-btn hidden">
+            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+          </a>
+
+          <!-- User Profile Dropdown - Visible when logged in -->
+          <div id="userProfileDropdown" class="profile-dropdown hidden">
+            <div class="profile-btn">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                alt="User Profile"
+                class="profile-img"
+              />
+              <span
+                id="userEmailDisplay"
+                class="text-white font-medium"
+              ></span>
+            </div>
+            <div class="dropdown-content">
+              <!-- <a href="#"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a> Removed this tab -->
+              <a href="#" id="savedArticlesLink"
+                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+              >
+              <a href="#" id="logoutBtn"
+                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+              >
+            </div>
+          </div>
+
+          <!-- Auth Buttons - Visible when not logged in -->
+          <button
+            id="loginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <button
+            id="signupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
+        </nav>
+        <!-- Mobile Menu Toggle (for the entire header content including new buttons) -->
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden text-white focus:outline-none"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobileMenu"
+        class="hidden md:hidden py-4 border-t border-gray-700 container mx-auto px-4"
+      >
+        <div class="flex flex-col space-y-4">
+          <a
+            href="hindi-literature.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-book mr-2"></i>हिंदी साहित्य
+          </a>
+          <a
+            href="literary-theories.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
+          </a>
+          <a
+            href="story-reviews.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं
+          </a>
+          <a
+            href="novel-reviews.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-book-reader mr-2"></i>उपन्यास समीक्षाएँ</a
+          >
+          <a
+            href="du-study-material.html"
+            class="text-white hover:text-emerald-300 transition duration-300"
+          >
+            <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
+          >
+          <!-- Post Blog Button - Visible only for admins -->
+          <a
+            href="#"
+            id="mobilePostContentLink"
+            class="text-white hover:text-emerald-300 transition duration-300 hidden"
+          >
+            <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
+          </a>
+
+          <!-- Mobile User Profile - Visible when logged in -->
+          <div
+            id="mobileUserProfile"
+            class="hidden pt-4 border-t border-gray-600"
+          >
+            <div class="flex items-center mb-4">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                alt="User Profile"
+                class="profile-img"
+              />
+              <span
+                id="mobileUserEmailDisplay"
+                class="text-white font-medium ml-2"
+              ></span>
+            </div>
+            <div class="flex flex-col space-y-2">
+              <!-- <a href="#" class="text-white hover:text-emerald-300"><i class="fas fa-user mr-2"></i>मेरी प्रोफाइल</a> Removed this tab -->
+              <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
+                ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
+              >
+              <a
+                href="#"
+                id="mobileLogoutBtn"
+                class="text-white hover:text-emerald-300"
+                ><i class="fas fa-sign-out-alt mr-2"></i>लॉग आउट करें</a
+              >
+            </div>
+          </div>
+
+          <!-- Mobile Auth Buttons - Visible when not logged in -->
+          <button
+            id="mobileLoginBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <button
+            id="mobileSignupBtn"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
+          >
+            साइन अप करें
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Section for DU Study Material -->
+    <section class="py-16 px-4 pt-32"> <!-- Added pt-32 to push content below fixed header -->
+      <div class="container mx-auto content-overlay p-8">
+        <h1
+          class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
+        >
+          डीयू अध्ययन सामग्री
+        </h1>
+        <p
+          class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
+        >
+          यह अनुभाग दिल्ली विश्वविद्यालय के छात्रों के लिए विशेष रूप से तैयार की
+          गई अध्ययन सामग्री प्रदान करता है। इसमें विभिन्न स्नातक और स्नातकोत्तर
+          पाठ्यक्रमों से संबंधित नोट्स, महत्वपूर्ण प्रश्न, पिछले वर्ष के प्रश्न
+          पत्र और परीक्षा तैयारी युक्तियाँ शामिल हैं।
+        </p>
+        <p
+          class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
+        >
+          हमारा उद्देश्य छात्रों को उनकी शैक्षणिक यात्रा में सहायता करना है,
+          विशेष रूप से हिंदी साहित्य, अंग्रेजी साहित्य, मास मीडिया और अन्य कला
+          और मानविकी विषयों में। यहां आपको सिनेमा और मास मीडिया, साहित्यिक
+          आलोचना के परिचय जैसे विषयों पर सामग्री मिलेगी।
+        </p>
+        <div
+          id="articlesContainer"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10"
+        >
+          <!-- Articles will be loaded here dynamically -->
+          <div class="col-span-full text-center">
+            <div id="articlesLoader" class="loader"></div>
+            <p id="noArticlesMessage" class="text-gray-400 hidden">
+              अभी कोई लेख उपलब्ध नहीं हैं।
+            </p>
+          </div>
+        </div>
+        <div class="text-center mt-12">
+          <a
+            href="index.html"
+            class="bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-8 rounded-full transition duration-300 transform hover:scale-105"
+          >
+            मुख्य पृष्ठ पर वापस जाएँ <i class="fas fa-home ml-2"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-8 px-4 mt-12">
+      <div class="container mx-auto text-center">
+        <p class="text-sm rounded-md">
+          &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित।
+          <span class="text-red-400">&hearts;</span> के साथ डिज़ाइन किया गया।
+        </p>
+        <div class="flex justify-center space-x-6 mt-4">
+          <a
+            href="#"
+            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
+            >गोपनीयता नीति</a
+          >
+          <a
+            href="#"
+            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
+            >सेवा की शर्तें</a
+          >
+          <a
+            href="#"
+            id="contactUsLink"
+            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
+            >हमसे संपर्क करें</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button
+      id="backToTopBtn"
+      class="floating-btn opacity-0 transform scale-0"
+      style="min-width: 50px; min-height: 50px"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Login Modal -->
+    <div
+      id="loginModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('loginModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          लॉग इन करें
+        </h3>
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label
+              for="loginEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="loginEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="loginPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >पासवर्ड:</label
+            >
+            <input
+              type="password"
+              id="loginPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका पासवर्ड"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            लॉग इन
+          </button>
+          <div class="text-center text-gray-600 mt-4">
+            <a
+              href="#"
+              id="forgotPasswordLink"
+              class="text-blue-500 hover:underline text-sm mt-2 block text-right hindi-text"
+              >पासवर्ड भूल गए?</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div
+      id="signupModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('signupModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          साइन अप करें
+        </h3>
+        <form id="signupForm" class="space-y-4">
+          <div>
+            <label
+              for="signupEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="signupEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="signupPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >पासवर्ड:</label
+            >
+            <input
+              type="password"
+              id="signupPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="नया पासवर्ड"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            साइन अप करें
+          </button>
+          <div class="text-center text-gray-600 mt-4">
+            <!-- No Google signup without Firebase -->
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div
+      id="forgotPasswordModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('forgotPasswordModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          पासवर्ड भूल गए
+        </h3>
+        <p class="text-gray-700 mb-4 text-center hindi-text">
+          अपना पासवर्ड रीसेट करने के लिए अपना ईमेल दर्ज करें। आपको एक ओटीपी
+          भेजा जाएगा।
+        </p>
+        <form id="forgotPasswordForm" class="space-y-4">
+          <div>
+            <label
+              for="forgotEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="forgotEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            ओटीपी भेजें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div
+      id="resetPasswordModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('resetPasswordModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          पासवर्ड रीसेट करें
+        </h3>
+        <p class="text-gray-700 mb-4 text-center hindi-text">
+          ओटीपी और अपना नया पासवर्ड दर्ज करें।
+        </p>
+        <form id="resetPasswordForm" class="space-y-4">
+          <div>
+            <label
+              for="resetEmail"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
+            >
+            <input
+              type="email"
+              id="resetEmail"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
+              readonly
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="resetOtp"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ओटीपी:</label
+            >
+            <input
+              type="text"
+              id="resetOtp"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="प्राप्त ओटीपी दर्ज करें"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="newPassword"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >नया पासवर्ड:</label
+            >
+            <input
+              type="password"
+              id="newPassword"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="नया पासवर्ड दर्ज करें"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            पासवर्ड रीसेट करें
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Post Content Modal -->
+    <div
+      id="postContentModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div
+        class="modal-content animate__animated animate__zoomIn max-w-2xl w-full"
+      >
+        <span class="close-button" onclick="closeModal('postContentModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
+          नया लेख पोस्ट करें
+        </h3>
+        <form id="newArticleForm" class="space-y-4">
+          <div>
+            <label
+              for="articleTitle"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >शीर्षक:</label
+            >
+            <input
+              type="text"
+              id="articleTitle"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="लेख का शीर्षक"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="articleCategory"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >श्रेणी:</label
+            >
+            <select
+              id="articleCategory"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            >
+              <option value="">श्रेणी चुनें</option>
+              <option value="hindi-literature">हिंदी साहित्य</option>
+              <option value="literary-theories">साहित्यिक सिद्धांत</option>
+              <option value="story-reviews">कहानी समीक्षाएं</option>
+              <option value="novel-reviews">उपन्यास समीक्षाएँ</option>
+              <option value="du-study-material">डीयू अध्ययन सामग्री</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="articleContent"
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >सामग्री:</label
+            >
+            <div class="editor-toolbar">
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('bold')"
+              >
+                <i class="fas fa-bold"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('italic')"
+              >
+                <i class="fas fa-italic"></i>
+              </button>
+              <button
+                type="button"
+                class="editor-btn"
+                onclick="formatDoc('underline')"
+              >
+                <i class="fas fa-underline"></i>
+              </button>
               <button
                 type="button"
                 class="editor-btn"
