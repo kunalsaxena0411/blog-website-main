@@ -111,7 +111,7 @@ const SavedArticle = mongoose.model("SavedArticle", savedArticleSchema);
 const transporter = nodemailer.createTransport({
   service: "gmail", // Example: Use Gmail. For production, consider dedicated services.
   auth: {
-    user: "gamakauaa.com@gmail.com", // Replace with your Gmail address
+    user: "gamkauaa@gmail.com", // ⭐ UPDATED: Replace with your Gmail address
     pass: "epkf gmxv potv acsw", // Replace with your Gmail App Password (NOT your regular password)
   },
 });
@@ -183,7 +183,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
     // Send welcome email after successful signup
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // Sender address
+      from: "gamkauaa@gmail.com", // ⭐ UPDATED: Sender address
       to: newUser.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
@@ -241,7 +241,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // Send welcome email on login (if not sent before or as a reminder)
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // Sender address
+      from: "gamkauaa@gmail.com", // ⭐ UPDATED: Sender address
       to: user.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
@@ -298,7 +298,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 
     // Send OTP via email (replace with actual email sending logic)
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // Sender address
+      from: "gamkauaa@gmail.com", // ⭐ UPDATED: Sender address
       to: user.email, // Recipient address
       subject: "गामाकौआ: पासवर्ड रीसेट ओटीपी",
       html: `
