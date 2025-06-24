@@ -995,30 +995,23 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('bold')"
+                onclick="formatDoc('bold', 'articleContentEditable')"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('italic')"
+                onclick="formatDoc('italic', 'articleContentEditable')"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDoc('underline')"
+                onclick="formatDoc('underline', 'articleContentEditable')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDoc('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1100,30 +1093,23 @@
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('bold')"
+                onclick="formatDocEdit('bold', 'editArticleContentEditable')"
               >
                 <i class="fas fa-bold"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('italic')"
+                onclick="formatDocEdit('italic', 'editArticleContentEditable')"
               >
                 <i class="fas fa-italic"></i>
               </button>
               <button
                 type="button"
                 class="editor-btn"
-                onclick="formatDocEdit('underline')"
+                onclick="formatDocEdit('underline', 'editArticleContentEditable')"
               >
                 <i class="fas fa-underline"></i>
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                onclick="formatDocEdit('insertUnorderedList')"
-              >
-                <i class="fas fa-list-ul"></i>
               </button>
             </div>
             <div
@@ -1183,7 +1169,7 @@
     <!-- Auth Required Modal -->
     <div
       id="authRequiredModal"
-      class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
+      class="modal-overlay animate__animated animate__fadeIn"
     >
       <div class="modal-content animate__animated animate__zoomIn">
         <span class="close-button" onclick="closeModal('authRequiredModal')"
@@ -1353,6 +1339,7 @@
       >
         <span class="close-button" onclick="closeModal('savedArticlesModal')"
           >&times;</span
+
         >
         <h3
           class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
@@ -1669,7 +1656,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्d है।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -1732,7 +1719,7 @@
             closeModal("loginModal");
             updateAuthUI();
           } else {
-            showMessage(data.message || "लॉगिन विफल रहा।", true); // Display error from server
+            showMessage(data.message || "लॉगइन विफल रहा।", true); // Display error from server
           }
         } catch (error) {
           console.error("Login error:", error);
