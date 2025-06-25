@@ -1004,7 +1004,7 @@
             >उपयोग की शर्तें</a
           >
           <a
-            href="mailto:gamakauaa.com@gmail.com"
+            href="#"
             id="contactUsLink"
             class="hover:text-gray-300 transition duration-300"
             >हमसे संपर्क करें</a
@@ -2649,6 +2649,27 @@
       document.addEventListener("DOMContentLoaded", () => {
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
         // loadArticles is called inside updateAuthUI()
+      });
+
+      // Contact Us Form Submission - now generates mailto link
+      document.getElementById("contactForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("contactName").value;
+        const email = document.getElementById("contactEmail").value;
+        const message = document.getElementById("contactMessage").value;
+
+        const recipientEmail = "gamakauaa.com@gmail.com";
+        const subject = encodeURIComponent(`Contact from Gamakauaa - ${name}`);
+        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+
+        const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+        
+        // Open the mailto link in a new window/tab
+        window.open(mailtoLink, '_blank');
+
+        showMessage("आपका संदेश सफलतापूर्वक भेजा गया! आपका ईमेल क्लाइंट अब खुलेगा।");
+        closeModal("contactUsModal");
+        document.getElementById("contactForm").reset(); // Clear form
       });
     </script>
   </body>
