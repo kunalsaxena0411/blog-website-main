@@ -1000,14 +1000,15 @@
           &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित। ❤️ के साथ डिज़ाइन किया गया।
         </p>
         <div class="flex justify-center space-x-6 text-sm">
-          <a href="#mainHeader" class="hover:text-gray-300 transition duration-300"
-            >उपयोग की शर्तें</a
+          <!-- Renamed "गोपनीयता नीति" to "मुखपृष्ठ" and linked to homepage -->
+          <a href="index.html" class="hover:text-gray-300 transition duration-300"
+            >मुखपृष्ठ</a
           >
-          <a
-            href="#"
-            id="contactUsLink"
-            class="hover:text-gray-300 transition duration-300"
-            >हमसे संपर्क करें</a
+          <!-- Changed to button to open contactUsModal -->
+          <button
+            id="openContactUsModalBtn"
+            class="hover:text-gray-300 transition duration-300 focus:outline-none"
+            >हमसे संपर्क करें</button
           >
           <!-- Social Media Links -->
           <a
@@ -2645,31 +2646,41 @@
         document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
-      // Initial load of articles and UI update when DOM is ready
-      document.addEventListener("DOMContentLoaded", () => {
-        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
-        // loadArticles is called inside updateAuthUI()
+      // NEW: Event listener for "हमसे संपर्क करें" button in footer to open Contact Us modal
+      document.getElementById("openContactUsModalBtn").addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        openModal("contactUsModal");
+        // Clear contact form fields when opening
+        document.getElementById("contactName").value = "";
+        document.getElementById("contactEmail").value = "";
+        document.getElementById("contactMessage").value = "";
       });
 
-      // Contact Us Form Submission - now generates mailto link
+      // NEW: Contact Form Submission to mailto
       document.getElementById("contactForm").addEventListener("submit", (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent actual form submission
+
         const name = document.getElementById("contactName").value;
         const email = document.getElementById("contactEmail").value;
         const message = document.getElementById("contactMessage").value;
 
-        const recipientEmail = "gamakauaa.com@gmail.com";
-        const subject = encodeURIComponent(`Contact from Gamakauaa - ${name}`);
+        // Construct the mailto link
+        const subject = encodeURIComponent(`Gamakauaa Contact Form: ${name}`);
         const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+        const mailtoLink = `mailto:gamakauaa.com@gmail.com?subject=${subject}&body=${body}`;
 
-        const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-        
-        // Open the mailto link in a new window/tab
-        window.open(mailtoLink, '_blank');
+        // Attempt to open the mail client
+        window.location.href = mailtoLink;
 
-        showMessage("आपका संदेश सफलतापूर्वक भेजा गया! आपका ईमेल क्लाइंट अब खुलेगा।");
+        showMessage("आपका संदेश भेजने के लिए आपका ईमेल क्लाइंट खुल रहा है।");
         closeModal("contactUsModal");
-        document.getElementById("contactForm").reset(); // Clear form
+      });
+
+
+      // Initial load of articles and UI update when DOM is ready
+      document.addEventListener("DOMContentLoaded", () => {
+        updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
+        // loadArticles is called inside updateAuthUI()
       });
     </script>
   </body>
