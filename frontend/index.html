@@ -510,70 +510,6 @@
         color: white;
       }
 
-      /* Text style dropdown specific styles (removed from HTML, keeping for reference in case user wants to add back) */
-      /*
-      .text-style-dropdown-container {
-        position: relative;
-        display: inline-block;
-      }
-
-      .text-style-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background-color: #1e293b;
-        min-width: 150px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 10;
-        border-radius: 8px;
-        overflow: hidden;
-        padding: 8px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .text-style-dropdown-menu.show {
-        display: block;
-      }
-
-      .text-style-dropdown-menu button {
-        background: none;
-        border: none;
-        color: white;
-        padding: 8px 16px;
-        text-align: left;
-        width: 100%;
-        display: block;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-
-      .text-style-dropdown-menu button:hover {
-        background-color: #334155;
-      }
-      */
-
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .logo-text {
-          font-size: 1.2rem;
-        }
-
-        .logo-img {
-          width: 40px;
-          height: 40px;
-        }
-
-        .post-blog-btn {
-          padding: 8px 16px;
-          font-size: 0.9rem;
-        }
-
-        .auth-required-buttons {
-          flex-direction: column;
-          gap: 8px;
-        }
-      }
       /* Custom styling for article detail modal content for better readability */
       #articleDetailContent {
         white-space: pre-wrap; /* Preserves whitespace and wraps text */
@@ -821,6 +757,7 @@
         <div class="animate__animated animate__fadeInUp animate__delay-2s">
           <a
             href="#latest-articles"
+            id="findArticlesBtn"
             class="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-semibold text-white transition-all duration-300 bg-emerald-500 rounded-full hover:bg-emerald-600 group"
           >
             <span
@@ -915,6 +852,7 @@
         <div class="text-center mt-12">
           <a
             href="#"
+            id="viewAllArticlesBtn"
             class="inline-flex items-center px-6 py-3 border border-emerald-500 text-emerald-500 rounded-full hover:bg-emerald-500 hover:text-white transition duration-300"
           >
             सभी लेख देखें <i class="fas fa-chevron-right ml-2"></i>
@@ -1062,14 +1000,11 @@
           &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित। ❤️ के साथ डिज़ाइन किया गया।
         </p>
         <div class="flex justify-center space-x-6 text-sm">
-          <a href="#" class="hover:text-gray-300 transition duration-300"
-            >गोपनीयता नीति</a
-          >
-          <a href="#" class="hover:text-gray-300 transition duration-300"
-            >सेवा की शर्तें</a
+          <a href="#mainHeader" class="hover:text-gray-300 transition duration-300"
+            >उपयोग की शर्तें</a
           >
           <a
-            href="#"
+            href="mailto:gamakauaa.com@gmail.com"
             id="contactUsLink"
             class="hover:text-gray-300 transition duration-300"
             >हमसे संपर्क करें</a
@@ -2248,65 +2183,6 @@
       // The formatDocEdit function can now simply call formatDoc as they have identical functionality
       const formatDocEdit = formatDoc;
 
-      // Removed toggleTextStyleDropdown and applyTextStyle functions as text styling options are removed
-      /*
-      function toggleTextStyleDropdown(editorId) {
-        const dropdownId = editorId.includes('newArticle') ? 'newArticleTextStyleDropdown' : 'editArticleTextStyleDropdown';
-        const dropdown = document.getElementById(dropdownId);
-        dropdown.classList.toggle('show');
-
-        // Close other text style dropdowns if open
-        document.querySelectorAll('.text-style-dropdown-menu').forEach(menu => {
-            if (menu.id !== dropdownId) {
-                menu.classList.remove('show');
-            }
-        });
-      }
-
-      function applyTextStyle(editorId, tagName) {
-          const editor = document.getElementById(editorId);
-          editor.focus(); // Ensure the editor is focused
-
-          // Hide dropdown immediately after a style is chosen
-          document.querySelectorAll('.text-style-dropdown-menu').forEach(menu => {
-              menu.classList.remove('show');
-          });
-
-          // Get the current selection
-          const selection = window.getSelection();
-          if (!selection.rangeCount) {
-              console.warn("No selection found. Cannot apply text style.");
-              return;
-          }
-
-          const range = selection.getRangeAt(0);
-          console.log("Current selection range:", range);
-          console.log("Current editor innerHTML before formatBlock:", editor.innerHTML);
-
-          // If the editor is empty or just has a break, insert the new block directly
-          if (!editor.textContent.trim() && editor.innerHTML.includes('<br>')) {
-              editor.innerHTML = `<${tagName}><br></${tagName}>`;
-              // Move cursor inside the newly created block
-              const newElement = editor.querySelector(tagName);
-              if (newElement && newElement.firstChild) {
-                  range.setStart(newElement.firstChild, 0);
-              } else if (newElement) {
-                   range.setStart(newElement, 0);
-              }
-              range.collapse(true);
-              selection.removeAllRanges();
-              selection.addRange(range);
-          } else {
-              // Apply block format to the current selection or line
-              // document.execCommand('formatBlock') applies to the block containing the selection.
-              // It will replace the current block if it's already a block element like <p>
-              document.execCommand('formatBlock', false, `<${tagName}>`);
-          }
-          console.log("Editor innerHTML after formatBlock:", editor.innerHTML);
-      }
-      */
-
-
       // Post Content Link handler - Checks for admin access
       document
         .getElementById("postContentLink")
@@ -2322,7 +2198,6 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
-            // document.getElementById("articleImageUrl").value = ""; // Removed image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
           }
         });
@@ -2341,7 +2216,6 @@
             // Clear form fields when opening for new post
             document.getElementById("articleTitle").value = "";
             document.getElementById("articleCategory").value = "";
-            // document.getElementById("articleImageUrl").value = ""; // Removed image URL field
             document.getElementById("articleContentEditable").innerHTML = "";
           }
         });
@@ -2365,7 +2239,6 @@
 
           const title = document.getElementById("articleTitle").value;
           const category = document.getElementById("articleCategory").value;
-          // const imageUrl = document.getElementById("articleImageUrl").value; // Removed image URL
           const content = document.getElementById(
             "articleContentEditable"
           ).innerHTML;
@@ -2421,7 +2294,6 @@
           const articleId = document.getElementById("editArticleId").value;
           const title = document.getElementById("editArticleTitle").value;
           const category = document.getElementById("editArticleCategory").value;
-          // const imageUrl = document.getElementById("editArticleImageUrl").value; // Removed image URL
           const content = document.getElementById(
             "editArticleContentEditable"
           ).innerHTML;
@@ -2691,7 +2563,6 @@
           "articleDetailTimestamp"
         ).textContent = `प्रकाशित: ${timestamp}`;
 
-        // Removed logic for displaying article image
         document.getElementById("articleDetailContent").innerHTML =
           article.content; // Use innerHTML for rich text
         openModal("articleDetailModal");
@@ -2708,25 +2579,17 @@
           document.getElementById("newsletterEmail").value = ""; // Clear input
         });
 
-      // Contact Us Modal
-      document
-        .getElementById("contactUsLink")
-        .addEventListener("click", (e) => {
-          e.preventDefault();
-          openModal("contactUsModal");
-        });
-
-      document.getElementById("contactForm").addEventListener("submit", (e) => {
+      // Event listener for "सभी लेख देखें" button
+      document.getElementById("viewAllArticlesBtn").addEventListener("click", (e) => {
         e.preventDefault();
-        const name = document.getElementById("contactName").value;
-        const email = document.getElementById("contactEmail").value;
-        const message = document.getElementById("contactMessage").value;
-        console.log(
-          `Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`
-        );
-        showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
-        closeModal("contactUsModal");
-        document.getElementById("contactForm").reset(); // Clear form
+        displayArticles(allArticles); // Display all articles
+        document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Event listener for "लेख खोजें" (Find Articles) button in Hero section
+      document.getElementById("findArticlesBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
       // Event listener for "सेव किए गए लेख" (Saved Articles) link
