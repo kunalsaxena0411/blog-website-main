@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 // If running locally for development, ensure this is set in your .env file or similar
 const JWT_SECRET =
   process.env.JWT_SECRET ||
-  "602c5dfb680d578974a3fdbd2300d8756de317872a4c5f76e3df91a71e3342ea2b8959c289cd57fce1748ce53ec0aeb1939aa69c155de1384664f563ee702139"; // CHANGE THIS IN PRODUCTION!
+  "602c5dfb680d5789774a3fdbd2300d8756de317872a4c5f76e3df91a71e3342ea2b8959c289cd57fce1748ce53ec0aeb1939aa69c155de1384664f563ee702139"; // CHANGE THIS IN PRODUCTION!
 
 // Define the email that will be allowed to register as an admin if no admin exists
 const ALLOWED_ADMIN_EMAIL = "gamakauaa.com@gmail.com"; // Set this to your desired admin email
@@ -608,6 +608,46 @@ app.delete("/api/users/:userId/saved-articles/:articleId", verifyToken, async (r
     next(error); // Pass error to global error handler
   }
 });
+
+// POST /api/contact - Handle contact form submissions
+app.post("/api/contact", async (req, res, next) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: "Name, email, and message are required." });
+  }
+
+  try {
+    // Email recipient for contact form
+    const contactRecipientEmail = "gamakauaa.com@gmail.com"; // Set to your actual contact email
+
+    const mailOptions = {
+      from: email, // Sender will be the user's email from the form
+      to: contactRecipientEmail,
+      subject: `गामाकौआ संपर्क फ़ॉर्म से नया संदेश: ${name}`,
+      html: `
+        <p><b>प्रेषक का नाम:</b> ${name}</p>
+        <p><b>प्रेषक का ईमेल:</b> ${email}</p>
+        <p><b>संदेश:</b></p>
+        <p>${message}</p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending contact form email:", error);
+        // Important: Still return success to frontend to avoid revealing server-side email issues
+        return res.status(500).json({ message: "संदेश भेजने में त्रुटि हुई, कृपया बाद में पुनः प्रयास करें।" });
+      }
+      console.log("Contact form email sent:", info.response);
+      res.status(200).json({ message: "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।" });
+    });
+  } catch (error) {
+    console.error("Contact form submission handler error:", error);
+    next(error); // Pass error to global error handler
+  }
+});
+
 
 // --- Global Error Handling Middleware ---
 // This middleware will catch any errors passed to `next(error)` from your routes.
