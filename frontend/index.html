@@ -789,22 +789,6 @@
           की इस यात्रा में हमारे साथ जुड़ें।
         </p>
 
-        <!-- Call-to-Action Button removed as per request -->
-        <!-- <div class="animate__animated animate__fadeInUp animate__delay-2s">
-          <a
-            href="#latest-articles"
-            id="findArticlesBtn"
-            class="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-semibold text-white transition-all duration-300 bg-emerald-500 rounded-full hover:bg-emerald-600 group"
-          >
-            <span
-              class="absolute inset-0 border-0 group-hover:border-[25px] ease-linear duration-100 transition-all border-white rounded-full"
-            ></span>
-            <span class="relative z-10 flex items-center">
-              <i class="fas fa-search mr-2"></i> लेख खोजें
-            </span>
-          </a>
-        </div> -->
-
         <!-- Social Proof Section -->
         <div class="mt-12 animate__animated animate__fadeIn animate__delay-3s">
           <div
@@ -2460,6 +2444,10 @@
           );
         }
 
+        console.log(`Filtering articles: Category="${currentCategoryFilter}", SearchTerm="${currentSearchTerm}", FromSaved=${fromSaved}`);
+        console.log("Filtered articles for display:", filtered.map(article => article.title));
+
+
         // Update category display text
         const currentCategoryDisplayElement = document.getElementById('currentCategoryDisplay');
         if (currentCategoryFilter === 'all') {
@@ -2740,15 +2728,16 @@
           articleCategoryFilter.value = currentCategoryFilter;
       }
 
-      // REMOVED: Event listener for "लेख खोजें" (Find Articles) button in Hero section
-      // document.getElementById("findArticlesBtn").addEventListener("click", (e) => {
-      //   e.preventDefault();
-      //   document.getElementById('articleSearchInput').value = ''; // Clear search on hero click
-      //   currentSearchTerm = '';
-      //   currentCategoryFilter = 'all'; // Ensure 'All' category is selected
-      //   filterAndDisplayArticles('all', ''); // Ensure all articles are shown when coming from hero
-      //   document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
-      // });
+      // Event listener for category dropdown change
+      if (articleCategoryFilter) {
+          articleCategoryFilter.addEventListener('change', (e) => {
+              const category = e.target.value;
+              document.getElementById('articleSearchInput').value = ''; // Clear search when category is changed
+              currentSearchTerm = ''; // Reset search term
+              filterAndDisplayArticles(category, ''); // Filter by the selected category
+          });
+      }
+
 
       // Event listener for "सेव किए गए लेख" (Saved Articles) link
       document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
@@ -2856,7 +2845,7 @@
           const data = await response.json();
 
           if (response.ok) {
-            showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है।"); // Changed message for clarity
+            showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।"); // Improved message
             closeModal("contactUsModal");
             // Clear form fields
             document.getElementById("contactName").value = "";
