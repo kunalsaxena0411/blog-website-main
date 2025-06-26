@@ -667,13 +667,13 @@
       </div>
     </section>
 
-    <!-- Footer Section (UPDATED) -->
+    <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-10 mt-12">
       <div class="container mx-auto px-4 text-center">
         <p class="text-sm mb-4">
           &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित। ❤️ के साथ डिज़ाइन किया गया।
         </p>
-        <div class="flex justify-center space-x-6 text-sm">
+        <div class="flex flex-wrap justify-center space-x-4 text-sm">
           <!-- Homepage link -->
           <a href="index.html" class="hover:text-gray-300 transition duration-300"
             >मुखपृष्ठ</a
@@ -1495,6 +1495,11 @@
                 displayArticles(allArticles); // Update main article list
                 if (document.getElementById('savedArticlesModal').classList.contains('open')) {
                     loadSavedArticles(); // Update saved articles modal if open
+                }
+                // Also update the detail modal if it's open and showing this article
+                const detailModal = document.getElementById('articleDetailModal');
+                if (detailModal.classList.contains('open') && detailModal.querySelector('#articleDetailTitle').textContent === allArticles.find(a => a._id === articleId)?.title) {
+                    openArticleDetailModal(allArticles.find(a => a._id === articleId));
                 }
             } else {
                 showMessage(data.message || "लेख सेव/अनसेव करने में त्रुटि।", true);
@@ -2390,7 +2395,7 @@
             backToTopBtn.classList.remove("opacity-0", "scale-0");
           } else {
             backToTopBtn.classList.add("opacity-0", "scale-0");
-            backToTopBtn.classList.remove("opacity-100", "scale-0");
+            backToTopBtn.classList.remove("opacity-100", "scale-100");
           }
         };
 
