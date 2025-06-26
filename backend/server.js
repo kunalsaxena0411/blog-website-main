@@ -8,7 +8,9 @@ const crypto = require("crypto"); // For generating OTPs
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 // It's crucial to set JWT_SECRET in environment variables in production
+// If running locally for development, ensure this is set in your .env file or similar
 const JWT_SECRET =
   process.env.JWT_SECRET ||
   "602c5dfb680d578974a3fdbd2300d8756de317872a4c5f76e3df91a71e3342ea2b8959c289cd57fce1748ce53ec0aeb1939aa69c155de1384664f563ee702139"; // CHANGE THIS IN PRODUCTION!
@@ -17,7 +19,7 @@ const JWT_SECRET =
 const ALLOWED_ADMIN_EMAIL = "gamakauaa.com@gmail.com"; // Set this to your desired admin email
 
 // Middleware
-// Allows requests from your frontend origin (e.g., http://localhost:5500 if using Live Server)
+// Allows requests from your frontend origin (e.g., https://gamakauaa-frontend.onrender.com)
 app.use(cors({
   origin: "https://gamakauaa-frontend.onrender.com", // ✅ Allow your frontend
   credentials: true // ✅ Allow cookies if needed
@@ -27,6 +29,7 @@ app.use(express.json());
 
 // MongoDB Connection String
 // Replace 'nehaghure5:ig9CDghzNxt9SSpX' with your actual MongoDB Atlas username and password.
+// For production, this should ideally be an environment variable (e.g., process.env.MONGODB_URI)
 const MONGODB_URI =
   "mongodb+srv://nehaghure5:ig9CDghzNxt9SSpX@cluster0.grixzsn.mongodb.net/gamakauaaDB?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -40,6 +43,10 @@ mongoose
     console.log("MongoDB connected successfully");
   })
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// Optional: Set strictQuery to false to suppress Mongoose 7+ warning.
+// Be aware of the implications: queries with undefined/null paths might return all documents.
+mongoose.set('strictQuery', false);
 
 // --- Mongoose Schemas and Models ---
 
@@ -111,7 +118,7 @@ const SavedArticle = mongoose.model("SavedArticle", savedArticleSchema);
 const transporter = nodemailer.createTransport({
   service: "gmail", // Example: Use Gmail. For production, consider dedicated services.
   auth: {
-    user: "gamakauaa.com@gmail.com", // ⭐ REVERTED: Reverted to gamakauaa.com@gmail.com
+    user: "gamakauaa.com@gmail.com", // Your sending email address
     pass: "epkf gmxv potv acsw", // Replace with your Gmail App Password (NOT your regular password)
   },
 });
@@ -135,6 +142,10 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (error) {
     console.error("JWT Verification Error:", error.message);
+    // Specifically handle JsonWebTokenError for more specific client feedback
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: "Unauthorized: Token expired" });
+    }
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
@@ -154,7 +165,7 @@ const verifyAdmin = (req, res, next) => {
 // --- Authentication Endpoints ---
 
 // POST /api/auth/signup - Register a new user
-app.post("/api/auth/signup", async (req, res) => {
+app.post("/api/auth/signup", async (req, res, next) => { // Added 'next' for error handling middleware
   let { email = "", password } = req.body;
   email = email.toLowerCase().trim(); // always normalise email
 
@@ -183,7 +194,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
     // Send welcome email after successful signup
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // ⭐ REVERTED: Sender address
+      from: "gamakauaa.com@gmail.com", // Sender address
       to: newUser.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
@@ -208,12 +219,12 @@ app.post("/api/auth/signup", async (req, res) => {
     });
   } catch (err) {
     console.error("Signup error:", err);
-    res.status(500).json({ message: "Server error during signup." });
+    next(err); // Pass error to global error handler
   }
 });
 
 // POST /api/auth/login - Authenticate a user
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", async (req, res, next) => { // Added 'next'
   const { email, password } = req.body;
   if (!email || !password) {
     return res
@@ -241,7 +252,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // Send welcome email on login (if not sent before or as a reminder)
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // ⭐ REVERTED: Sender address
+      from: "gamakauaa.com@gmail.com", // Sender address
       to: user.email, // Recipient address
       subject: "गामाकौआ में आपका स्वागत है!",
       html: `
@@ -260,7 +271,6 @@ app.post("/api/auth/login", async (req, res) => {
       }
     });
 
-
     res.status(200).json({
       message: "Login successful.",
       token,
@@ -268,15 +278,12 @@ app.post("/api/auth/login", async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({
-      message: "Server error during login. Please try again later.",
-      details: error.message,
-    });
+    next(error); // Pass error to global error handler
   }
 });
 
 // POST /api/auth/forgot-password - Request OTP for password reset
-app.post("/api/auth/forgot-password", async (req, res) => {
+app.post("/api/auth/forgot-password", async (req, res, next) => { // Added 'next'
   const { email } = req.body;
   if (!email) {
     return res.status(400).json({ message: "Email is required." });
@@ -285,7 +292,10 @@ app.post("/api/auth/forgot-password", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User not found with this email." });
+      // Return 200 OK even if user not found to prevent email enumeration
+      // but log the actual status on the server side
+      console.warn(`Forgot password attempt for unknown email: ${email}`);
+      return res.status(200).json({ message: "यदि आपका ईमेल हमारे सिस्टम में है, तो आपको पासवर्ड रीसेट करने के लिए एक ओटीपी प्राप्त होगा।" });
     }
 
     // Generate 6-digit OTP
@@ -296,9 +306,9 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    // Send OTP via email (replace with actual email sending logic)
+    // Send OTP via email
     const mailOptions = {
-      from: "gamakauaa.com@gmail.com", // ⭐ REVERTED: Sender address
+      from: "gamakauaa.com@gmail.com", // Sender address
       to: user.email, // Recipient address
       subject: "गामाकौआ: पासवर्ड रीसेट ओटीपी",
       html: `
@@ -313,22 +323,23 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error("Error sending OTP email:", error);
-        // Even if email fails, return success to prevent email enumeration
-        return res.status(500).json({ message: "OTP generation successful, but failed to send email. Please try again later." });
+        // Do NOT return error status here, still send success to frontend to avoid user enumeration
+        res.status(200).json({ message: "OTP generation successful, but failed to send email. Please try again later." });
+      } else {
+        console.log("OTP Email sent:", info.response);
+        res.status(200).json({ message: "OTP sent to your email.", email: user.email });
       }
-      console.log("OTP Email sent:", info.response);
-      res.status(200).json({ message: "OTP sent to your email.", email: user.email });
     });
 
   } catch (error) {
     console.error("Forgot password error:", error);
-    res.status(500).json({ message: "Server error during forgot password request." });
+    next(error); // Pass error to global error handler
   }
 });
 
 
 // POST /api/auth/reset-password - Verify OTP and reset password
-app.post("/api/auth/reset-password", async (req, res) => {
+app.post("/api/auth/reset-password", async (req, res, next) => { // Added 'next'
   const { email, otp, newPassword } = req.body;
   if (!email || !otp || !newPassword) {
     return res.status(400).json({ message: "Email, OTP, and new password are required." });
@@ -356,7 +367,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
 
   } catch (error) {
     console.error("Reset password error:", error);
-    res.status(500).json({ message: "Server error during password reset." });
+    next(error); // Pass error to global error handler
   }
 });
 
@@ -364,7 +375,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
 // --- Article Endpoints ---
 
 // GET All Articles (Publicly accessible, with optional category filter)
-app.get("/api/articles", async (req, res) => {
+app.get("/api/articles", async (req, res, next) => { // Added 'next'
   try {
     const { category } = req.query; // Get category from query parameters
 
@@ -377,14 +388,12 @@ app.get("/api/articles", async (req, res) => {
     res.status(200).json(articles);
   } catch (error) {
     console.error("Error fetching articles:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching articles", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 // GET Article by ID (Publicly accessible)
-app.get("/api/articles/:id", async (req, res) => {
+app.get("/api/articles/:id", async (req, res, next) => { // Added 'next'
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
@@ -397,15 +406,12 @@ app.get("/api/articles/:id", async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid article ID format." });
     }
-    res.status(500).json({
-      message: "Server error fetching article.",
-      error: error.message,
-    });
+    next(error); // Pass error to global error handler
   }
 });
 
 // POST New Article (Admin Only)
-app.post("/api/articles", verifyToken, verifyAdmin, async (req, res) => {
+app.post("/api/articles", verifyToken, verifyAdmin, async (req, res, next) => { // Added 'next'
   // req.user contains the decoded JWT payload from verifyToken: { userId, email, role }
   const { title, category, content, imageUrl } = req.body; // 'author' will be taken from logged-in user's email
 
@@ -434,14 +440,12 @@ app.post("/api/articles", verifyToken, verifyAdmin, async (req, res) => {
       .json({ message: "Article posted successfully!", article: savedArticle });
   } catch (error) {
     console.error("Error posting article:", error);
-    res
-      .status(400)
-      .json({ message: "Error posting article", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 // PUT/PATCH Update Article (Admin Only)
-app.put("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
+app.put("/api/articles/:id", verifyToken, verifyAdmin, async (req, res, next) => { // Added 'next'
   const { id } = req.params;
   const { title, category, content, imageUrl } = req.body; // Fields to update
 
@@ -479,14 +483,12 @@ app.put("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid article ID format." });
     }
-    res
-      .status(500)
-      .json({ message: "Error updating article", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 // DELETE Article (Admin Only)
-app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
+app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res, next) => { // Added 'next'
   const { id } = req.params; // Get article ID from URL parameters
 
   try {
@@ -513,16 +515,14 @@ app.delete("/api/articles/:id", verifyToken, verifyAdmin, async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid article ID format." });
     }
-    res
-      .status(500)
-      .json({ message: "Error deleting article", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 // --- Saved Article Endpoints ---
 
 // POST /api/users/:userId/saved-articles - Save an article for a specific user
-app.post("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
+app.post("/api/users/:userId/saved-articles", verifyToken, async (req, res, next) => { // Added 'next'
   const { userId } = req.params;
   const { articleId } = req.body; // articleId is now in the request body
 
@@ -553,12 +553,12 @@ app.post("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid article ID format." });
     }
-    res.status(500).json({ message: "Error saving article", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 // GET /api/users/:userId/saved-articles - Get all saved articles for a specific user
-app.get("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
+app.get("/api/users/:userId/saved-articles", verifyToken, async (req, res, next) => { // Added 'next'
   const { userId } = req.params;
 
   // Security check: Ensure the userId in the URL matches the authenticated user's ID
@@ -578,13 +578,13 @@ app.get("/api/users/:userId/saved-articles", verifyToken, async (req, res) => {
     res.status(200).json({ savedArticles: savedArticleIds });
   } catch (error) {
     console.error("Error fetching saved articles:", error);
-    res.status(500).json({ message: "Error fetching saved articles", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
 
 // DELETE /api/users/:userId/saved-articles/:articleId - Unsave an article for a specific user
-app.delete("/api/users/:userId/saved-articles/:articleId", verifyToken, async (req, res) => {
+app.delete("/api/users/:userId/saved-articles/:articleId", verifyToken, async (req, res, next) => { // Added 'next'
   const { userId, articleId } = req.params;
 
   // Security check: Ensure the userId in the URL matches the authenticated user's ID
@@ -605,10 +605,47 @@ app.delete("/api/users/:userId/saved-articles/:articleId", verifyToken, async (r
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid article ID format." });
     }
-    res.status(500).json({ message: "Error unsaving article", error: error.message });
+    next(error); // Pass error to global error handler
   }
 });
 
+// --- Global Error Handling Middleware ---
+// This middleware will catch any errors passed to `next(error)` from your routes.
+// It ensures that all errors return a consistent JSON response instead of default HTML error pages.
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler:", err.stack); // Log the full stack trace for debugging
+
+  // Default error message and status
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "An unexpected server error occurred.";
+
+  // Specific error handling for Mongoose validation errors
+  if (err.name === 'ValidationError') {
+    statusCode = 400; // Bad request
+    message = err.message; // Mongoose validation messages are usually descriptive
+  } else if (err.name === 'CastError' && err.kind === 'ObjectId') {
+    statusCode = 400; // Bad request for invalid ID format
+    message = `Invalid ID format for ${err.path}: ${err.value}`;
+  } else if (err.code === 11000) { // MongoDB duplicate key error (e.g., unique email constraint)
+    statusCode = 409; // Conflict
+    message = "Duplicate key error: This resource already exists.";
+    if (err.keyValue && Object.keys(err.keyValue).length > 0) {
+        message = `Duplicate entry for ${Object.keys(err.keyValue)[0]}: ${Object.values(err.keyValue)[0]} already exists.`;
+    }
+  }
+
+  // Send the error response as JSON
+  res.status(statusCode).json({
+    message: message,
+    // In development, you might send more error details. In production, be less verbose.
+    // error: process.env.NODE_ENV === 'production' ? {} : { name: err.name, details: err.message, stack: err.stack }
+  });
+});
+
+// Catch-all for 404 Not Found (must be after all other routes)
+app.use((req, res, next) => {
+  res.status(404).json({ message: "API endpoint not found." });
+});
 
 // Start the server
 app.listen(PORT, () => {
