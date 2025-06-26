@@ -1,4 +1,4 @@
-a<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
   <head>
     <meta charset="UTF-8" />
@@ -668,7 +668,7 @@ a<!DOCTYPE html>
       </div>
     </section>
 
-    <!-- Footer Section (UPDATED) -->
+    <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-10 mt-12">
       <div class="container mx-auto px-4 text-center">
         <p class="text-sm mb-4">
@@ -1182,7 +1182,7 @@ a<!DOCTYPE html>
     <!-- Auth Required Modal -->
     <div
       id="authRequiredModal"
-      class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
+      class="modal-overlay animate__animated animate__fadeIn"
     >
       <div class="modal-content animate__animated animate__zoomIn">
         <span class="close-button" onclick="closeModal('authRequiredModal')"
@@ -1214,7 +1214,7 @@ a<!DOCTYPE html>
     <!-- Admin Access Required Modal -->
     <div
       id="adminAccessModal"
-      class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
+      class="modal-overlay animate__animated animate__fadeIn"
     >
       <div class="modal-content animate__animated animate__zoomIn">
         <span class="close-button" onclick="closeModal('adminAccessModal')"
@@ -1642,6 +1642,7 @@ a<!DOCTYPE html>
         .addEventListener("click", (e) => {
           e.preventDefault();
           closeModal("loginModal");
+          document.getElementById("forgotEmail").value = ""; // Clear email field
           openModal("forgotPasswordModal");
         });
 
@@ -1923,7 +1924,7 @@ a<!DOCTYPE html>
           }
           catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्d.");
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
