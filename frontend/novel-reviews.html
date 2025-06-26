@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>उपन्यास समीक्षाएँ - गामाकौआ</title>
+    <title>कहानी समीक्षाएं - गामाकौआ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -621,28 +621,28 @@
       </div>
     </header>
 
-    <!-- Main Content Section for Novel Reviews -->
+    <!-- Main Content Section for Story Reviews -->
     <section class="py-16 px-4 pt-32">
       <!-- Added pt-32 to push content below fixed header -->
       <div class="container mx-auto content-overlay p-8">
         <h1
           class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
         >
-          उपन्यास समीक्षाएँ
+          कहानी समीक्षाएं
         </h1>
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          यहां आप विभिन्न हिंदी उपन्यासों की गहन समीक्षाएं पा सकते हैं। हम
-          उपन्यासों के कथानक, पात्रों के विकास, साहित्यिक शैली और उनके सामाजिक
-          या दार्शनिक महत्व का विश्लेषण करते हैं।
+          यह अनुभाग हिंदी कहानियों पर गहन समीक्षाएं और विश्लेषण प्रदान करता है।
+          हम विभिन्न लघु कथाओं के कथानक, पात्रों के मनोवैज्ञानिक पहलुओं, और
+          लेखकों की अनूठी शैली पर ध्यान केंद्रित करते हैं।
         </p>
         <p
           class="text-lg text-gray-700 leading-relaxed mb-6 rounded-md hindi-text"
         >
-          हमारा उद्देश्य पाठकों को नए उपन्यासों की खोज करने और मौजूदा कार्यों
-          की बेहतर समझ विकसित करने में मदद करना है। प्रत्येक समीक्षा आपको उपन्यास
-          की दुनिया में एक गहरी अंतर्दृष्टि प्रदान करेगी।
+          हमारा उद्देश्य पाठकों को हिंदी कहानी साहित्य की गहराई और सुंदरता से
+          परिचित कराना है, साथ ही उन्हें नए लेखकों और क्लासिक कृतियों को खोजने
+          में मदद करना है।
         </p>
         <div
           id="articlesContainer"
@@ -1381,7 +1381,7 @@
     <script>
       // API Base URL - IMPORTANT: Change this if your backend is hosted elsewhere
       const API_BASE_URL = "https://gamakauaa-backend.onrender.com/api";
-      const ARTICLE_CATEGORY = "novel-reviews"; // This page's category
+      const ARTICLE_CATEGORY = "story-reviews"; // This page's category
 
       // Global variables to store articles and saved article IDs
       let allArticles = []; // Stores all fetched articles for this category
@@ -1646,7 +1646,6 @@
         .addEventListener("click", (e) => {
           e.preventDefault();
           closeModal("loginModal");
-          document.getElementById("forgotEmail").value = ""; // Clear email field
           openModal("forgotPasswordModal");
         });
 
@@ -2183,7 +2182,6 @@
         });
       }
 
-
       // Handle delete confirmation (Now interacts with backend)
       document
         .getElementById("confirmDeleteBtn")
@@ -2279,7 +2277,7 @@
       const savedArticlesLoader = document.getElementById("savedArticlesLoader");
       const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
 
-      // Load Saved Articles Function (Moved to global scope)
+      // Load Saved Articles Function (Corrected and moved to global scope)
       async function loadSavedArticles() {
           const loggedInUser = getCurrentUser();
           if (!loggedInUser) {
@@ -2365,7 +2363,8 @@
                           toggleSaveBtn.addEventListener('click', async (e) => {
                               e.stopPropagation();
                               const articleId = e.currentTarget.dataset.id;
-                              await toggleSaveArticle(articleId, true); // true for unsaving from this modal
+                              // When clicked from saved articles, it's always an "unsave" action
+                              await toggleSaveArticle(articleId, true);
                           });
 
                           savedArticlesContainer.appendChild(savedArticleCard); // Append the card to the container
@@ -2383,6 +2382,7 @@
               savedArticlesLoader.style.display = "none";
           }
       }
+
 
       document.addEventListener("DOMContentLoaded", function () {
         // Back to Top button functionality
@@ -2408,14 +2408,17 @@
         });
 
         // Contact Us Modal functionality
-        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn");
-        const contactUsModal = document.getElementById("contactUsModal");
+        // Original: const contactUsLink = document.getElementById("contactUsLink");
+        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn"); // New ID from index.html
+        // Original: const contactModal = document.getElementById("contactModal");
+        const contactUsModal = document.getElementById("contactUsModal"); // New ID from index.html
         const contactForm = document.getElementById("contactForm");
 
+        // Use the new ID for event listener
         if (openContactUsModalBtn) {
           openContactUsModalBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            openModal("contactUsModal");
+            openModal("contactUsModal"); // Open the new contactUsModal
             // Clear contact form fields when opening
             document.getElementById("contactName").value = "";
             document.getElementById("contactEmail").value = "";
@@ -2425,10 +2428,10 @@
 
         // Contact Form Submission
         if (contactForm) {
-            contactForm.addEventListener("submit", async (e) => {
+            contactForm.addEventListener("submit", async (e) => { // Made async to handle fetch
                 e.preventDefault();
 
-                const submitBtn = document.getElementById("contactSubmitBtn");
+                const submitBtn = document.getElementById("contactSubmitBtn"); // Get the submit button
                 submitBtn.disabled = true; // Disable button during submission
                 submitBtn.textContent = "संदेश भेजा जा रहा है..."; // Change button text
 
@@ -2449,7 +2452,7 @@
 
                     if (response.ok) {
                         showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।");
-                        closeModal("contactUsModal");
+                        closeModal("contactUsModal"); // Close the new contactUsModal
                         contactForm.reset(); // Clear form
                     } else {
                         showMessage(data.message || "संदेश भेजने में त्रुटि हुई।", true);
@@ -2464,7 +2467,6 @@
             });
         }
 
-
         // Event listener for "सेव किए गए लेख" link
         document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
             e.preventDefault();
@@ -2477,7 +2479,6 @@
             openModal("savedArticlesModal");
             loadSavedArticles(); // Load articles when modal opens
         });
-
 
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
         // loadArticlesByCategory is called inside updateAuthUI()
