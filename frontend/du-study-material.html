@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+a<!DOCTYPE html>
 <html lang="hi">
   <head>
     <meta charset="UTF-8" />
@@ -668,30 +668,42 @@
       </div>
     </section>
 
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-8 px-4 mt-12">
-      <div class="container mx-auto text-center">
-        <p class="text-sm rounded-md">
-          &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित।
-          <span class="text-red-400">&hearts;</span> के साथ डिज़ाइन किया गया।
+    <!-- Footer Section (UPDATED) -->
+    <footer class="bg-gray-800 text-white py-10 mt-12">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-sm mb-4">
+          &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित। ❤️ के साथ डिज़ाइन किया गया।
         </p>
-        <div class="flex justify-center space-x-6 mt-4">
-          <a
-            href="#"
-            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
-            >गोपनीयता नीति</a
+        <div class="flex justify-center space-x-6 text-sm">
+          <!-- Homepage link -->
+          <a href="index.html" class="hover:text-gray-300 transition duration-300"
+            >मुखपृष्ठ</a
           >
-          <a
-            href="#"
-            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
-            >सेवा की शर्तें</a
+          <!-- Contact Us button -->
+          <button
+            id="openContactUsModalBtn"
+            class="hover:text-gray-300 transition duration-300 focus:outline-none"
+            >हमसे संपर्क करें</button
           >
+          <!-- Social Media Links -->
           <a
-            href="#"
-            id="contactUsLink"
-            class="text-gray-300 hover:text-white transition duration-300 rounded-md"
-            >हमसे संपर्क करें</a
+            href="https://www.facebook.com/profile.php?id=61555061251543"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-gray-300 transition duration-300"
+            aria-label="Facebook"
           >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="https://www.instagram.com/gamakauaa.com6/?hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-gray-300 transition duration-300"
+            aria-label="Instagram"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
         </div>
       </div>
     </footer>
@@ -1265,67 +1277,73 @@
       </div>
     </div>
 
-    <!-- Contact Us Modal (already present, reused) -->
-    <div id="contactModal" class="modal-overlay">
-      <div class="modal-content">
-        <span class="close-button" id="closeModalBtn" onclick="closeModal('contactModal')">&times;</span>
-        <h3 class="text-2xl font-bold text-gray-800 mb-4 hindi-text">
+    <!-- Contact Us Modal (NEWLY ADDED / MODIFIED) -->
+    <div
+      id="contactUsModal"
+      class="modal-overlay animate__animated animate__fadeIn"
+    >
+      <div class="modal-content animate__animated animate__zoomIn">
+        <span class="close-button" onclick="closeModal('contactUsModal')"
+          >&times;</span
+        >
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
+        >
           हमसे संपर्क करें
         </h3>
-        <form id="contactForm">
-          <div class="mb-4">
+        <form id="contactForm" class="space-y-4">
+          <div>
             <label
               for="contactName"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका नाम:</label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >नाम:</label
             >
             <input
               type="text"
               id="contactName"
               name="name"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="अपना नाम दर्ज करें"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका नाम"
               required
             />
           </div>
-          <div class="mb-4">
+          <div>
             <label
               for="contactEmail"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका ईमेल:</label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >ईमेल:</label
             >
             <input
               type="email"
               id="contactEmail"
               name="email"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="अपना ईमेल दर्ज करें"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="आपका ईमेल"
               required
             />
           </div>
-          <div class="mb-6">
+          <div>
             <label
               for="contactMessage"
-              class="block text-gray-700 text-sm font-bold mb-2 hindi-text"
-              >आपका संदेश:</label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              >संदेश:</label
             >
             <textarea
               id="contactMessage"
               name="message"
               rows="4"
-              class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500 rounded-md"
-              placeholder="यहां अपना संदेश लिखें"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+              placeholder="आपका संदेश यहाँ लिखें..."
               required
             ></textarea>
           </div>
-          <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline transition duration-300 transform hover:scale-105 hindi-text"
-            >
-              संदेश भेजें
-            </button>
-          </div>
+          <button
+            type="submit"
+            id="contactSubmitBtn"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+          >
+            संदेश भेजें
+          </button>
         </form>
       </div>
     </div>
@@ -2276,28 +2294,60 @@
         });
 
         // Contact Us Modal functionality
-        const contactUsLink = document.getElementById("contactUsLink");
-        const contactModal = document.getElementById("contactModal");
-        const contactForm = document.getElementById("contactForm"); // Get the contact form
+        // Re-aligning with index.html's ID for consistency
+        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn");
+        const contactUsModal = document.getElementById("contactUsModal");
+        const contactForm = document.getElementById("contactForm");
 
-        if (contactUsLink) {
-          contactUsLink.addEventListener("click", function (e) {
+        if (openContactUsModalBtn) {
+          openContactUsModalBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            openModal("contactModal"); // Use generic openModal
+            openModal("contactUsModal");
+            // Clear contact form fields when opening
+            document.getElementById("contactName").value = "";
+            document.getElementById("contactEmail").value = "";
+            document.getElementById("contactMessage").value = "";
           });
         }
 
         // Contact Form Submission
         if (contactForm) {
-            contactForm.addEventListener("submit", (e) => {
+            contactForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
+
+                const submitBtn = document.getElementById("contactSubmitBtn");
+                submitBtn.disabled = true; // Disable button during submission
+                submitBtn.textContent = "संदेश भेजा जा रहा है..."; // Change button text
+
                 const name = document.getElementById("contactName").value;
                 const email = document.getElementById("contactEmail").value;
                 const message = document.getElementById("contactMessage").value;
-                console.log(`Contact Form Submission: Name - ${name}, Email - ${email}, Message - ${message}`);
-                showMessage("आपका संदेश सफलतापूर्वक भेजा गया!");
-                closeModal("contactModal"); // Use generic closeModal
-                contactForm.reset(); // Clear form
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/contact`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ name, email, message }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।");
+                        closeModal("contactUsModal");
+                        contactForm.reset(); // Clear form
+                    } else {
+                        showMessage(data.message || "संदेश भेजने में त्रुटि हुई।", true);
+                    }
+                } catch (error) {
+                    console.error("Contact form submission error:", error);
+                    showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+                } finally {
+                    submitBtn.disabled = false; // Re-enable button
+                    submitBtn.textContent = "संदेश भेजें"; // Reset button text
+                }
             });
         }
 
