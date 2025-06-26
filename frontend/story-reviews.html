@@ -2273,6 +2273,118 @@
         openModal("articleDetailModal");
       }
 
+      // Saved Articles Modal elements (defined globally for access)
+      const savedArticlesContainer = document.getElementById("savedArticlesContainer");
+      const savedArticlesLoader = document.getElementById("savedArticlesLoader");
+      const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
+
+      // Load Saved Articles Function (Corrected and moved to global scope)
+      async function loadSavedArticles() {
+          const loggedInUser = getCurrentUser();
+          if (!loggedInUser) {
+              openModal("authRequiredModal");
+              return;
+          }
+
+          savedArticlesLoader.style.display = "block";
+          noSavedArticlesMessage.classList.add("hidden");
+          savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
+
+          try {
+              // Fetch the full article details for the saved article IDs
+              const response = await fetch(
+                  `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
+                  {
+                      headers: {
+                          Authorization: `Bearer ${loggedInUser.token}`,
+                      },
+                  }
+              );
+
+              const savedArticlesResponse = await response.json();
+
+              if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
+                  // Fetch full article objects based on the IDs returned
+                  const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
+                      const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                      return articleRes.json();
+                  });
+                  const fullSavedArticles = await Promise.all(fullArticlesPromises);
+
+                  // Filter out any articles that might have failed to fetch or are null
+                  const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
+
+                  if (validSavedArticles.length === 0) {
+                      noSavedArticlesMessage.classList.remove("hidden");
+                      noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
+                  } else {
+                      validSavedArticles.forEach((article) => {
+                          const timestamp = new Date(article.createdAt).toLocaleString(
+                              "hi-IN",
+                              {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              }
+                          );
+
+                          // Create the article card as a DOM element directly
+                          const savedArticleCard = document.createElement('div');
+                          savedArticleCard.className = "content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1";
+                          savedArticleCard.dataset.id = article._id;
+
+                          savedArticleCard.innerHTML = `
+                              <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
+                              <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
+                              <p class="text-gray-600 text-sm mb-2">लेखक: ${article.author}</p>
+                              <p class="text-gray-500 text-xs mb-3">प्रकाशित: ${timestamp}</p>
+                              <p class="text-gray-700 leading-relaxed truncate-2-lines hindi-text">
+                                  ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
+                              </p>
+                              <div class="mt-3 flex justify-between items-center">
+                                  <button class="text-emerald-600 hover:underline read-more-btn">
+                                      और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
+                                  </button>
+                                  <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
+                                      <i class="fas fa-trash-alt mr-1"></i>हटाएँ
+                                  </button>
+                              </div>
+                          `;
+                          // Attach event listeners directly to the created elements
+                          const readMoreBtn = savedArticleCard.querySelector('.read-more-btn');
+                          readMoreBtn.addEventListener('click', (e) => {
+                              e.stopPropagation();
+                              openArticleDetailModal(article); // Pass the full article object
+                              closeModal("savedArticlesModal");
+                          });
+
+                          const toggleSaveBtn = savedArticleCard.querySelector('.toggle-save-btn');
+                          toggleSaveBtn.addEventListener('click', async (e) => {
+                              e.stopPropagation();
+                              const articleId = e.currentTarget.dataset.id;
+                              // When clicked from saved articles, it's always an "unsave" action
+                              await toggleSaveArticle(articleId, true);
+                          });
+
+                          savedArticlesContainer.appendChild(savedArticleCard); // Append the card to the container
+                      });
+                  }
+              } else {
+                  noSavedArticlesMessage.classList.remove("hidden");
+                  noSavedArticlesMessage.textContent = "आपके पास कोई सेव किया गया लेख नहीं है।";
+              }
+          } catch (error) {
+              console.error("Error loading saved articles:", error);
+              noSavedArticlesMessage.classList.remove("hidden");
+              noSavedArticlesMessage.textContent = "सेव किए गए लेख लोड करने में त्रुटि हुई।";
+          } finally {
+              savedArticlesLoader.style.display = "none";
+          }
+      }
+
+
       document.addEventListener("DOMContentLoaded", function () {
         // Back to Top button functionality
         const backToTopBtn = document.getElementById("backToTopBtn");
@@ -2355,118 +2467,6 @@
                 }
             });
         }
-
-        // Saved Articles Modal elements (defined here for scope within DOMContentLoaded)
-        const savedArticlesContainer = document.getElementById("savedArticlesContainer");
-        const savedArticlesLoader = document.getElementById("savedArticlesLoader");
-        const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
-
-        // Load Saved Articles Function (Corrected and moved to use DOM elements)
-        async function loadSavedArticles() {
-            const loggedInUser = getCurrentUser();
-            if (!loggedInUser) {
-                openModal("authRequiredModal");
-                return;
-            }
-
-            savedArticlesLoader.style.display = "block";
-            noSavedArticlesMessage.classList.add("hidden");
-            savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
-
-            try {
-                // Fetch the full article details for the saved article IDs
-                const response = await fetch(
-                    `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${loggedInUser.token}`,
-                        },
-                    }
-                );
-
-                const savedArticlesResponse = await response.json();
-
-                if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
-                    // Fetch full article objects based on the IDs returned
-                    const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
-                        const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                        return articleRes.json();
-                    });
-                    const fullSavedArticles = await Promise.all(fullArticlesPromises);
-
-                    // Filter out any articles that might have failed to fetch or are null
-                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
-
-                    if (validSavedArticles.length === 0) {
-                        noSavedArticlesMessage.classList.remove("hidden");
-                        noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
-                    } else {
-                        validSavedArticles.forEach((article) => {
-                            const timestamp = new Date(article.createdAt).toLocaleString(
-                                "hi-IN",
-                                {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                }
-                            );
-
-                            // Create the article card as a DOM element directly
-                            const savedArticleCard = document.createElement('div');
-                            savedArticleCard.className = "content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1";
-                            savedArticleCard.dataset.id = article._id;
-
-                            savedArticleCard.innerHTML = `
-                                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
-                                <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
-                                <p class="text-gray-600 text-sm mb-2">लेखक: ${article.author}</p>
-                                <p class="text-gray-500 text-xs mb-3">प्रकाशित: ${timestamp}</p>
-                                <p class="text-gray-700 leading-relaxed truncate-2-lines hindi-text">
-                                    ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
-                                </p>
-                                <div class="mt-3 flex justify-between items-center">
-                                    <button class="text-emerald-600 hover:underline read-more-btn">
-                                        और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
-                                    </button>
-                                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
-                                        <i class="fas fa-trash-alt mr-1"></i>हटाएँ
-                                    </button>
-                                </div>
-                            `;
-                            // Attach event listeners directly to the created elements
-                            const readMoreBtn = savedArticleCard.querySelector('.read-more-btn');
-                            readMoreBtn.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                openArticleDetailModal(article); // Pass the full article object
-                                closeModal("savedArticlesModal");
-                            });
-
-                            const toggleSaveBtn = savedArticleCard.querySelector('.toggle-save-btn');
-                            toggleSaveBtn.addEventListener('click', async (e) => {
-                                e.stopPropagation();
-                                const articleId = e.currentTarget.dataset.id;
-                                // When clicked from saved articles, it's always an "unsave" action
-                                await toggleSaveArticle(articleId, true);
-                            });
-
-                            savedArticlesContainer.appendChild(savedArticleCard); // Append the card to the container
-                        });
-                    }
-                } else {
-                    noSavedArticlesMessage.classList.remove("hidden");
-                    noSavedArticlesMessage.textContent = "आपके पास कोई सेव किया गया लेख नहीं है।";
-                }
-            } catch (error) {
-                console.error("Error loading saved articles:", error);
-                noSavedArticlesMessage.classList.remove("hidden");
-                noSavedArticlesMessage.textContent = "सेव किए गए लेख लोड करने में त्रुटि हुई।";
-            } finally {
-                savedArticlesLoader.style.display = "none";
-            }
-        }
-
 
         // Event listener for "सेव किए गए लेख" link
         document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
