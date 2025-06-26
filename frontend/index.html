@@ -881,23 +881,23 @@
         </div>
 
         <!-- Search Input Field -->
-        <div class="mb-8 max-w-xl mx-auto flex rounded-full shadow-lg bg-gray-700 overflow-hidden">
+        <div class="mb-8 w-full md:max-w-4xl mx-auto flex rounded-full shadow-lg bg-gray-700 overflow-hidden">
             <input
                 type="text"
                 id="articleSearchInput"
                 placeholder="लेख शीर्षक या सामग्री में खोजें..."
-                class="flex-grow py-3 px-6 bg-gray-700 text-white rounded-l-full focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-gray-400"
+                class="flex-grow py-3 px-4 sm:px-6 bg-gray-700 text-white rounded-l-full focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-gray-400"
             />
             <button
                 id="clearSearchBtn"
-                class="bg-gray-700 text-white px-4 py-3 hover:bg-gray-600 transition duration-300 flex items-center justify-center"
+                class="bg-gray-700 text-white px-3 py-3 sm:px-4 hover:bg-gray-600 transition duration-300 flex items-center justify-center"
                 style="display: none;"
             >
                 <i class="fas fa-times-circle"></i>
             </button>
             <button
                 id="searchArticlesBtn"
-                class="bg-emerald-500 text-white px-6 py-3 rounded-r-full hover:bg-emerald-600 transition duration-300 flex items-center justify-center"
+                class="bg-emerald-500 text-white px-4 py-3 sm:px-6 rounded-r-full hover:bg-emerald-600 transition duration-300 flex items-center justify-center"
             >
                 <i class="fas fa-search"></i>
             </button>
@@ -2105,7 +2105,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2145,7 +2145,7 @@
             }
           } catch (error) {
             console.error("Reset password error:", error);
-            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2186,7 +2186,7 @@
           }
         } catch (error) {
           console.error("Login error:", error);
-          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       });
 
@@ -2226,7 +2226,7 @@
           }
         } catch (error) {
           console.error("Signup error:", error);
-          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2381,7 +2381,7 @@
           }
           catch (error) {
             console.error("Error posting article:", error);
-            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2442,7 +2442,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2733,7 +2733,7 @@
               }
             } catch (error) {
               console.error("Error deleting article:", error);
-              showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+              showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true);
             }
           } else {
             showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
@@ -2952,7 +2952,7 @@
           }
         } catch (error) {
           console.error("Contact form submission error:", error);
-          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true); // Display the error message caught
+          showMessage(error.message || "नेटwork त्रुटि या सर्वर अनुपलब्ध।", true); // Display the error message caught
         } finally {
           submitBtn.disabled = false; // Re-enable button
           submitBtn.textContent = "संदेश भेजें"; // Reset button text
