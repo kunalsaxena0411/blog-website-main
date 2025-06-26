@@ -4,13 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>हिंदी साहित्य - गामाकौआ</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Font Awesome for icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -432,17 +430,14 @@
     </style>
   </head>
   <body class="text-gray-800">
-    <!-- Message Container (for success/error) -->
     <div id="infoMessage" class="info-message">
       <i class="fas fa-check-circle"></i>
       <span id="infoMessageText"></span>
     </div>
 
-    <!-- Header Section -->
     <header id="mainHeader" class="fixed top-0 left-0 w-full z-50">
       <div class="container mx-auto px-4">
         <div class="flex justify-between items-center py-4">
-          <!-- Logo with link to homepage -->
           <div class="logo-container">
             <img
               src="20211011_204121_0000-1.png"
@@ -483,12 +478,10 @@
               <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
             >
 
-          <!-- Post Blog Button - Visible only for admins -->
           <a href="#" id="postContentLink" class="post-blog-btn hidden">
             <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
           </a>
 
-          <!-- User Profile Dropdown - Visible when logged in -->
           <div id="userProfileDropdown" class="profile-dropdown hidden">
             <div class="profile-btn">
               <img
@@ -502,7 +495,6 @@
               ></span>
             </div>
             <div class="dropdown-content">
-              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
               <a href="#" id="savedArticlesLink"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
@@ -512,7 +504,6 @@
             </div>
           </div>
 
-          <!-- Auth Buttons - Visible when not logged in -->
           <button
             id="loginBtn"
             class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
@@ -526,7 +517,6 @@
             साइन अप करें
           </button>
         </nav>
-        <!-- Mobile Menu Toggle (for the entire header content including new buttons) -->
         <button
           id="mobileMenuBtn"
           class="md:hidden text-white focus:outline-none"
@@ -535,7 +525,6 @@
         </button>
       </div>
 
-      <!-- Mobile Menu -->
       <div
         id="mobileMenu"
         class="hidden md:hidden py-4 border-t border-gray-700 container mx-auto px-4"
@@ -571,7 +560,6 @@
           >
             <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
           >
-          <!-- Post Blog Button - Visible only for admins -->
           <a
             href="#"
             id="mobilePostContentLink"
@@ -580,7 +568,6 @@
             <i class="fas fa-plus-circle mr-2"></i>ब्लॉग पोस्ट करें
           </a>
 
-          <!-- Mobile User Profile - Visible when logged in -->
           <div
             id="mobileUserProfile"
             class="hidden pt-4 border-t border-gray-600"
@@ -597,7 +584,6 @@
               ></span>
             </div>
             <div class="flex flex-col space-y-2">
-              <!-- Removed "मेरी प्रोफाइल" for consistency with du_study_material_page -->
               <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                 ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
               >
@@ -610,7 +596,6 @@
             </div>
           </div>
 
-          <!-- Mobile Auth Buttons - Visible when not logged in -->
           <button
             id="mobileLoginBtn"
             class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300"
@@ -627,9 +612,7 @@
       </div>
     </header>
 
-    <!-- Main Content Section for Hindi Literature -->
     <section class="py-16 px-4 pt-32">
-      <!-- Added pt-32 to push content below fixed header -->
       <div class="container mx-auto content-overlay p-8">
         <h1
           class="text-4xl font-bold text-gray-800 mb-8 rounded-md text-center hindi-text"
@@ -656,7 +639,6 @@
           id="articlesContainer"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10"
         >
-          <!-- Articles will be loaded here dynamically -->
           <div class="col-span-full text-center">
             <div id="articlesLoader" class="loader"></div>
             <p id="noArticlesMessage" class="text-gray-400 hidden">
@@ -675,7 +657,6 @@
       </div>
     </section>
 
-    <!-- Footer Section - Updated to match index.html -->
     <footer class="bg-gray-800 text-white py-10 mt-12">
       <div class="container mx-auto px-4 text-center">
         <p class="text-sm mb-4">
@@ -691,7 +672,6 @@
             class="hover:text-gray-300 transition duration-300"
             >हमसे संपर्क करें</a
           >
-          <!-- Social Media Links - Integrated into the same div and adjusted styling -->
           <a
             href="https://www.facebook.com/profile.php?id=61555061251543"
             target="_blank"
@@ -715,7 +695,6 @@
     </footer>
 
 
-    <!-- Back to Top Button -->
     <button
       id="backToTopBtn"
       class="floating-btn opacity-0 transform scale-0"
@@ -724,7 +703,6 @@
       <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Login Modal -->
     <div
       id="loginModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -785,7 +763,6 @@
       </div>
     </div>
 
-    <!-- Signup Modal -->
     <div
       id="signupModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -835,13 +812,11 @@
             साइन अप करें
           </button>
           <div class="text-center text-gray-600 mt-4">
-            <!-- No Google signup without Firebase -->
-          </div>
+            </div>
         </form>
       </div>
     </div>
 
-    <!-- Forgot Password Modal -->
     <div
       id="forgotPasswordModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -884,7 +859,6 @@
       </div>
     </div>
 
-    <!-- Reset Password Modal -->
     <div
       id="resetPasswordModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -955,7 +929,6 @@
       </div>
     </div>
 
-    <!-- Post Content Modal -->
     <div
       id="postContentModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1052,7 +1025,6 @@
       </div>
     </div>
 
-    <!-- Edit Article Modal -->
     <div
       id="editArticleModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1150,7 +1122,6 @@
       </div>
     </div>
 
-    <!-- Article Detail Modal -->
     <div
       id="articleDetailModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1169,15 +1140,14 @@
           <span
             id="articleDetailCategory"
             class="font-semibold text-blue-600"
-          ></span
-          > - <span id="articleDetailAuthor" class="italic"></span> द्वारा
+          ></span>
+          - <span id="articleDetailAuthor" class="italic"></span> द्वारा
         </p>
         <p id="articleDetailTimestamp" class="text-gray-500 text-xs mb-4"></p>
         <div
           id="articleDetailContent"
           class="prose max-w-none text-gray-700 leading-relaxed text-base overflow-y-auto h-96"
         ></div>
-        <!-- Save/Unsave button will be added here dynamically -->
         <div class="mt-4 flex justify-end">
             <button id="saveArticleBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300">
                 <i class="fas fa-bookmark mr-2"></i>सेव करें
@@ -1186,7 +1156,6 @@
       </div>
     </div>
 
-    <!-- Auth Required Modal -->
     <div
       id="authRequiredModal"
       class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
@@ -1218,7 +1187,6 @@
       </div>
     </div>
 
-    <!-- Admin Access Required Modal -->
     <div
       id="adminAccessModal"
       class="modal-overlay auth-required-modal animate__animated animate__fadeIn"
@@ -1250,7 +1218,6 @@
       </div>
     </div>
 
-    <!-- Confirmation Modal for Delete -->
     <div
       id="confirmationModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1284,7 +1251,6 @@
       </div>
     </div>
 
-    <!-- Contact Us Modal (already present, reused) -->
     <div id="contactModal" class="modal-overlay">
       <div class="modal-content">
         <span class="close-button" id="closeModalBtn" onclick="closeModal('contactModal')">&times;</span>
@@ -1349,7 +1315,6 @@
       </div>
     </div>
 
-    <!-- Saved Articles Modal (NEW) -->
     <div
       id="savedArticlesModal"
       class="modal-overlay animate__animated animate__fadeIn"
@@ -1369,7 +1334,6 @@
           id="savedArticlesContainer"
           class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2"
         >
-          <!-- Saved articles will be loaded here dynamically -->
           <div class="col-span-full text-center">
             <div id="savedArticlesLoader" class="loader"></div>
             <p id="noSavedArticlesMessage" class="text-gray-400 hidden">
@@ -1750,6 +1714,7 @@
         .addEventListener("click", (e) => {
           e.preventDefault();
           closeModal("loginModal");
+          document.getElementById("forgotEmail").value = ""; // Clear email field
           openModal("forgotPasswordModal");
         });
 
@@ -2172,8 +2137,7 @@
                 <p class="text-gray-700 leading-relaxed truncate-3-lines hindi-text">
                   ${article.content
                     .replace(/<[^>]*>?/gm, "")
-                    .substring(0, 150)}... <!-- Strip HTML and truncate -->
-                </p>
+                    .substring(0, 150)}... </p>
                 <div class="mt-4 flex gap-2 justify-between items-center">
                     <button class="text-emerald-600 hover:underline read-more-btn" data-id="${
                     article._id
