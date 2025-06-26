@@ -569,9 +569,9 @@
         <div class="flex justify-between items-center py-4">
           <!-- Logo with link to homepage -->
           <div class="logo-container">
-            <!-- Updated logo source -->
+            <!-- Updated logo source - Placeholder for your actual logo -->
             <img
-              src="20211011_204121_0000-1.png"
+              src="https://placehold.co/50x50/10b981/ffffff?text=LOGO"
               alt="Gamakauaa Logo"
               class="logo-img"
             />
@@ -789,6 +789,22 @@
           की इस यात्रा में हमारे साथ जुड़ें।
         </p>
 
+        <!-- Call-to-Action Button removed as per request -->
+        <!-- <div class="animate__animated animate__fadeInUp animate__delay-2s">
+          <a
+            href="#latest-articles"
+            id="findArticlesBtn"
+            class="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-semibold text-white transition-all duration-300 bg-emerald-500 rounded-full hover:bg-emerald-600 group"
+          >
+            <span
+              class="absolute inset-0 border-0 group-hover:border-[25px] ease-linear duration-100 transition-all border-white rounded-full"
+            ></span>
+            <span class="relative z-10 flex items-center">
+              <i class="fas fa-search mr-2"></i> लेख खोजें
+            </span>
+          </a>
+        </div> -->
+
         <!-- Social Proof Section -->
         <div class="mt-12 animate__animated animate__fadeIn animate__delay-3s">
           <div
@@ -800,9 +816,10 @@
                 src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="User Avatar 1"
               />
+              <!-- Updated placeholder for rahul_verma.jpg -->
               <img
                 class="w-10 h-10 rounded-full border-2 border-white"
-                src="rahul_verma.jpg"
+                src="https://placehold.co/40x40/3b82f6/ffffff?text=RV"
                 alt="User Avatar 2"
               />
               <img
@@ -953,8 +970,9 @@
             class="bg-white bg-opacity-10 rounded-xl p-6 backdrop-filter backdrop-blur-sm border border-gray-700 hover:border-emerald-400 transition duration-500"
           >
             <div class="flex items-center mb-4">
+              <!-- Updated placeholder for rahul_verma.jpg -->
               <img
-                src="rahul_verma.jpg"
+                src="https://placehold.co/48x48/10b981/ffffff?text=RV"
                 alt="Rahul Verma"
                 class="w-12 h-12 rounded-full border-2 border-emerald-400"
               />
@@ -1092,7 +1110,6 @@
       <div class="modal-content animate__animated animate__zoomIn">
         <span class="close-button" onclick="closeModal('loginModal')"
           >&times;</span
-
         >
         <h3
           class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
@@ -1784,7 +1801,14 @@
             headers: { Authorization: `Bearer ${loggedInUser.token}` },
           });
 
-          const data = await response.json();
+          let data;
+          try {
+              data = await response.json(); // Attempt to parse JSON
+          } catch (jsonError) {
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in fetchSavedArticles (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+          }
 
           if (response.ok) {
             savedArticleIds = data.savedArticles || [];
@@ -1793,10 +1817,12 @@
             filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
           } else {
             console.error("Failed to fetch saved articles:", data.message);
+            showMessage(data.message || "सेव किए गए लेख लोड करने में त्रुटि।", true);
             savedArticleIds = [];
           }
         } catch (error) {
           console.error("Error fetching saved articles:", error);
+          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           savedArticleIds = [];
         }
       }
@@ -1814,7 +1840,7 @@
           return;
         }
 
-        console.log(`Attempting to toggle save for articleId: ${articleId}, userId: ${loggedInUser.userId}`); // Added logging
+        console.log(`Attempting to toggle save for articleId: ${articleId}, userId: ${loggedInUser.userId}`);
         const isCurrentlySaved = savedArticleIds.includes(articleId);
         const method = isCurrentlySaved ? "DELETE" : "POST";
         
@@ -1832,31 +1858,14 @@
             body: method === "POST" ? JSON.stringify({ articleId }) : undefined,
           });
 
-          const contentType = response.headers.get('content-type');
-          if (!response.ok) {
-            let errorMessage = `Server responded with status ${response.status}.`;
-            if (contentType && contentType.includes('application/json')) {
-              try {
-                  const errorData = await response.json();
-                  errorMessage = errorData.message || errorMessage;
-              } catch (e) {
-                  console.error("Error parsing JSON error response:", e);
-                  errorMessage = `Server responded with status ${response.status}, but JSON error data could not be parsed.`;
-              }
-            } else {
-              const errorText = await response.text();
-              console.error("Non-JSON error response from server (raw HTML/text):", errorText);
-              errorMessage = `Error: ${response.status} ${response.statusText}. Please check network tab for more details.`;
-              if (response.status === 404) {
-                  errorMessage = "लेख या उपयोगकर्ता नहीं मिला। कृपया पुनः प्रयास करें या रीफ्रेश करें।";
-              } else if (response.status === 403) {
-                  errorMessage = "इस कार्रवाई के लिए अनधिकृत।";
-              }
-            }
-            throw new Error(errorMessage);
+          let data;
+          try {
+              data = await response.json();
+          } catch (jsonError) {
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in toggleSaveArticle (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
           }
-
-          const data = await response.json();
 
           if (response.ok) {
             if (isCurrentlySaved) {
@@ -1874,11 +1883,18 @@
             // Re-load and display articles to refresh all bookmark icons on the page, maintaining current filters
             filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
           } else {
-            throw new Error(data.message || "सेव करने की कार्रवाई विफल रही।");
+            let errorMessage = data.message || "सेव करने की कार्रवाई विफल रही।";
+            if (response.status === 404) {
+                errorMessage = "लेख या उपयोगकर्ता नहीं मिला। कृपया पुनः प्रयास करें या रीफ्रेश करें।";
+            } else if (response.status === 403) {
+                errorMessage = "इस कार्रवाई के लिए अनधिकृत।";
+            }
+            showMessage(errorMessage, true);
+            throw new Error(errorMessage); // Propagate error for outer catch
           }
         } catch (error) {
           console.error("Save article error:", error);
-          showMessage(error.message, true);
+          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       }
 
@@ -2070,7 +2086,14 @@
               body: JSON.stringify({ email }),
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                const rawResponse = await response.text();
+                console.error("Error parsing JSON response in forgotPasswordForm (raw):", rawResponse, jsonError);
+                throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+            }
 
             if (response.ok) {
               showMessage(data.message || "OTP आपके ईमेल पर भेजा गया है।");
@@ -2082,7 +2105,7 @@
             }
           } catch (error) {
             console.error("Forgot password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध", true);
+            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2104,7 +2127,14 @@
               body: JSON.stringify({ email, otp, newPassword }),
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                const rawResponse = await response.text();
+                console.error("Error parsing JSON response in resetPasswordForm (raw):", rawResponse, jsonError);
+                throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+            }
 
             if (response.ok) {
               showMessage(data.message || "पासवर्ड सफलतापूर्वक रीसेट किया गया। अब लॉग इन करें।");
@@ -2115,7 +2145,7 @@
             }
           } catch (error) {
             console.error("Reset password error:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2134,7 +2164,14 @@
             body: JSON.stringify({ email, password }),
           });
 
-          const data = await response.json();
+          let data;
+          try {
+              data = await response.json();
+          } catch (jsonError) {
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in loginForm (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+          }
 
           if (response.ok) {
             localStorage.setItem("token", data.token);
@@ -2149,7 +2186,7 @@
           }
         } catch (error) {
           console.error("Login error:", error);
-          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
         }
       });
 
@@ -2168,7 +2205,14 @@
             body: JSON.stringify({ email, password }),
           });
 
-          const data = await response.json();
+          let data;
+          try {
+              data = await response.json();
+          } catch (jsonError) {
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in signupForm (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+          }
 
           if (response.ok) {
             showMessage(data.message || "सफलतापूर्वक साइन अप किया गया!");
@@ -2182,7 +2226,7 @@
           }
         } catch (error) {
           console.error("Signup error:", error);
-          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2318,7 +2362,14 @@
               body: JSON.stringify({ title, category, content, author: loggedInUser.email, userId: loggedInUser.userId }), // imageUrl removed, userId added
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                const rawResponse = await response.text();
+                console.error("Error parsing JSON response in newArticleForm (raw):", rawResponse, jsonError);
+                throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+            }
 
             if (response.ok) {
               showMessage(data.message || "लेख सफलतापूर्वक पोस्ट किया गया!");
@@ -2330,7 +2381,7 @@
           }
           catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2373,7 +2424,14 @@
               body: JSON.stringify({ title, category, content }), // imageUrl removed
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                const rawResponse = await response.text();
+                console.error("Error parsing JSON response in editArticleForm (raw):", rawResponse, jsonError);
+                throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+            }
 
             if (response.ok) {
               showMessage(data.message || "लेख सफलतापूर्वक अपडेट किया गया!");
@@ -2384,7 +2442,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्huद।", true);
+            showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2401,7 +2459,19 @@
 
         try {
           const response = await fetch(`${API_BASE_URL}/articles`);
-          const articles = await response.json();
+          let articles;
+          try {
+              articles = await response.json();
+          } catch (jsonError) {
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in loadArticles (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+          }
+
+          if (!response.ok) { // Check response.ok AFTER trying to parse JSON
+              throw new Error(articles.message || `लेख लोड करने में त्रुटि। स्थिति: ${response.status}`);
+          }
+          
           allArticles = articles; // Store all articles globally
           
           // After loading all articles, apply the current filters
@@ -2409,7 +2479,7 @@
 
         } catch (error) {
           console.error("Error loading articles:", error);
-          showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
           noArticlesMessage.classList.remove("hidden"); // Show message if API fails
         } finally {
           articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
@@ -2565,15 +2635,24 @@
         articlesContainer
           .querySelectorAll(".edit-article-btn")
           .forEach((button) => {
-            button.addEventListener("click", (e) => {
+            button.addEventListener("click", async (e) => { // Made async here
               e.stopPropagation(); // Prevent card click event
               const loggedInUser = getCurrentUser();
               if (loggedInUser && loggedInUser.role === "admin") {
                 const articleId = e.currentTarget.dataset.id;
                 // Fetch article data to populate the edit form
-                fetch(`${API_BASE_URL}/articles/${articleId}`)
-                  .then(res => res.json())
-                  .then(article => {
+                try {
+                  const res = await fetch(`${API_BASE_URL}/articles/${articleId}`);
+                  let article;
+                  try {
+                      article = await res.json();
+                  } catch (jsonError) {
+                      const rawResponse = await res.text();
+                      console.error("Error parsing JSON response in edit button fetch (raw):", rawResponse, jsonError);
+                      throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${res.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+                  }
+
+                  if (res.ok) {
                     if (article) {
                       document.getElementById("editArticleId").value = article._id;
                       document.getElementById("editArticleTitle").value = article.title;
@@ -2583,11 +2662,13 @@
                     } else {
                       showMessage("लेख नहीं मिला।", true);
                     }
-                  })
-                  .catch(error => {
+                  } else {
+                      throw new Error(article.message || `लेख डेटा प्राप्त करने में त्रुटि। स्थिति: ${res.status}`);
+                  }
+                } catch (error) {
                     console.error("Error fetching article for edit:", error);
-                    showMessage("लेख डेटा प्राप्त करने में त्रुटि।", true);
-                  });
+                    showMessage(error.message || "लेख डेटा प्राप्त करने में त्रुटि।", true);
+                }
               } else if (!loggedInUser) {
                 openModal("authRequiredModal");
               } else {
@@ -2633,7 +2714,14 @@
                 },
               });
 
-              const data = await response.json();
+              let data;
+              try {
+                  data = await response.json();
+              } catch (jsonError) {
+                  const rawResponse = await response.text();
+                  console.error("Error parsing JSON response in confirmDeleteBtn (raw):", rawResponse, jsonError);
+                  throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+              }
 
               if (response.ok) {
                 showMessage(data.message || "लेख सफलतापूर्वक हटाया गया!");
@@ -2645,7 +2733,7 @@
               }
             } catch (error) {
               console.error("Error deleting article:", error);
-              showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+              showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
             }
           } else {
             showMessage("लेख हटाने में त्रुटि या पहुँच नहीं है।", true);
@@ -2842,7 +2930,15 @@
             body: JSON.stringify({ name, email, message }),
           });
 
-          const data = await response.json();
+          let data;
+          try {
+              data = await response.json(); // Attempt to parse JSON
+          } catch (jsonError) {
+              // If JSON parsing fails, read as text to get raw response
+              const rawResponse = await response.text();
+              console.error("Error parsing JSON response in contactForm (raw):", rawResponse, jsonError);
+              throw new Error(`Server returned non-JSON response or malformed JSON. Status: ${response.status}. Raw response: ${rawResponse.substring(0, 200)}...`);
+          }
 
           if (response.ok) {
             showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।"); // Improved message
@@ -2856,7 +2952,7 @@
           }
         } catch (error) {
           console.error("Contact form submission error:", error);
-          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+          showMessage(error.message || "नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true); // Display the error message caught
         } finally {
           submitBtn.disabled = false; // Re-enable button
           submitBtn.textContent = "संदेश भेजें"; // Reset button text
