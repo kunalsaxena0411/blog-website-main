@@ -668,13 +668,13 @@
       </div>
     </section>
 
-    <!-- Footer Section (UPDATED) -->
+    <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-10 mt-12">
       <div class="container mx-auto px-4 text-center">
         <p class="text-sm mb-4">
           &copy; 2025 गामाकौआ। सर्वाधिकार सुरक्षित। ❤️ के साथ डिज़ाइन किया गया।
         </p>
-        <div class="flex justify-center space-x-6 text-sm">
+        <div class="flex flex-wrap justify-center space-x-4 text-sm">
           <!-- Homepage link -->
           <a href="index.html" class="hover:text-gray-300 transition duration-300"
             >मुखपृष्ठ</a
@@ -1055,7 +1055,6 @@
       >
         <span class="close-button" onclick="closeModal('editArticleModal')"
           >&times;</span
-
         >
         <h3
           class="text-2xl font-bold text-gray-800 mb-6 text-center hindi-text"
@@ -1454,7 +1453,7 @@
         }
       }
 
-      // Load Saved Articles Function (Corrected and moved to use DOM elements)
+      // Load Saved Articles Function (Corrected and moved to global scope)
       async function loadSavedArticles() {
           const loggedInUser = getCurrentUser();
           if (!loggedInUser) {
@@ -1604,6 +1603,11 @@
                 if (document.getElementById('savedArticlesModal').classList.contains('open')) {
                     loadSavedArticles(); // Update saved articles modal if open
                 }
+                // Also update the detail modal if it's open and showing this article
+                const detailModal = document.getElementById('articleDetailModal');
+                if (detailModal.classList.contains('open') && detailModal.querySelector('#articleDetailTitle').textContent === allArticles.find(a => a._id === articleId)?.title) {
+                    openArticleDetailModal(allArticles.find(a => a._id === articleId));
+                }
             } else {
                 showMessage(data.message || "लेख सेव/अनसेव करने में त्रुटि।", true);
             }
@@ -1749,6 +1753,7 @@
         .addEventListener("click", (e) => {
           e.preventDefault();
           closeModal("loginModal");
+          document.getElementById("forgotEmail").value = ""; // Clear email field
           openModal("forgotPasswordModal");
         });
 
@@ -2030,7 +2035,7 @@
           }
           catch (error) {
             console.error("Error posting article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ruध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
           }
         });
 
@@ -2388,7 +2393,7 @@
             backToTopBtn.classList.remove("opacity-0", "scale-0");
           } else {
             backToTopBtn.classList.add("opacity-0", "scale-0");
-            backToTopBtn.classList.remove("opacity-100", "scale-0");
+            backToTopBtn.classList.remove("opacity-100", "scale-100");
           }
         };
 
@@ -2401,17 +2406,14 @@
         });
 
         // Contact Us Modal functionality
-        // Original: const contactUsLink = document.getElementById("contactUsLink");
-        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn"); // New ID from index.html
-        // Original: const contactModal = document.getElementById("contactModal");
-        const contactUsModal = document.getElementById("contactUsModal"); // New ID from index.html
+        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn");
+        const contactUsModal = document.getElementById("contactUsModal");
         const contactForm = document.getElementById("contactForm");
 
-        // Use the new ID for event listener
         if (openContactUsModalBtn) {
           openContactUsModalBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            openModal("contactUsModal"); // Open the new contactUsModal
+            openModal("contactUsModal");
             // Clear contact form fields when opening
             document.getElementById("contactName").value = "";
             document.getElementById("contactEmail").value = "";
@@ -2421,10 +2423,10 @@
 
         // Contact Form Submission
         if (contactForm) {
-            contactForm.addEventListener("submit", async (e) => { // Made async to handle fetch
+            contactForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                const submitBtn = document.getElementById("contactSubmitBtn"); // Get the submit button
+                const submitBtn = document.getElementById("contactSubmitBtn");
                 submitBtn.disabled = true; // Disable button during submission
                 submitBtn.textContent = "संदेश भेजा जा रहा है..."; // Change button text
 
@@ -2445,7 +2447,7 @@
 
                     if (response.ok) {
                         showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।");
-                        closeModal("contactUsModal"); // Close the new contactUsModal
+                        closeModal("contactUsModal");
                         contactForm.reset(); // Clear form
                     } else {
                         showMessage(data.message || "संदेश भेजने में त्रुटि हुई।", true);
@@ -2464,112 +2466,6 @@
         const savedArticlesContainer = document.getElementById("savedArticlesContainer");
         const savedArticlesLoader = document.getElementById("savedArticlesLoader");
         const noSavedArticlesMessage = document.getElementById("noSavedArticlesMessage");
-
-        // Load Saved Articles Function (Corrected and moved to use DOM elements)
-        async function loadSavedArticles() {
-            const loggedInUser = getCurrentUser();
-            if (!loggedInUser) {
-                openModal("authRequiredModal");
-                return;
-            }
-
-            savedArticlesLoader.style.display = "block";
-            noSavedArticlesMessage.classList.add("hidden");
-            savedArticlesContainer.innerHTML = ""; // Clear previous saved articles
-
-            try {
-                // Fetch the full article details for the saved article IDs
-                const response = await fetch(
-                    `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${loggedInUser.token}`,
-                        },
-                    }
-                );
-
-                const savedArticlesResponse = await response.json();
-
-                if (response.ok && savedArticlesResponse.savedArticles.length > 0) {
-                    // Fetch full article objects based on the IDs returned
-                    const fullArticlesPromises = savedArticlesResponse.savedArticles.map(async (articleId) => {
-                        const articleRes = await fetch(`${API_BASE_URL}/articles/${articleId}`);
-                        return articleRes.json();
-                    });
-                    const fullSavedArticles = await Promise.all(fullArticlesPromises);
-
-                    // Filter out any articles that might have failed to fetch or are null
-                    const validSavedArticles = fullSavedArticles.filter(article => article && article._id);
-
-                    if (validSavedArticles.length === 0) {
-                        noSavedArticlesMessage.classList.remove("hidden");
-                        noSavedArticlesMessage.textContent = "कोई सेव किया गया लेख नहीं मिला।";
-                    } else {
-                        validSavedArticles.forEach((article) => {
-                            const timestamp = new Date(article.createdAt).toLocaleString(
-                                "hi-IN",
-                                {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                }
-                            );
-
-                            // Create the article card as a DOM element directly
-                            const savedArticleCard = document.createElement('div');
-                            savedArticleCard.className = "content-overlay p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1";
-                            savedArticleCard.dataset.id = article._id;
-
-                            savedArticleCard.innerHTML = `
-                                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${article.category}</span>
-                                <h4 class="text-lg font-bold mt-1 mb-1 text-gray-800 hindi-text">${article.title}</h4>
-                                <p class="text-gray-600 text-sm mb-2">लेखक: ${article.author}</p>
-                                <p class="text-gray-500 text-xs mb-3">प्रकाशित: ${timestamp}</p>
-                                <p class="text-gray-700 leading-relaxed truncate-2-lines hindi-text">
-                                    ${article.content.replace(/<[^>]*>?/gm, "").substring(0, 100)}...
-                                </p>
-                                <div class="mt-3 flex justify-between items-center">
-                                    <button class="text-emerald-600 hover:underline read-more-btn">
-                                        और पढ़ें <i class="fas fa-arrow-right ml-1"></i>
-                                    </button>
-                                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm toggle-save-btn" data-id="${article._id}" data-saved="true">
-                                        <i class="fas fa-trash-alt mr-1"></i>हटाएँ
-                                    </button>
-                                </div>
-                            `;
-                            // Attach event listeners directly to the created elements
-                            const readMoreBtn = savedArticleCard.querySelector('.read-more-btn');
-                            readMoreBtn.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                openArticleDetailModal(article); // Pass the full article object
-                                closeModal("savedArticlesModal");
-                            });
-
-                            const toggleSaveBtn = savedArticleCard.querySelector('.toggle-save-btn');
-                            toggleSaveBtn.addEventListener('click', async (e) => {
-                                e.stopPropagation();
-                                const articleId = e.currentTarget.dataset.id;
-                                await toggleSaveArticle(articleId, true); // true for unsaving from this modal
-                            });
-
-                            savedArticlesContainer.appendChild(savedArticleCard); // Append the card to the container
-                        });
-                    }
-                } else {
-                    noSavedArticlesMessage.classList.remove("hidden");
-                    noSavedArticlesMessage.textContent = "आपके पास कोई सेव किया गया लेख नहीं है।";
-                }
-            } catch (error) {
-                console.error("Error loading saved articles:", error);
-                noSavedArticlesMessage.classList.remove("hidden");
-                noSavedArticlesMessage.textContent = "सेव किए गए लेख लोड करने में त्रुटि हुई।";
-            } finally {
-                savedArticlesLoader.style.display = "none";
-            }
-        }
-
 
         // Event listener for "सेव किए गए लेख" link
         document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
