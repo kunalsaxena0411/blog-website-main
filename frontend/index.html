@@ -515,6 +515,42 @@
         white-space: pre-wrap; /* Preserves whitespace and wraps text */
         word-break: break-word; /* Breaks long words */
       }
+
+      /* Category dropdown styling */
+      .category-dropdown-container {
+          margin-bottom: 2rem; /* 32px */
+          text-align: center;
+      }
+
+      #articleCategoryFilter {
+          background-color: #1a202c; /* Dark background */
+          color: #e2e8f0;
+          padding: 0.75rem 1.5rem; /* 12px 24px */
+          border-radius: 9999px; /* Full rounded */
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          font-weight: 500;
+          appearance: none; /* Remove default dropdown arrow */
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background-image: url('data:image/svg+xml;utf8,<svg fill="%23e2e8f0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1.5em;
+          cursor: pointer;
+          min-width: 200px;
+          outline: none;
+          transition: all 0.2s ease;
+      }
+
+      #articleCategoryFilter:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+      }
+
+      #articleCategoryFilter option {
+          background-color: #1a202c;
+          color: #e2e8f0;
+      }
     </style>
   </head>
   <body class="fade-in">
@@ -543,6 +579,7 @@
           </div>
 
           <nav class="hidden md:flex space-x-6 items-center">
+            <!-- Restored individual category links for header navigation -->
             <a
               href="hindi-literature.html"
               class="text-white hover:text-emerald-300 transition duration-300 underline-animation flex items-center"
@@ -593,7 +630,6 @@
                 ></span>
               </div>
               <div class="dropdown-content">
-                <!-- Removed "मेरी प्रोफाइल" tab -->
                 <a href="#" id="savedArticlesLink"
                   ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
                 >
@@ -632,6 +668,7 @@
           class="hidden md:hidden py-4 border-t border-gray-700"
         >
           <div class="flex flex-col space-y-4">
+            <!-- Restored individual category links for mobile navigation -->
             <a
               href="hindi-literature.html"
               class="text-white hover:text-emerald-300 transition duration-300"
@@ -688,7 +725,6 @@
                 ></span>
               </div>
               <div class="flex flex-col space-y-2">
-                <!-- Removed "मेरी प्रोफाइल" tab from mobile -->
                 <a href="#" id="mobileSavedArticlesLink" class="text-white hover:text-emerald-300"
                   ><i class="fas fa-bookmark mr-2"></i>सेव किए गए लेख</a
                 >
@@ -753,8 +789,8 @@
           की इस यात्रा में हमारे साथ जुड़ें।
         </p>
 
-        <!-- Call-to-Action Button -->
-        <div class="animate__animated animate__fadeInUp animate__delay-2s">
+        <!-- Call-to-Action Button removed as per request -->
+        <!-- <div class="animate__animated animate__fadeInUp animate__delay-2s">
           <a
             href="#latest-articles"
             id="findArticlesBtn"
@@ -767,7 +803,7 @@
               <i class="fas fa-search mr-2"></i> लेख खोजें
             </span>
           </a>
-        </div>
+        </div> -->
 
         <!-- Social Proof Section -->
         <div class="mt-12 animate__animated animate__fadeIn animate__delay-3s">
@@ -831,10 +867,41 @@
         <h2 class="text-4xl font-bold text-center text-white mb-4">
           नवीनतम लेख
         </h2>
-        <p class="text-center text-gray-300 mb-12 max-w-2xl mx-auto hindi-text">
-          हमारे विशेषज्ञों द्वारा तैयार किए गए गहन विश्लेषण और साहित्यिक
-          समीक्षाएँ
+        <p id="currentCategoryDisplay" class="text-center text-gray-300 mb-6 max-w-2xl mx-auto hindi-text">
+          सभी श्रेणियाँ
         </p>
+
+        <!-- Category Dropdown -->
+        <div class="category-dropdown-container">
+            <label for="articleCategoryFilter" class="sr-only">लेख श्रेणी फ़िल्टर</label>
+            <select id="articleCategoryFilter">
+                <!-- Options will be dynamically populated by JavaScript -->
+            </select>
+        </div>
+
+        <!-- Search Input Field -->
+        <div class="mb-8 max-w-xl mx-auto flex rounded-full shadow-lg bg-gray-700 overflow-hidden">
+            <input
+                type="text"
+                id="articleSearchInput"
+                placeholder="लेख शीर्षक या सामग्री में खोजें..."
+                class="flex-grow py-3 px-6 bg-gray-700 text-white rounded-l-full focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-gray-400"
+            />
+            <button
+                id="clearSearchBtn"
+                class="bg-gray-700 text-white px-4 py-3 hover:bg-gray-600 transition duration-300 flex items-center justify-center"
+                style="display: none;"
+            >
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <button
+                id="searchArticlesBtn"
+                class="bg-emerald-500 text-white px-6 py-3 rounded-r-full hover:bg-emerald-600 transition duration-300 flex items-center justify-center"
+            >
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
 
         <div
           id="articlesContainer"
@@ -1311,7 +1378,7 @@
               <option value="hindi-literature">हिंदी साहित्य</option>
               <option value="literary-theories">साहित्यिक सिद्धांत</option>
               <option value="story-reviews">कहानी समीक्षाएं</option>
-              <option value="upanyas-samikshayein">उपन्यास समीक्षाएँ</option>
+              <option value="novel-reviews">उपन्यास समीक्षाएँ</option>
               <option value="du-study-material">डीयू अध्ययन सामग्री</option>
             </select>
           </div>
@@ -1654,6 +1721,7 @@
           </div>
           <button
             type="submit"
+            id="contactSubmitBtn"
             class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
           >
             संदेश भेजें
@@ -1669,6 +1737,18 @@
       // Global variables to store articles and saved article IDs
       let allArticles = []; // Stores all fetched articles
       let savedArticleIds = []; // Stores IDs of articles saved by the user
+      let currentCategoryFilter = 'all'; // Default filter to show all categories
+      let currentSearchTerm = ''; // Stores the current search term
+
+      // Maps category keys to display names
+      const categoryDisplayNames = {
+        'all': 'सभी श्रेणियाँ',
+        'hindi-literature': 'हिंदी साहित्य',
+        'literary-theories': 'साहित्यिक सिद्धांत',
+        'story-reviews': 'कहानी समीक्षाएं',
+        'novel-reviews': 'उपन्यास समीक्षाएँ',
+        'du-study-material': 'डीयू अध्ययन सामग्री'
+      };
 
       // Function to show messages (success or error)
       function showMessage(message, isError = false) {
@@ -1715,7 +1795,6 @@
         }
 
         try {
-          // CORRECTED: Include userId in the API URL
           const response = await fetch(`${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`, {
             method: "GET",
             headers: { Authorization: `Bearer ${loggedInUser.token}` },
@@ -1726,8 +1805,8 @@
           if (response.ok) {
             savedArticleIds = data.savedArticles || [];
             console.log("Fetched saved article IDs:", savedArticleIds);
-            // Re-render all articles to update save icons based on new savedArticleIds
-            displayArticles(allArticles);
+            // After fetching saved articles, re-apply filters and display
+            filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
           } else {
             console.error("Failed to fetch saved articles:", data.message);
             savedArticleIds = [];
@@ -1756,22 +1835,19 @@
         const method = isCurrentlySaved ? "DELETE" : "POST";
         
         let url;
-        // Adjust URL based on method: POST expects articleId in body, DELETE expects it in URL
         if (method === "POST") {
-            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`; // Backend expects POST to this URL
+            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles`;
         } else { // DELETE
-            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`; // Backend expects DELETE to this URL
+            url = `${API_BASE_URL}/users/${loggedInUser.userId}/saved-articles/${articleId}`;
         }
 
         try {
           const response = await fetch(url, {
             method: method,
-            headers: { Authorization: `Bearer ${loggedInUser.token}`, 'Content-Type': 'application/json' }, // Ensure Content-Type for POST
-            // For POST, send articleId in body. For DELETE, it's in URL params.
+            headers: { Authorization: `Bearer ${loggedInUser.token}`, 'Content-Type': 'application/json' },
             body: method === "POST" ? JSON.stringify({ articleId }) : undefined,
           });
 
-          // Improved error handling for non-JSON responses and specific status codes
           const contentType = response.headers.get('content-type');
           if (!response.ok) {
             let errorMessage = `Server responded with status ${response.status}.`;
@@ -1796,7 +1872,7 @@
             throw new Error(errorMessage);
           }
 
-          const data = await response.json(); // This will now only run if response.ok and content-type is json
+          const data = await response.json();
 
           if (response.ok) {
             if (isCurrentlySaved) {
@@ -1811,8 +1887,8 @@
               buttonElement.classList.add('text-blue-500');
             }
             console.log("Updated saved article IDs:", savedArticleIds);
-            // Added: Re-load and display articles to refresh all bookmark icons on the page
-            loadArticles();
+            // Re-load and display articles to refresh all bookmark icons on the page, maintaining current filters
+            filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
           } else {
             throw new Error(data.message || "सेव करने की कार्रवाई विफल रही।");
           }
@@ -1823,7 +1899,7 @@
       }
 
       // Function to update UI based on login status
-      async function updateAuthUI() { // Made async to await fetchSavedArticles
+      async function updateAuthUI() {
         const loggedInUser = getCurrentUser();
         const loginBtn = document.getElementById("loginBtn");
         const signupBtn = document.getElementById("signupBtn");
@@ -1843,7 +1919,6 @@
         );
 
         if (loggedInUser) {
-          // User is signed in
           loginBtn.classList.add("hidden");
           signupBtn.classList.add("hidden");
           userProfileDropdown.classList.remove("hidden");
@@ -1863,7 +1938,6 @@
           }
           await fetchSavedArticles(); // Fetch saved articles for the logged-in user
         } else {
-          // User is signed out
           loginBtn.classList.remove("hidden");
           signupBtn.classList.remove("hidden");
           userProfileDropdown.classList.add("hidden");
@@ -1876,7 +1950,8 @@
           mobilePostContentLink.classList.add("hidden");
           savedArticleIds = []; // Clear saved articles when logged out
         }
-        loadArticles(); // Always load articles, but UI elements depend on login status
+        // Initial load of articles and applying default filters
+        loadArticles();
       }
 
       // Header scroll effect
@@ -2325,7 +2400,7 @@
             }
           } catch (error) {
             console.error("Error updating article:", error);
-            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+            showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्huद।", true);
           }
         });
 
@@ -2344,13 +2419,10 @@
           const response = await fetch(`${API_BASE_URL}/articles`);
           const articles = await response.json();
           allArticles = articles; // Store all articles globally
+          
+          // After loading all articles, apply the current filters
+          filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
 
-          if (allArticles.length === 0) {
-            noArticlesMessage.classList.remove("hidden");
-            articlesLoader.style.display = "none";
-            return;
-          }
-          displayArticles(allArticles); // Display all articles by default
         } catch (error) {
           console.error("Error loading articles:", error);
           showMessage("लेख लोड करने में त्रुटि या सर्वर अनुपलब्ध।", true);
@@ -2359,6 +2431,60 @@
           articlesLoader.style.display = "none"; // Hide loader regardless of success/failure
         }
       }
+
+      /**
+       * Filters and displays articles based on category and search term.
+       * @param {string} category - The category to filter by ('all' for all categories).
+       * @param {string} searchTerm - The search term to filter by (case-insensitive, title/content).
+       * @param {boolean} fromSaved - If true, filters only from saved articles.
+       */
+      function filterAndDisplayArticles(category, searchTerm, fromSaved = false) {
+        currentCategoryFilter = category;
+        currentSearchTerm = searchTerm;
+
+        let filtered = fromSaved ? 
+                       allArticles.filter(article => savedArticleIds.includes(article._id)) :
+                       [...allArticles]; // Create a copy to avoid modifying original array
+
+        // Apply category filter
+        if (currentCategoryFilter && currentCategoryFilter !== 'all') {
+          filtered = filtered.filter(article => article.category === currentCategoryFilter);
+        }
+
+        // Apply search term filter
+        if (currentSearchTerm) {
+          const lowerCaseSearchTerm = currentSearchTerm.toLowerCase();
+          filtered = filtered.filter(article =>
+            article.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+            article.content.toLowerCase().includes(lowerCaseSearchTerm)
+          );
+        }
+
+        // Update category display text
+        const currentCategoryDisplayElement = document.getElementById('currentCategoryDisplay');
+        if (currentCategoryFilter === 'all') {
+            currentCategoryDisplayElement.textContent = `सभी श्रेणियाँ`;
+        } else {
+            currentCategoryDisplayElement.textContent = `श्रेणी: ${categoryDisplayNames[currentCategoryFilter] || currentCategoryFilter}`;
+        }
+        
+        // Update the dropdown selection
+        const articleCategoryFilter = document.getElementById('articleCategoryFilter');
+        if (articleCategoryFilter) {
+            articleCategoryFilter.value = currentCategoryFilter;
+        }
+        
+        // Hide/show clear search button
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        if (currentSearchTerm.length > 0) {
+            clearSearchBtn.style.display = 'flex';
+        } else {
+            clearSearchBtn.style.display = 'none';
+        }
+
+        displayArticles(filtered);
+      }
+
 
       /**
        * Displays articles in the UI.
@@ -2398,7 +2524,7 @@
               data-id="${article._id}"
             >
               <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">${
-                article.category
+                categoryDisplayNames[article.category] || article.category
               }</span>
               <h3 class="text-xl font-bold mt-2 mb-2 text-gray-800 hindi-text">${
                 article.title
@@ -2524,7 +2650,7 @@
               if (response.ok) {
                 showMessage(data.message || "लेख सफलतापूर्वक हटाया गया!");
                 closeModal("confirmationModal");
-                loadArticles(); // Re-render articles
+                loadArticles(); // Re-render articles by reloading all and re-applying filters
                 articleToDeleteId = null; // Clear stored ID
               } else {
                 showMessage(data.message || "लेख हटाने में त्रुटि।", true);
@@ -2540,7 +2666,7 @@
         });
 
       // Open Article Detail Modal and populate content
-      function showArticleDetail(articleId) { // Renamed from openArticleDetailModal to match old code
+      function showArticleDetail(articleId) {
         const article = allArticles.find(a => a._id === articleId);
         if (!article) {
             showMessage("लेख नहीं मिला।", true);
@@ -2549,7 +2675,7 @@
         document.getElementById("articleDetailTitle").textContent =
           article.title;
         document.getElementById("articleDetailCategory").textContent =
-          article.category;
+          categoryDisplayNames[article.category] || article.category;
         document.getElementById("articleDetailAuthor").textContent =
           article.author;
         // Format timestamp
@@ -2583,15 +2709,46 @@
       // Event listener for "सभी लेख देखें" button
       document.getElementById("viewAllArticlesBtn").addEventListener("click", (e) => {
         e.preventDefault();
-        displayArticles(allArticles); // Display all articles
+        document.getElementById('articleSearchInput').value = ''; // Clear search
+        currentSearchTerm = '';
+        currentCategoryFilter = 'all'; // Reset to show all categories
+        filterAndDisplayArticles('all', ''); // Reset to show all categories and no search
         document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
-      // Event listener for "लेख खोजें" (Find Articles) button in Hero section
-      document.getElementById("findArticlesBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
-      });
+      // NEW: Function to populate the category dropdown dynamically
+      const articleCategoryFilter = document.getElementById('articleCategoryFilter');
+      function populateCategoryDropdown() {
+          articleCategoryFilter.innerHTML = ''; // Clear existing options
+
+          // Add 'All Categories' option first
+          let allOption = document.createElement('option');
+          allOption.value = 'all';
+          allOption.textContent = categoryDisplayNames['all'];
+          articleCategoryFilter.appendChild(allOption);
+
+          // Add other category options
+          for (const key in categoryDisplayNames) {
+              if (key !== 'all') {
+                  let option = document.createElement('option');
+                  option.value = key;
+                  option.textContent = categoryDisplayNames[key];
+                  articleCategoryFilter.appendChild(option);
+              }
+          }
+          // Set the initial selected value
+          articleCategoryFilter.value = currentCategoryFilter;
+      }
+
+      // REMOVED: Event listener for "लेख खोजें" (Find Articles) button in Hero section
+      // document.getElementById("findArticlesBtn").addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   document.getElementById('articleSearchInput').value = ''; // Clear search on hero click
+      //   currentSearchTerm = '';
+      //   currentCategoryFilter = 'all'; // Ensure 'All' category is selected
+      //   filterAndDisplayArticles('all', ''); // Ensure all articles are shown when coming from hero
+      //   document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
+      // });
 
       // Event listener for "सेव किए गए लेख" (Saved Articles) link
       document.getElementById("savedArticlesLink").addEventListener("click", (e) => {
@@ -2602,20 +2759,29 @@
           return;
         }
 
+        // Clear existing filters and apply only saved articles filter
+        document.getElementById('articleSearchInput').value = '';
+        currentSearchTerm = '';
+        currentCategoryFilter = 'all'; // Temporarily set to all for the filtered view
+
         if (savedArticleIds.length === 0) {
           articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
-          noArticlesMessage.classList.add("hidden");
+          noArticlesMessage.classList.remove("hidden");
         } else {
-          // Filter articles from the globally available allArticles
           const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
           if (filteredArticles.length === 0) {
               articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
-              noArticlesMessage.classList.add("hidden");
+              noArticlesMessage.classList.remove("hidden");
           } else {
               displayArticles(filteredArticles); // Display only saved articles
+              // Update category display to reflect "Saved Articles"
+              document.getElementById('currentCategoryDisplay').textContent = 'सेव किए गए लेख';
           }
         }
-        // Scroll to articles section
+        // Set dropdown to 'All Categories' as "Saved Articles" is a special view
+        if (articleCategoryFilter) {
+            articleCategoryFilter.value = 'all';
+        }
         document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
@@ -2629,24 +2795,33 @@
           return;
         }
 
+        // Clear existing filters and apply only saved articles filter
+        document.getElementById('articleSearchInput').value = '';
+        currentSearchTerm = '';
+        currentCategoryFilter = 'all'; // Temporarily set to all for the filtered view
+
         if (savedArticleIds.length === 0) {
           articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">आपके पास कोई सेव किया गया लेख नहीं है।</p>';
-          noArticlesMessage.classList.add("hidden");
+          noArticlesMessage.classList.remove("hidden");
         } else {
-          // Filter articles from the globally available allArticles
           const filteredArticles = allArticles.filter(article => savedArticleIds.includes(article._id));
           if (filteredArticles.length === 0) {
               articlesContainer.innerHTML = '<p class="text-center text-gray-600 mt-8">कोई सेव किया गया लेख नहीं मिला।</p>';
-              noArticlesMessage.classList.add("hidden");
+              noArticlesMessage.classList.remove("hidden");
           } else {
               displayArticles(filteredArticles); // Display only saved articles
+              // Update category display to reflect "Saved Articles"
+              document.getElementById('currentCategoryDisplay').textContent = 'सेव किए गए लेख';
           }
         }
-        // Scroll to articles section
+        // Set dropdown to 'All Categories' as "Saved Articles" is a special view
+        if (articleCategoryFilter) {
+            articleCategoryFilter.value = 'all';
+        }
         document.querySelector('#latest-articles').scrollIntoView({ behavior: 'smooth' });
       });
 
-      // NEW: Event listener for "हमसे संपर्क करें" button in footer to open Contact Us modal
+      // Event listener for "हमसे संपर्क करें" button in footer to open Contact Us modal
       document.getElementById("openContactUsModalBtn").addEventListener("click", (e) => {
         e.preventDefault(); // Prevent default link behavior
         openModal("contactUsModal");
@@ -2656,31 +2831,90 @@
         document.getElementById("contactMessage").value = "";
       });
 
-      // NEW: Contact Form Submission to mailto
-      document.getElementById("contactForm").addEventListener("submit", (e) => {
-        e.preventDefault(); // Prevent actual form submission
+      // Contact Form Submission to backend API
+      document.getElementById("contactForm").addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        const submitBtn = document.getElementById("contactSubmitBtn");
+        submitBtn.disabled = true; // Disable button during submission
+        submitBtn.textContent = "संदेश भेजा जा रहा है..."; // Change button text
 
         const name = document.getElementById("contactName").value;
         const email = document.getElementById("contactEmail").value;
         const message = document.getElementById("contactMessage").value;
 
-        // Construct the mailto link
-        const subject = encodeURIComponent(`Gamakauaa Contact Form: ${name}`);
-        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-        const mailtoLink = `mailto:gamakauaa.com@gmail.com?subject=${subject}&body=${body}`;
+        try {
+          // Send data to your backend's contact endpoint
+          const response = await fetch(`${API_BASE_URL}/contact`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, email, message }),
+          });
 
-        // Attempt to open the mail client
-        window.location.href = mailtoLink;
+          const data = await response.json();
 
-        showMessage("आपका संदेश भेजने के लिए आपका ईमेल क्लाइंट खुल रहा है।");
-        closeModal("contactUsModal");
+          if (response.ok) {
+            showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है।"); // Changed message for clarity
+            closeModal("contactUsModal");
+            // Clear form fields
+            document.getElementById("contactName").value = "";
+            document.getElementById("contactEmail").value = "";
+            document.getElementById("contactMessage").value = "";
+          } else {
+            showMessage(data.message || "संदेश भेजने में त्रुटि हुई।", true);
+          }
+        } catch (error) {
+          console.error("Contact form submission error:", error);
+          showMessage("नेटवर्क त्रुटि या सर्वर अनुपलब्ध।", true);
+        } finally {
+          submitBtn.disabled = false; // Re-enable button
+          submitBtn.textContent = "संदेश भेजें"; // Reset button text
+        }
+      });
+
+      // NEW: Event listener for article search input
+      const articleSearchInput = document.getElementById('articleSearchInput');
+      const searchArticlesBtn = document.getElementById('searchArticlesBtn');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      // Function to handle search logic
+      function performSearch() {
+          currentSearchTerm = articleSearchInput.value.trim();
+          filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm);
+      }
+
+      articleSearchInput.addEventListener('input', () => {
+          // The clear button visibility is handled here.
+          if (articleSearchInput.value.length > 0) {
+              clearSearchBtn.style.display = 'flex';
+          } else {
+              clearSearchBtn.style.display = 'none';
+          }
+      });
+
+      searchArticlesBtn.addEventListener('click', performSearch);
+
+      articleSearchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+              e.preventDefault(); // Prevent form submission if input is inside a form
+              performSearch();
+          }
+      });
+
+      clearSearchBtn.addEventListener('click', () => {
+          articleSearchInput.value = '';
+          currentSearchTerm = '';
+          filterAndDisplayArticles(currentCategoryFilter, currentSearchTerm); // Re-apply current category filter with no search term
       });
 
 
       // Initial load of articles and UI update when DOM is ready
       document.addEventListener("DOMContentLoaded", () => {
+        populateCategoryDropdown(); // Populate the dropdown on load
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
-        // loadArticles is called inside updateAuthUI()
+        // loadArticles is called inside updateAuthUI() which then calls filterAndDisplayArticles
       });
     </script>
   </body>
