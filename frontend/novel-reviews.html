@@ -545,26 +545,26 @@
             href="literary-theories.html"
             class="text-white hover:text-emerald-300 transition duration-300"
           >
-            <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत
-          </a>
-          <a
-            href="story-reviews.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं</a
-          >
-          <a
-            href="novel-reviews.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-book-reader mr-2"></i>उपन्यास समीक्षाएँ</a
-          >
-          <a
-            href="du-study-material.html"
-            class="text-white hover:text-emerald-300 transition duration-300"
-          >
-            <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
-          >
+            <i class="fas fa-scroll mr-2"></i>साहित्यिक सिद्धांत</a
+            >
+            <a
+              href="story-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-star mr-2"></i>कहानी समीक्षाएं</a
+            >
+            <a
+              href="novel-reviews.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-book-reader mr-2"></i>उपन्यास समीक्षाएँ</a
+            >
+            <a
+              href="du-study-material.html"
+              class="text-white hover:text-emerald-300 transition duration-300"
+            >
+              <i class="fas fa-graduation-cap mr-2"></i>डीयू अध्ययन सामग्री</a
+            >
           <!-- Post Blog Button - Visible only for admins -->
           <a
             href="#"
@@ -1641,6 +1641,7 @@
         .addEventListener("click", (e) => {
           e.preventDefault();
           closeModal("loginModal");
+          document.getElementById("forgotEmail").value = ""; // Clear email field
           openModal("forgotPasswordModal");
         });
 
@@ -2279,7 +2280,7 @@
             backToTopBtn.classList.remove("opacity-0", "scale-0");
           } else {
             backToTopBtn.classList.add("opacity-0", "scale-0");
-            backToTopBtn.classList.remove("opacity-100", "scale-0");
+            backToTopBtn.classList.remove("opacity-100", "scale-100");
           }
         };
 
@@ -2292,17 +2293,14 @@
         });
 
         // Contact Us Modal functionality
-        // Original: const contactUsLink = document.getElementById("contactUsLink");
-        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn"); // New ID from index.html
-        // Original: const contactModal = document.getElementById("contactModal");
-        const contactUsModal = document.getElementById("contactUsModal"); // New ID from index.html
+        const openContactUsModalBtn = document.getElementById("openContactUsModalBtn");
+        const contactUsModal = document.getElementById("contactUsModal");
         const contactForm = document.getElementById("contactForm");
 
-        // Use the new ID for event listener
         if (openContactUsModalBtn) {
           openContactUsModalBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            openModal("contactUsModal"); // Open the new contactUsModal
+            openModal("contactUsModal");
             // Clear contact form fields when opening
             document.getElementById("contactName").value = "";
             document.getElementById("contactEmail").value = "";
@@ -2312,10 +2310,10 @@
 
         // Contact Form Submission
         if (contactForm) {
-            contactForm.addEventListener("submit", async (e) => { // Made async to handle fetch
+            contactForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                const submitBtn = document.getElementById("contactSubmitBtn"); // Get the submit button
+                const submitBtn = document.getElementById("contactSubmitBtn");
                 submitBtn.disabled = true; // Disable button during submission
                 submitBtn.textContent = "संदेश भेजा जा रहा है..."; // Change button text
 
@@ -2336,7 +2334,7 @@
 
                     if (response.ok) {
                         showMessage(data.message || "आपका संदेश सफलतापूर्वक भेजा गया है। गामाकौआ टीम आपसे जल्द ही संपर्क करेगी।");
-                        closeModal("contactUsModal"); // Close the new contactUsModal
+                        closeModal("contactUsModal");
                         contactForm.reset(); // Clear form
                     } else {
                         showMessage(data.message || "संदेश भेजने में त्रुटि हुई।", true);
@@ -2350,6 +2348,7 @@
                 }
             });
         }
+
 
         // Saved Articles Modal elements (defined here for scope within DOMContentLoaded)
         const savedArticlesContainer = document.getElementById("savedArticlesContainer");
@@ -2474,7 +2473,6 @@
             openModal("savedArticlesModal");
             loadSavedArticles(); // Load articles when modal opens
         });
-
 
         updateAuthUI(); // Initialize UI based on initial loggedInUser state (null)
         // loadArticlesByCategory is called inside updateAuthUI()
