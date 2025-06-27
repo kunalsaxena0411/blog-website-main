@@ -21,7 +21,7 @@ const ALLOWED_ADMIN_EMAIL = "gamakauaa.com@gmail.com"; // Set this to your desir
 // Middleware
 // Allows requests from your frontend origin (e.g., https://gamakauaa-frontend.onrender.com)
 app.use(cors({
-  origin: "https://gamakauaa-frontend.onrender.com",  // ✅ Allow your frontend
+  origin: ["https://gamakauaa-frontend.onrender.com", "https://gamakauaa.com"], // ✅ Allow your frontend
   credentials: true // ✅ Allow cookies if needed
 }));
 // To parse JSON request bodies
